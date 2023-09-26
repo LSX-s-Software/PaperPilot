@@ -31,3 +31,15 @@ _✨ Author: [Nagico](https://github.com/Nagico/) ✨_
 [//]: # (  </a>)
 </p>
 <!-- markdownlint-enable MD033 -->
+
+## 结构
+
+```text
+.  # 根目录
+├── paperpilot_common  # 公共定义
+│   ├── protobuf  # proto文件
+│   ├── version  # 接口版本
+|
+├── paperpilot-common-python  # 公共Python包
+
+```
