@@ -1,0 +1,19 @@
+[flake8]
+# 适当提高最大行长度
+max-line-length = 120
+# 设置最大复杂度
+max-complexity = 24
+# 忽略这些错误类型
+ignore = F401, W503, E203
+# 忽略以下文件
+exclude =
+    .git,
+    .venv,
+    __pycache__,
+    scripts,
+    logs,
+    upload,
+    build,
+    dist,
+    docs,
+    migrations,
