@@ -1,0 +1,103 @@
+[tool.poetry]
+name = "paperpilot-common"
+version = "0.1.0"
+description = "PaperPilot 公共包及接口定义"
+authors = ["Nagico <coyangjr@whu.edu.cn>"]
+readme = "../README.md"
+repository = "https://github.com/Nagico/paperpilot-common"
+homepage = "https://github.com/Nagico/paperpilot-common"
+packages = [{include = "paperpilot_common"}]
+
+[[tool.poetry.source]]
+name = "aliyun"
+priority = "default"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+
+[tool.poetry.dependencies]
+python = ">=3.10"
+grpcio = "^1.58.0"
+grpcio-tools = "^1.58.0"
+grpc-stubs = "^1.53.0"
+grpcio-status = "^1.58.0"
+googleapis-common-protos = "^1.56.3"
+loguru = "^0.7.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+mypy = "^1.5.1"
+pytest = "^7.4.2"
+isort = "^5.12.0"
+pytest-mock = "^3.11.1"
+coverage = "^7.3.1"
+mypy-protobuf = "^3.5.0"
+grpcio-testing = "^1.58.0"
+pytest-grpc = "^0.8.0"
+pre-commit = "^3.4.0"
+flake8 = "^6.1.0"
+autoflake = "^2.2.1"
+ipython = "^8.15.0"
+
+[tool.black]
+line-length = 120
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+line_length = 120
+skip_glob = "grpc_handler/protos"
+
+[tool.pytest]
+testpaths = "tests"
+
+[tool.coverage.run]
+branch = true
+source = ["."]
+omit = [
+    ".venv/*",  "venv/*",
+    "tests/*",
+    "grpc_example_common/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+
+    # type hints
+    "if TYPE_CHECKING:",
+    "pass",
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

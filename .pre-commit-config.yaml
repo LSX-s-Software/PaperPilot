@@ -29,11 +29,6 @@ repos:
       - id: flake8
         additional_dependencies: [Flake8-pyproject]
 
-  - repo: https://github.com/python-poetry/poetry
-    rev: 1.6.0
-    hooks:
-      - id: poetry-check
-
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v2.4.0
     hooks:
