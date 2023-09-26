@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "paperpilot-common"
-version = "0.1.0"
+version = "0.0.9"
 description = "PaperPilot 公共包及接口定义"
 authors = ["Nagico <coyangjr@whu.edu.cn>"]
 readme = "../README.md"
