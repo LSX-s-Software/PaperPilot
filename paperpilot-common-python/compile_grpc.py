@@ -12,7 +12,7 @@ from loguru import logger as default_logger
 ROOT = Path(__file__).parent.parent
 
 source_path = ROOT / "paperpilot_common" / "protobuf"
-target_path = ROOT / "python" / "paperpilot_common" / "protobuf"
+target_path = ROOT / "paperpilot-common-python" / "paperpilot_common" / "protobuf"
 
 # 设置生成protobuf代码文件的文件名
 service_list = os.listdir(source_path)
