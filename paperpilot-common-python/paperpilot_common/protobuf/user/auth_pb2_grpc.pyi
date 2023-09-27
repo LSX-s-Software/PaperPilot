@@ -39,7 +39,7 @@ class AuthServiceStub:
     """登出"""
     Register: grpc.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.CreateUserRequest,
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """注册"""
 
@@ -63,7 +63,7 @@ class AuthServiceAsyncStub:
     """登出"""
     Register: grpc.aio.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.CreateUserRequest,
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """注册"""
 
@@ -103,8 +103,8 @@ class AuthServiceServicer(metaclass=abc.ABCMeta):
         request: paperpilot_common.protobuf.user.user_pb2.CreateUserRequest,
         context: _ServicerContext,
     ) -> typing.Union[
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
-        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserInfo],
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserDetail],
     ]:
         """注册"""
 

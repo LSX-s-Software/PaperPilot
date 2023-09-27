@@ -6,7 +6,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 from paperpilot_common.protobuf.test import test_pb2 as paperpilot__common_dot_protobuf_dot_test_dot_test__pb2
 
 
-class TestPublicStub(object):
+class TestPublicServiceStub(object):
     """测试公开接口"""
 
     def __init__(self, channel):
@@ -16,13 +16,13 @@ class TestPublicStub(object):
             channel: A grpc.Channel.
         """
         self.Test = channel.unary_unary(
-            "/test.TestPublic/Test",
+            "/test.TestPublicService/Test",
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             response_deserializer=paperpilot__common_dot_protobuf_dot_test_dot_test__pb2.TestResult.FromString,
         )
 
 
-class TestPublicServicer(object):
+class TestPublicServiceServicer(object):
     """测试公开接口"""
 
     def Test(self, request, context):
@@ -32,7 +32,7 @@ class TestPublicServicer(object):
         raise NotImplementedError("Method not implemented!")
 
 
-def add_TestPublicServicer_to_server(servicer, server):
+def add_TestPublicServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
         "Test": grpc.unary_unary_rpc_method_handler(
             servicer.Test,
@@ -40,12 +40,12 @@ def add_TestPublicServicer_to_server(servicer, server):
             response_serializer=paperpilot__common_dot_protobuf_dot_test_dot_test__pb2.TestResult.SerializeToString,
         ),
     }
-    generic_handler = grpc.method_handlers_generic_handler("test.TestPublic", rpc_method_handlers)
+    generic_handler = grpc.method_handlers_generic_handler("test.TestPublicService", rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
 # This class is part of an EXPERIMENTAL API.
-class TestPublic(object):
+class TestPublicService(object):
     """测试公开接口"""
 
     @staticmethod
@@ -64,7 +64,7 @@ class TestPublic(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/test.TestPublic/Test",
+            "/test.TestPublicService/Test",
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             paperpilot__common_dot_protobuf_dot_test_dot_test__pb2.TestResult.FromString,
             options,

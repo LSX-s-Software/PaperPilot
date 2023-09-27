@@ -28,13 +28,13 @@ class TestResult(google.protobuf.message.Message):
     def time(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """服务器当前时间"""
     @property
-    def user(self) -> paperpilot_common.protobuf.user.user_pb2.UserShortInfo:
+    def user(self) -> paperpilot_common.protobuf.user.user_pb2.UserInfo:
         """（可选）当前登录用户简要信息"""
     def __init__(
         self,
         *,
         time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
-        user: paperpilot_common.protobuf.user.user_pb2.UserShortInfo | None = ...,
+        user: paperpilot_common.protobuf.user.user_pb2.UserInfo | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["time", b"time", "user", b"user"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["time", b"time", "user", b"user"]) -> None: ...

@@ -3,9 +3,12 @@
 isort:skip_file
 """
 import builtins
+import collections.abc
 import google.protobuf.descriptor
+import google.protobuf.internal.containers
 import google.protobuf.message
 import google.protobuf.timestamp_pb2
+import paperpilot_common.protobuf.common.util_pb2
 import sys
 
 if sys.version_info >= (3, 8):
@@ -34,7 +37,7 @@ class UserId(google.protobuf.message.Message):
 global___UserId = UserId
 
 @typing_extensions.final
-class UserShortInfo(google.protobuf.message.Message):
+class UserInfo(google.protobuf.message.Message):
     """用户简要信息 用于展示"""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -59,10 +62,10 @@ class UserShortInfo(google.protobuf.message.Message):
         self, field_name: typing_extensions.Literal["avatar", b"avatar", "id", b"id", "username", b"username"]
     ) -> None: ...
 
-global___UserShortInfo = UserShortInfo
+global___UserInfo = UserInfo
 
 @typing_extensions.final
-class UserInfo(google.protobuf.message.Message):
+class UserDetail(google.protobuf.message.Message):
     """用户详细信息"""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -71,8 +74,8 @@ class UserInfo(google.protobuf.message.Message):
     USERNAME_FIELD_NUMBER: builtins.int
     PHONE_FIELD_NUMBER: builtins.int
     AVATAR_FIELD_NUMBER: builtins.int
-    CREATED_AT_FIELD_NUMBER: builtins.int
-    UPDATED_AT_FIELD_NUMBER: builtins.int
+    CREATE_TIME_FIELD_NUMBER: builtins.int
+    UPDATE_TIME_FIELD_NUMBER: builtins.int
     id: builtins.str
     """用户 UUID"""
     username: builtins.str
@@ -82,10 +85,10 @@ class UserInfo(google.protobuf.message.Message):
     avatar: builtins.str
     """头像"""
     @property
-    def created_at(self) -> google.protobuf.timestamp_pb2.Timestamp:
+    def create_time(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """创建时间"""
     @property
-    def updated_at(self) -> google.protobuf.timestamp_pb2.Timestamp:
+    def update_time(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """更新时间"""
     def __init__(
         self,
@@ -94,31 +97,31 @@ class UserInfo(google.protobuf.message.Message):
         username: builtins.str = ...,
         phone: builtins.str = ...,
         avatar: builtins.str = ...,
-        created_at: google.protobuf.timestamp_pb2.Timestamp | None = ...,
-        updated_at: google.protobuf.timestamp_pb2.Timestamp | None = ...,
+        create_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
+        update_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
     ) -> None: ...
     def HasField(
-        self, field_name: typing_extensions.Literal["created_at", b"created_at", "updated_at", b"updated_at"]
+        self, field_name: typing_extensions.Literal["create_time", b"create_time", "update_time", b"update_time"]
     ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
             "avatar",
             b"avatar",
-            "created_at",
-            b"created_at",
+            "create_time",
+            b"create_time",
             "id",
             b"id",
             "phone",
             b"phone",
-            "updated_at",
-            b"updated_at",
+            "update_time",
+            b"update_time",
             "username",
             b"username",
         ],
     ) -> None: ...
 
-global___UserInfo = UserInfo
+global___UserDetail = UserDetail
 
 @typing_extensions.final
 class CreateUserRequest(google.protobuf.message.Message):
@@ -178,7 +181,7 @@ class UpdateUserAvatarRequest(google.protobuf.message.Message):
 global___UpdateUserAvatarRequest = UpdateUserAvatarRequest
 
 @typing_extensions.final
-class UpdateUserInfoRequest(google.protobuf.message.Message):
+class UpdateUserRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ID_FIELD_NUMBER: builtins.int
@@ -227,4 +230,59 @@ class UpdateUserInfoRequest(google.protobuf.message.Message):
         ],
     ) -> None: ...
 
-global___UpdateUserInfoRequest = UpdateUserInfoRequest
+global___UpdateUserRequest = UpdateUserRequest
+
+@typing_extensions.final
+class UserIdList(google.protobuf.message.Message):
+    """用户 ID 列表"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    IDS_FIELD_NUMBER: builtins.int
+    @property
+    def ids(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+    def __init__(
+        self,
+        *,
+        ids: collections.abc.Iterable[builtins.str] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["ids", b"ids"]) -> None: ...
+
+global___UserIdList = UserIdList
+
+@typing_extensions.final
+class UserInfoList(google.protobuf.message.Message):
+    """用户简要信息列表"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    USERS_FIELD_NUMBER: builtins.int
+    @property
+    def users(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___UserInfo]: ...
+    def __init__(
+        self,
+        *,
+        users: collections.abc.Iterable[global___UserInfo] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["users", b"users"]) -> None: ...
+
+global___UserInfoList = UserInfoList
+
+@typing_extensions.final
+class UploadUserAvatarResponse(google.protobuf.message.Message):
+    """上传头像响应"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    TOKEN_FIELD_NUMBER: builtins.int
+    @property
+    def token(self) -> paperpilot_common.protobuf.common.util_pb2.OssToken: ...
+    def __init__(
+        self,
+        *,
+        token: paperpilot_common.protobuf.common.util_pb2.OssToken | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["token", b"token"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["token", b"token"]) -> None: ...
+
+global___UploadUserAvatarResponse = UploadUserAvatarResponse

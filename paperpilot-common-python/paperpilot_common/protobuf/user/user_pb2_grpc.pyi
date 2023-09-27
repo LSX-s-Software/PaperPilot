@@ -17,58 +17,58 @@ class _MaybeAsyncIterator(collections.abc.AsyncIterator[_T], collections.abc.Ite
 class _ServicerContext(grpc.ServicerContext, grpc.aio.ServicerContext):  # type: ignore
     ...
 
-class UserStub:
+class UserServiceStub:
     """用户服务接口"""
 
     def __init__(self, channel: typing.Union[grpc.Channel, grpc.aio.Channel]) -> None: ...
-    GetUserShortInfo: grpc.UnaryUnaryMultiCallable[
-        paperpilot_common.protobuf.user.user_pb2.UserId,
-        paperpilot_common.protobuf.user.user_pb2.UserShortInfo,
-    ]
-    """获取指定ID用户简要信息"""
     GetUserInfo: grpc.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.UserId,
         paperpilot_common.protobuf.user.user_pb2.UserInfo,
     ]
+    """获取指定ID用户简要信息"""
+    GetUserDetail: grpc.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.user_pb2.UserId,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
+    ]
     """获取指定ID用户详细信息"""
+    ListUserInfo: grpc.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.user_pb2.UserIdList,
+        paperpilot_common.protobuf.user.user_pb2.UserInfoList,
+    ]
+    """批量获取用户简要信息"""
     UpdateUserAvatar: grpc.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.UpdateUserAvatarRequest,
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """更新用户头像"""
 
-class UserAsyncStub:
+class UserServiceAsyncStub:
     """用户服务接口"""
 
-    GetUserShortInfo: grpc.aio.UnaryUnaryMultiCallable[
-        paperpilot_common.protobuf.user.user_pb2.UserId,
-        paperpilot_common.protobuf.user.user_pb2.UserShortInfo,
-    ]
-    """获取指定ID用户简要信息"""
     GetUserInfo: grpc.aio.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.UserId,
         paperpilot_common.protobuf.user.user_pb2.UserInfo,
     ]
+    """获取指定ID用户简要信息"""
+    GetUserDetail: grpc.aio.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.user_pb2.UserId,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
+    ]
     """获取指定ID用户详细信息"""
+    ListUserInfo: grpc.aio.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.user_pb2.UserIdList,
+        paperpilot_common.protobuf.user.user_pb2.UserInfoList,
+    ]
+    """批量获取用户简要信息"""
     UpdateUserAvatar: grpc.aio.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.UpdateUserAvatarRequest,
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """更新用户头像"""
 
-class UserServicer(metaclass=abc.ABCMeta):
+class UserServiceServicer(metaclass=abc.ABCMeta):
     """用户服务接口"""
 
-    @abc.abstractmethod
-    def GetUserShortInfo(
-        self,
-        request: paperpilot_common.protobuf.user.user_pb2.UserId,
-        context: _ServicerContext,
-    ) -> typing.Union[
-        paperpilot_common.protobuf.user.user_pb2.UserShortInfo,
-        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserShortInfo],
-    ]:
-        """获取指定ID用户简要信息"""
     @abc.abstractmethod
     def GetUserInfo(
         self,
@@ -78,93 +78,135 @@ class UserServicer(metaclass=abc.ABCMeta):
         paperpilot_common.protobuf.user.user_pb2.UserInfo,
         collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserInfo],
     ]:
+        """获取指定ID用户简要信息"""
+    @abc.abstractmethod
+    def GetUserDetail(
+        self,
+        request: paperpilot_common.protobuf.user.user_pb2.UserId,
+        context: _ServicerContext,
+    ) -> typing.Union[
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserDetail],
+    ]:
         """获取指定ID用户详细信息"""
+    @abc.abstractmethod
+    def ListUserInfo(
+        self,
+        request: paperpilot_common.protobuf.user.user_pb2.UserIdList,
+        context: _ServicerContext,
+    ) -> typing.Union[
+        paperpilot_common.protobuf.user.user_pb2.UserInfoList,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserInfoList],
+    ]:
+        """批量获取用户简要信息"""
     @abc.abstractmethod
     def UpdateUserAvatar(
         self,
         request: paperpilot_common.protobuf.user.user_pb2.UpdateUserAvatarRequest,
         context: _ServicerContext,
     ) -> typing.Union[
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
-        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserInfo],
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserDetail],
     ]:
         """更新用户头像"""
 
-def add_UserServicer_to_server(servicer: UserServicer, server: typing.Union[grpc.Server, grpc.aio.Server]) -> None: ...
+def add_UserServiceServicer_to_server(
+    servicer: UserServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
+) -> None: ...
 
-class UserPublicStub:
+class UserPublicServiceStub:
     """用户公开接口"""
 
     def __init__(self, channel: typing.Union[grpc.Channel, grpc.aio.Channel]) -> None: ...
-    GetUserShortInfo: grpc.UnaryUnaryMultiCallable[
+    GetUserInfo: grpc.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.UserId,
-        paperpilot_common.protobuf.user.user_pb2.UserShortInfo,
+        paperpilot_common.protobuf.user.user_pb2.UserInfo,
     ]
     """获取指定ID用户简要信息"""
-    GetCurrentUserInfo: grpc.UnaryUnaryMultiCallable[
+    GetCurrentUser: grpc.UnaryUnaryMultiCallable[
         google.protobuf.empty_pb2.Empty,
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """获取当前用户信息"""
-    UpdateUserInfo: grpc.UnaryUnaryMultiCallable[
-        paperpilot_common.protobuf.user.user_pb2.UpdateUserInfoRequest,
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
+    UpdateUser: grpc.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.user_pb2.UpdateUserRequest,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """更新用户信息"""
+    UploadUserAvatar: grpc.UnaryUnaryMultiCallable[
+        google.protobuf.empty_pb2.Empty,
+        paperpilot_common.protobuf.user.user_pb2.UploadUserAvatarResponse,
+    ]
+    """上传用户头像"""
 
-class UserPublicAsyncStub:
+class UserPublicServiceAsyncStub:
     """用户公开接口"""
 
-    GetUserShortInfo: grpc.aio.UnaryUnaryMultiCallable[
+    GetUserInfo: grpc.aio.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.UserId,
-        paperpilot_common.protobuf.user.user_pb2.UserShortInfo,
+        paperpilot_common.protobuf.user.user_pb2.UserInfo,
     ]
     """获取指定ID用户简要信息"""
-    GetCurrentUserInfo: grpc.aio.UnaryUnaryMultiCallable[
+    GetCurrentUser: grpc.aio.UnaryUnaryMultiCallable[
         google.protobuf.empty_pb2.Empty,
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """获取当前用户信息"""
-    UpdateUserInfo: grpc.aio.UnaryUnaryMultiCallable[
-        paperpilot_common.protobuf.user.user_pb2.UpdateUserInfoRequest,
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
+    UpdateUser: grpc.aio.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.user_pb2.UpdateUserRequest,
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """更新用户信息"""
+    UploadUserAvatar: grpc.aio.UnaryUnaryMultiCallable[
+        google.protobuf.empty_pb2.Empty,
+        paperpilot_common.protobuf.user.user_pb2.UploadUserAvatarResponse,
+    ]
+    """上传用户头像"""
 
-class UserPublicServicer(metaclass=abc.ABCMeta):
+class UserPublicServiceServicer(metaclass=abc.ABCMeta):
     """用户公开接口"""
 
     @abc.abstractmethod
-    def GetUserShortInfo(
+    def GetUserInfo(
         self,
         request: paperpilot_common.protobuf.user.user_pb2.UserId,
         context: _ServicerContext,
     ) -> typing.Union[
-        paperpilot_common.protobuf.user.user_pb2.UserShortInfo,
-        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserShortInfo],
+        paperpilot_common.protobuf.user.user_pb2.UserInfo,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserInfo],
     ]:
         """获取指定ID用户简要信息"""
     @abc.abstractmethod
-    def GetCurrentUserInfo(
+    def GetCurrentUser(
         self,
         request: google.protobuf.empty_pb2.Empty,
         context: _ServicerContext,
     ) -> typing.Union[
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
-        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserInfo],
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserDetail],
     ]:
         """获取当前用户信息"""
     @abc.abstractmethod
-    def UpdateUserInfo(
+    def UpdateUser(
         self,
-        request: paperpilot_common.protobuf.user.user_pb2.UpdateUserInfoRequest,
+        request: paperpilot_common.protobuf.user.user_pb2.UpdateUserRequest,
         context: _ServicerContext,
     ) -> typing.Union[
-        paperpilot_common.protobuf.user.user_pb2.UserInfo,
-        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserInfo],
+        paperpilot_common.protobuf.user.user_pb2.UserDetail,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserDetail],
     ]:
         """更新用户信息"""
+    @abc.abstractmethod
+    def UploadUserAvatar(
+        self,
+        request: google.protobuf.empty_pb2.Empty,
+        context: _ServicerContext,
+    ) -> typing.Union[
+        paperpilot_common.protobuf.user.user_pb2.UploadUserAvatarResponse,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UploadUserAvatarResponse],
+    ]:
+        """上传用户头像"""
 
-def add_UserPublicServicer_to_server(
-    servicer: UserPublicServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
+def add_UserPublicServiceServicer_to_server(
+    servicer: UserPublicServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
 ) -> None: ...

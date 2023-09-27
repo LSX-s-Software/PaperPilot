@@ -45,21 +45,21 @@ class Token(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     VALUE_FIELD_NUMBER: builtins.int
-    EXPIRED_AT_FIELD_NUMBER: builtins.int
+    EXPIRE_TIME_FIELD_NUMBER: builtins.int
     value: builtins.str
     """token值"""
     @property
-    def expired_at(self) -> google.protobuf.timestamp_pb2.Timestamp:
+    def expire_time(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """过期时间"""
     def __init__(
         self,
         *,
         value: builtins.str = ...,
-        expired_at: google.protobuf.timestamp_pb2.Timestamp | None = ...,
+        expire_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["expired_at", b"expired_at"]) -> builtins.bool: ...
+    def HasField(self, field_name: typing_extensions.Literal["expire_time", b"expire_time"]) -> builtins.bool: ...
     def ClearField(
-        self, field_name: typing_extensions.Literal["expired_at", b"expired_at", "value", b"value"]
+        self, field_name: typing_extensions.Literal["expire_time", b"expire_time", "value", b"value"]
     ) -> None: ...
 
 global___Token = Token
@@ -74,7 +74,7 @@ class LoginResponse(google.protobuf.message.Message):
     ACCESS_FIELD_NUMBER: builtins.int
     REFRESH_FIELD_NUMBER: builtins.int
     @property
-    def user(self) -> paperpilot_common.protobuf.user.user_pb2.UserShortInfo:
+    def user(self) -> paperpilot_common.protobuf.user.user_pb2.UserInfo:
         """用户信息"""
     @property
     def access(self) -> global___Token:
@@ -85,7 +85,7 @@ class LoginResponse(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        user: paperpilot_common.protobuf.user.user_pb2.UserShortInfo | None = ...,
+        user: paperpilot_common.protobuf.user.user_pb2.UserInfo | None = ...,
         access: global___Token | None = ...,
         refresh: global___Token | None = ...,
     ) -> None: ...

@@ -17,7 +17,7 @@ class _MaybeAsyncIterator(collections.abc.AsyncIterator[_T], collections.abc.Ite
 class _ServicerContext(grpc.ServicerContext, grpc.aio.ServicerContext):  # type: ignore
     ...
 
-class TestPublicStub:
+class TestPublicServiceStub:
     """测试公开接口"""
 
     def __init__(self, channel: typing.Union[grpc.Channel, grpc.aio.Channel]) -> None: ...
@@ -27,7 +27,7 @@ class TestPublicStub:
     ]
     """测试接口"""
 
-class TestPublicAsyncStub:
+class TestPublicServiceAsyncStub:
     """测试公开接口"""
 
     Test: grpc.aio.UnaryUnaryMultiCallable[
@@ -36,7 +36,7 @@ class TestPublicAsyncStub:
     ]
     """测试接口"""
 
-class TestPublicServicer(metaclass=abc.ABCMeta):
+class TestPublicServiceServicer(metaclass=abc.ABCMeta):
     """测试公开接口"""
 
     @abc.abstractmethod
@@ -50,6 +50,6 @@ class TestPublicServicer(metaclass=abc.ABCMeta):
     ]:
         """测试接口"""
 
-def add_TestPublicServicer_to_server(
-    servicer: TestPublicServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
+def add_TestPublicServiceServicer_to_server(
+    servicer: TestPublicServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
 ) -> None: ...

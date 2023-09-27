@@ -34,7 +34,7 @@ class AuthServiceStub(object):
         self.Register = channel.unary_unary(
             "/auth.AuthService/Register",
             request_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.CreateUserRequest.SerializeToString,
-            response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserInfo.FromString,
+            response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserDetail.FromString,
         )
 
 
@@ -86,7 +86,7 @@ def add_AuthServiceServicer_to_server(servicer, server):
         "Register": grpc.unary_unary_rpc_method_handler(
             servicer.Register,
             request_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.CreateUserRequest.FromString,
-            response_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserInfo.SerializeToString,
+            response_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserDetail.SerializeToString,
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler("auth.AuthService", rpc_method_handlers)
@@ -202,7 +202,7 @@ class AuthService(object):
             target,
             "/auth.AuthService/Register",
             paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.CreateUserRequest.SerializeToString,
-            paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserInfo.FromString,
+            paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserDetail.FromString,
             options,
             channel_credentials,
             insecure,
