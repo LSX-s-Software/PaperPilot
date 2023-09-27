@@ -8,10 +8,10 @@ repository = "https://github.com/Nagico/paperpilot-common"
 homepage = "https://github.com/Nagico/paperpilot-common"
 packages = [{include = "paperpilot_common"}]
 
-[[tool.poetry.source]]
-name = "aliyun"
-priority = "default"
-url = "https://mirrors.aliyun.com/pypi/simple/"
+#[[tool.poetry.source]]
+#name = "aliyun"
+#priority = "default"
+#url = "https://mirrors.aliyun.com/pypi/simple/"
 
 [tool.poetry.dependencies]
 python = ">=3.10"
