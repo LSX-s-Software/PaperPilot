@@ -12,12 +12,12 @@ message TestResult {
     // 服务器当前时间
     google.protobuf.Timestamp time = 1;
     // （可选）当前登录用户简要信息
-    user.UserShortInfo user = 2;
+    user.UserInfo user = 2;
 }
 
 
 // 测试公开接口
-service TestPublic {
+service TestPublicService {
     // 测试接口
     rpc Test (google.protobuf.Empty) returns (TestResult);
 }

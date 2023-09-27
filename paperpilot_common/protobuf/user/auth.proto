@@ -20,13 +20,13 @@ message Token {
     // token值
     string value = 1;
     // 过期时间
-    google.protobuf.Timestamp expired_at = 2;
+    google.protobuf.Timestamp expire_time = 2;
 }
 
 // 登录响应
 message LoginResponse {
     // 用户信息
-    user.UserShortInfo user = 1;
+    user.UserInfo user = 1;
     // access token
     Token access = 2;
     // refresh token
@@ -58,5 +58,5 @@ service AuthService {
     rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
 
     // 注册
-    rpc Register(user.CreateUserRequest) returns (user.UserInfo);
+    rpc Register(user.CreateUserRequest) returns (user.UserDetail);
 }
