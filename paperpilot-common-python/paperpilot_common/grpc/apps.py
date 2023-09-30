@@ -3,5 +3,5 @@ from django.apps import AppConfig
 
 
 class DjangoGrpcConfig(AppConfig):
-    name = "django_grpc"
+    name = "paperpilot_common.grpc"
     verbose_name = "Django gRPC server"
