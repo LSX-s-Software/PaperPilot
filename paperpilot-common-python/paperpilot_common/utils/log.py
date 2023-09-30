@@ -7,7 +7,7 @@ _logger = default_logger.bind(title="main")
 default_fmt = (
     "<green>{time:HH:mm:ss}</green> <red>|</red> "
     "<level>{level.icon}</level> <red>|</red> "
-    "<cyan>{name}</cyan>:<cyan>{function}</cyan> <red>|</red> "
+    # "<cyan>{name}</cyan>:<cyan>{function}</cyan> <red>|</red> "
     "<cyan>[{extra[title]}]</cyan> <red>-</red> <level>{message}</level>"
 )
 
@@ -15,6 +15,9 @@ default_fmt = (
 def configure_logging(fmt: str, level: str):
     _logger.remove()
     _logger.add(sys.stdout, format=fmt, level=level)
+
+
+configure_logging(default_fmt, "DEBUG")
 
 
 def get_logger(title: str | None = None):

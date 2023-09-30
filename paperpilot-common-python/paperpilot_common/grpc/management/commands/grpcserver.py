@@ -6,6 +6,9 @@ from django.core.management.base import BaseCommand
 from django.utils import autoreload
 
 from paperpilot_common.grpc.utils import create_server, extract_handlers
+from paperpilot_common.utils.log import get_logger
+
+logger = get_logger("grpcserver")
 
 
 class Command(BaseCommand):
@@ -14,7 +17,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--max_workers", type=int, help="Number of workers")
-        parser.add_argument("--port", type=int, default=50051, help="Port number to listen")
+        parser.add_argument("--port", type=int, default=8001, help="Port number to listen")
         parser.add_argument("--autoreload", action="store_true", default=False)
         parser.add_argument(
             "--list-handlers", action="store_true", default=False, help="Print all registered endpoints"
@@ -26,7 +29,7 @@ class Command(BaseCommand):
             self._serve_async(**options)
         else:
             if options["autoreload"] is True:
-                self.stdout.write("ATTENTION! Autoreload is enabled!")
+                logger.warning("ATTENTION! Autoreload is enabled!")
                 if hasattr(autoreload, "run_with_reloader"):
                     # Django 2.2. and above
                     autoreload.run_with_reloader(self._serve, **options)
@@ -38,33 +41,33 @@ class Command(BaseCommand):
 
     def _serve(self, max_workers, port, *args, **kwargs):
         autoreload.raise_last_exception()
-        self.stdout.write("gRPC server starting at %s" % datetime.datetime.now())
+        logger.info("gRPC server starting at %s" % datetime.datetime.now())
 
         server = create_server(max_workers, port)
         server.start()
 
-        self.stdout.write("gRPC server is listening port %s" % port)
+        logger.info("gRPC server is listening port %s" % port)
 
         if kwargs["list_handlers"] is True:
-            self.stdout.write("Registered handlers:")
+            logger.info("Registered handlers:")
             for handler in extract_handlers(server):
-                self.stdout.write("* %s" % handler)
+                logger.info("* %s" % handler)
 
         server.wait_for_termination()
 
     def _serve_async(self, max_workers, port, *args, **kwargs):
-        self.stdout.write("gRPC async server starting  at %s" % datetime.datetime.now())
+        logger.info("gRPC async server starting  at %s" % datetime.datetime.now())
 
         server = create_server(max_workers, port)
 
         async def _main_routine():
             await server.start()
-            self.stdout.write("gRPC async server is listening port %s" % port)
+            logger.info("gRPC async server is listening port %s" % port)
 
             if kwargs["list_handlers"] is True:
-                self.stdout.write("Registered handlers:")
+                logger.info("Registered handlers:")
                 for handler in extract_handlers(server):
-                    self.stdout.write("* %s" % handler)
+                    logger.info("* %s" % handler)
 
             await server.wait_for_termination()
 
