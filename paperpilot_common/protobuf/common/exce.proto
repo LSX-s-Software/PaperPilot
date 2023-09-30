@@ -1,0 +1,9 @@
+syntax = "proto3";
+package exec;
+import "google/protobuf/empty.proto";
+
+
+message Exec{
+  string name = 1;
+  string msg = 2;
+}
