@@ -3,7 +3,6 @@ name = "paperpilot-common"
 version = "0.0.9"
 description = "PaperPilot 公共包及接口定义"
 authors = ["Nagico <coyangjr@whu.edu.cn>"]
-readme = "../README.md"
 repository = "https://github.com/Nagico/paperpilot-common"
 homepage = "https://github.com/Nagico/paperpilot-common"
 packages = [{include = "paperpilot_common"}]
