@@ -25,4 +25,5 @@ class DjangoAdminLogsConfig(AppConfig):
 
         from django.contrib.admin.models import LogEntry
 
-        LogEntry.user = models.IntegerField(default=0, verbose_name="user")
+        LogEntry.user = None
+        LogEntry.user_id = models.IntegerField(default=0, verbose_name="user")
