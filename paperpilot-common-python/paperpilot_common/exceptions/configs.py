@@ -21,7 +21,7 @@ class ZqExceptionSettings(PackageSettings):
 
     DEFAULTS: ZqExceptionSettingDict = {
         "EXCEPTION_UNKNOWN_HANDLE": True,  # 处理未知异常
-        "EXCEPTION_HANDLER_CLASS": "zq_django_util.exceptions.handler.ApiExceptionHandler",
+        "EXCEPTION_HANDLER_CLASS": "paperpilot_common.exceptions.handler.ApiExceptionHandler",
     }
 
     IMPORT_STRINGS: List[str] = ["EXCEPTION_HANDLER_CLASS"]

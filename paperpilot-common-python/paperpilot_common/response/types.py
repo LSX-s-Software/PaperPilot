@@ -1,7 +1,8 @@
 from typing import Dict, List, TypedDict, Union
 
 from rest_framework.response import Response
-from zq_django_util.exceptions import ApiException
+
+from paperpilot_common.exceptions import ApiException
 
 JSONVal = Union[None, bool, str, float, int, List["JSONVal"], Dict[str, "JSONVal"]]
 

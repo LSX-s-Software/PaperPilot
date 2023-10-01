@@ -2,7 +2,8 @@ from typing import List, TypedDict
 
 from django.core.signals import setting_changed
 from django.dispatch import receiver
-from zq_django_util.utils.package_settings import PackageSettings
+
+from paperpilot_common.utils.package_settings import PackageSettings
 
 OssSettingDict = TypedDict(
     "OssSettingDict",

@@ -13,7 +13,6 @@ from Crypto.Hash import MD5
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from django.core.cache import cache
-from rest_framework.request import Request
 
 from paperpilot_common.utils.oss.configs import oss_settings
 from paperpilot_common.utils.types import JSONValue
@@ -122,7 +121,7 @@ def get_token(
     )
 
 
-def check_callback_signature(request: Request) -> bool:
+def check_callback_signature(request) -> bool:
     """
     检测回调身份
     """
