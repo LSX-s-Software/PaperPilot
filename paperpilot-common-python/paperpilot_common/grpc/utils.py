@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_server(max_workers, port, interceptors=None):
-    config = getattr(settings, "GRPCSERVER", dict())
+    config = getattr(settings, "GRPC_SERVER", dict())
     servicers_list = config.get("servicers", [])  # callbacks to add servicers to the server
     interceptors = load_interceptors(config.get("interceptors", []))
     maximum_concurrent_rpcs = config.get("maximum_concurrent_rpcs", None)
