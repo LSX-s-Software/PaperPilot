@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Optional
 from django.http import JsonResponse
 
 if TYPE_CHECKING:
-    from zq_django_util.exceptions import ApiException
-    from zq_django_util.response.types import JSONVal, ResponseData
+    from paperpilot_common.exceptions import ApiException
+    from paperpilot_common.response.types import JSONVal, ResponseData
 
 
 class ResponseTypeEnum(Enum):

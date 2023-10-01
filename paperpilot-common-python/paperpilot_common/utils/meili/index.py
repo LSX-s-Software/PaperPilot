@@ -73,9 +73,9 @@ class BaseIndex(meilisearch.index.Index):
         assert self.index_uid is not None and self.index_uid != "", "index_uid is required"
 
         if self.client is None:
-            import zq_django_util.utils.meili
+            import paperpilot_common.utils.meili
 
-            self.client = zq_django_util.utils.meili.meili_client
+            self.client = paperpilot_common.utils.meili.meili_client
 
         super().__init__(self.client.config, uid=self.index_uid, primary_key=self.primary_key)
 
