@@ -17,7 +17,7 @@ def configure_logging(fmt: str, level: str):
     _logger.add(sys.stdout, format=fmt, level=level)
 
 
-configure_logging(default_fmt, "DEBUG")
+# configure_logging(settings.LOG_FORMAT, settings.LOG_LEVEL)
 
 
 def get_logger(title: str | None = None):
