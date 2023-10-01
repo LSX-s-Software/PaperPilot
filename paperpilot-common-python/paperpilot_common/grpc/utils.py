@@ -1,6 +1,8 @@
 import logging
+import sys
 from abc import ABCMeta
 from concurrent import futures
+from pathlib import Path
 
 import grpc
 import grpc.aio
@@ -12,14 +14,37 @@ from paperpilot_common.grpc.signals.wrapper import SignalWrapper
 logger = logging.getLogger(__name__)
 
 
-def create_server(max_workers, port, interceptors=None):
+def get_existed_file_path(path: str) -> Path | None:
+    if path is None:
+        return None
+
+    path = Path(path)
+
+    # 如果路径是绝对路径并且存在，则返回 Path 对象
+    if path.is_absolute() and path.exists():
+        return path
+
+    # 获取sys.path中的路径列表
+    for search_path in sys.path:
+        current_path = Path(search_path) / path
+        if current_path.exists():
+            return current_path
+
+        # 如果未找到文件或路径不存在，则返回 None
+    return None
+
+
+def create_server(address):
     config = getattr(settings, "GRPC_SERVER", dict())
     servicers_list = config.get("servicers", [])  # callbacks to add servicers to the server
     interceptors = load_interceptors(config.get("interceptors", []))
+    max_workers = config.get("max_workers", 10)
     maximum_concurrent_rpcs = config.get("maximum_concurrent_rpcs", None)
     options = config.get("options", [])
-    credentials = config.get("credentials", None)
     is_async = config.get("async", False)
+
+    key_path = get_existed_file_path(config.get("ssl_key", None))
+    cert_path = get_existed_file_path(config.get("ssl_cert", None))
 
     # create a gRPC server
     if is_async is True:
@@ -36,30 +61,32 @@ def create_server(max_workers, port, interceptors=None):
 
     add_servicers(server, servicers_list)
 
-    if credentials is None:
-        server.add_insecure_port("[::]:%s" % port)
+    if key_path is None or cert_path is None:
+        server.add_insecure_port(address)
+        logger.info("gRPC server listening on %s", address)
     else:
-        credential_data = list()
-        for credential in credentials:
-            # read in key and certificate
-            with open(credential.get("private_key"), "rb") as pp:
-                private_key = pp.read()
-            with open(credential.get("certificate_chain"), "rb") as cp:
-                certificate_chain = cp.read()
+        key_path = get_existed_file_path(getattr(settings, "GRPC_SSL_KEY", None))
+        cert_path = get_existed_file_path(getattr(settings, "GRPC_SSL_CERT", None))
 
-            credential_data.append(
+        logger.info(f"Get ssl key path: {key_path}")
+        logger.info(f"Get ssl cert path: {cert_path}")
+
+        with open(key_path, "rb") as f:
+            private_key = f.read()
+        with open(cert_path, "rb") as f:
+            certificate_chain = f.read()
+
+        creds = grpc.ssl_server_credentials(
+            [
                 (
                     private_key,
                     certificate_chain,
-                )
-            )
+                ),
+            ]
+        )
 
-        # create server credentials
-        logger.debug("Adding server credentials...")
-        server_credentials = grpc.ssl_server_credentials(credential_data)
-
-        # add secure port with credentials
-        server.add_secure_port("[::]:%s" % port, server_credentials)
+        server.add_secure_port(address, creds)
+        logger.info("gRPC server with ssl listening on %s", address)
 
     return server
 
