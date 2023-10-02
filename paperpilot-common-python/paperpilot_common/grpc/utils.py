@@ -1,4 +1,3 @@
-import logging
 import sys
 from abc import ABCMeta
 from concurrent import futures
@@ -11,8 +10,9 @@ from django.utils.module_loading import import_string
 from grpc_reflection.v1alpha import reflection
 
 from paperpilot_common.grpc.signals.wrapper import SignalWrapper
+from paperpilot_common.utils.log import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger("server.grpc.util")
 
 
 def get_existed_file_path(path: str) -> Path | None:
