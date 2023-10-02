@@ -45,6 +45,11 @@ message RefreshTokenResponse {
     Token access = 1;
 }
 
+message SendSmsCodeRequest {
+    // 手机号
+    string phone = 1;
+}
+
 
 // 认证公开接口（可匿名访问）
 service AuthPublicService {
@@ -59,4 +64,7 @@ service AuthPublicService {
 
     // 注册
     rpc Register(user.CreateUserRequest) returns (LoginResponse);
+
+    // 发送短信验证码
+    rpc SendSmsCode(SendSmsCodeRequest) returns (google.protobuf.Empty);
 }

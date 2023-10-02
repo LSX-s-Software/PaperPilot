@@ -135,3 +135,19 @@ class RefreshTokenResponse(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["access", b"access"]) -> None: ...
 
 global___RefreshTokenResponse = RefreshTokenResponse
+
+@typing_extensions.final
+class SendSmsCodeRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PHONE_FIELD_NUMBER: builtins.int
+    phone: builtins.str
+    """手机号"""
+    def __init__(
+        self,
+        *,
+        phone: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["phone", b"phone"]) -> None: ...
+
+global___SendSmsCodeRequest = SendSmsCodeRequest

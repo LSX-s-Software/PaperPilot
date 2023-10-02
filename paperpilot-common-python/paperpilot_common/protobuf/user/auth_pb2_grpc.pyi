@@ -42,6 +42,11 @@ class AuthPublicServiceStub:
         paperpilot_common.protobuf.user.auth_pb2.LoginResponse,
     ]
     """注册"""
+    SendSmsCode: grpc.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.auth_pb2.SendSmsCodeRequest,
+        google.protobuf.empty_pb2.Empty,
+    ]
+    """发送短信验证码"""
 
 class AuthPublicServiceAsyncStub:
     """认证公开接口（可匿名访问）"""
@@ -66,6 +71,11 @@ class AuthPublicServiceAsyncStub:
         paperpilot_common.protobuf.user.auth_pb2.LoginResponse,
     ]
     """注册"""
+    SendSmsCode: grpc.aio.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.auth_pb2.SendSmsCodeRequest,
+        google.protobuf.empty_pb2.Empty,
+    ]
+    """发送短信验证码"""
 
 class AuthPublicServiceServicer(metaclass=abc.ABCMeta):
     """认证公开接口（可匿名访问）"""
@@ -107,6 +117,13 @@ class AuthPublicServiceServicer(metaclass=abc.ABCMeta):
         collections.abc.Awaitable[paperpilot_common.protobuf.user.auth_pb2.LoginResponse],
     ]:
         """注册"""
+    @abc.abstractmethod
+    def SendSmsCode(
+        self,
+        request: paperpilot_common.protobuf.user.auth_pb2.SendSmsCodeRequest,
+        context: _ServicerContext,
+    ) -> typing.Union[google.protobuf.empty_pb2.Empty, collections.abc.Awaitable[google.protobuf.empty_pb2.Empty]]:
+        """发送短信验证码"""
 
 def add_AuthPublicServiceServicer_to_server(
     servicer: AuthPublicServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
