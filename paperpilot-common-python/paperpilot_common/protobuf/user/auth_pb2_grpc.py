@@ -41,6 +41,16 @@ class AuthPublicServiceStub(object):
             request_serializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.SendSmsCodeRequest.SerializeToString,
             response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
+        self.CountPhone = channel.unary_unary(
+            "/auth.AuthPublicService/CountPhone",
+            request_serializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountPhoneRequest.SerializeToString,
+            response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountResponse.FromString,
+        )
+        self.CountUsername = channel.unary_unary(
+            "/auth.AuthPublicService/CountUsername",
+            request_serializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountUsernameRequest.SerializeToString,
+            response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountResponse.FromString,
+        )
 
 
 class AuthPublicServiceServicer(object):
@@ -76,6 +86,18 @@ class AuthPublicServiceServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def CountPhone(self, request, context):
+        """获取手机号数量"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def CountUsername(self, request, context):
+        """获取用户名数量"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
 
 def add_AuthPublicServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -103,6 +125,16 @@ def add_AuthPublicServiceServicer_to_server(servicer, server):
             servicer.SendSmsCode,
             request_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.SendSmsCodeRequest.FromString,
             response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        ),
+        "CountPhone": grpc.unary_unary_rpc_method_handler(
+            servicer.CountPhone,
+            request_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountPhoneRequest.FromString,
+            response_serializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountResponse.SerializeToString,
+        ),
+        "CountUsername": grpc.unary_unary_rpc_method_handler(
+            servicer.CountUsername,
+            request_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountUsernameRequest.FromString,
+            response_serializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountResponse.SerializeToString,
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler("auth.AuthPublicService", rpc_method_handlers)
@@ -248,6 +280,64 @@ class AuthPublicService(object):
             "/auth.AuthPublicService/SendSmsCode",
             paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.SendSmsCodeRequest.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def CountPhone(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/auth.AuthPublicService/CountPhone",
+            paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountPhoneRequest.SerializeToString,
+            paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def CountUsername(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/auth.AuthPublicService/CountUsername",
+            paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountUsernameRequest.SerializeToString,
+            paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.CountResponse.FromString,
             options,
             channel_credentials,
             insecure,

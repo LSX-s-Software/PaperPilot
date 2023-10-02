@@ -45,9 +45,28 @@ message RefreshTokenResponse {
     Token access = 1;
 }
 
+// 发送短信验证码请求
 message SendSmsCodeRequest {
     // 手机号
     string phone = 1;
+}
+
+// 获取手机号数量请求
+message CountPhoneRequest {
+    // 手机号
+    string phone = 1;
+}
+
+// 获取数量响应
+message CountResponse {
+    // 数量
+    int32 count = 1;
+}
+
+// 获取用户名数量请求
+message CountUsernameRequest {
+    // 用户名
+    string username = 1;
 }
 
 
@@ -64,7 +83,10 @@ service AuthPublicService {
 
     // 注册
     rpc Register(user.CreateUserRequest) returns (LoginResponse);
-
     // 发送短信验证码
     rpc SendSmsCode(SendSmsCodeRequest) returns (google.protobuf.Empty);
+    // 获取手机号数量
+    rpc CountPhone(CountPhoneRequest) returns (CountResponse);
+    // 获取用户名数量
+    rpc CountUsername(CountUsernameRequest) returns (CountResponse);
 }

@@ -47,6 +47,16 @@ class AuthPublicServiceStub:
         google.protobuf.empty_pb2.Empty,
     ]
     """发送短信验证码"""
+    CountPhone: grpc.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.auth_pb2.CountPhoneRequest,
+        paperpilot_common.protobuf.user.auth_pb2.CountResponse,
+    ]
+    """获取手机号数量"""
+    CountUsername: grpc.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.auth_pb2.CountUsernameRequest,
+        paperpilot_common.protobuf.user.auth_pb2.CountResponse,
+    ]
+    """获取用户名数量"""
 
 class AuthPublicServiceAsyncStub:
     """认证公开接口（可匿名访问）"""
@@ -76,6 +86,16 @@ class AuthPublicServiceAsyncStub:
         google.protobuf.empty_pb2.Empty,
     ]
     """发送短信验证码"""
+    CountPhone: grpc.aio.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.auth_pb2.CountPhoneRequest,
+        paperpilot_common.protobuf.user.auth_pb2.CountResponse,
+    ]
+    """获取手机号数量"""
+    CountUsername: grpc.aio.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.user.auth_pb2.CountUsernameRequest,
+        paperpilot_common.protobuf.user.auth_pb2.CountResponse,
+    ]
+    """获取用户名数量"""
 
 class AuthPublicServiceServicer(metaclass=abc.ABCMeta):
     """认证公开接口（可匿名访问）"""
@@ -124,6 +144,26 @@ class AuthPublicServiceServicer(metaclass=abc.ABCMeta):
         context: _ServicerContext,
     ) -> typing.Union[google.protobuf.empty_pb2.Empty, collections.abc.Awaitable[google.protobuf.empty_pb2.Empty]]:
         """发送短信验证码"""
+    @abc.abstractmethod
+    def CountPhone(
+        self,
+        request: paperpilot_common.protobuf.user.auth_pb2.CountPhoneRequest,
+        context: _ServicerContext,
+    ) -> typing.Union[
+        paperpilot_common.protobuf.user.auth_pb2.CountResponse,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.auth_pb2.CountResponse],
+    ]:
+        """获取手机号数量"""
+    @abc.abstractmethod
+    def CountUsername(
+        self,
+        request: paperpilot_common.protobuf.user.auth_pb2.CountUsernameRequest,
+        context: _ServicerContext,
+    ) -> typing.Union[
+        paperpilot_common.protobuf.user.auth_pb2.CountResponse,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.auth_pb2.CountResponse],
+    ]:
+        """获取用户名数量"""
 
 def add_AuthPublicServiceServicer_to_server(
     servicer: AuthPublicServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]

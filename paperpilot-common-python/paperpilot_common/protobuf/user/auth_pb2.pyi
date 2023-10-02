@@ -138,6 +138,8 @@ global___RefreshTokenResponse = RefreshTokenResponse
 
 @typing_extensions.final
 class SendSmsCodeRequest(google.protobuf.message.Message):
+    """发送短信验证码请求"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     PHONE_FIELD_NUMBER: builtins.int
@@ -151,3 +153,57 @@ class SendSmsCodeRequest(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["phone", b"phone"]) -> None: ...
 
 global___SendSmsCodeRequest = SendSmsCodeRequest
+
+@typing_extensions.final
+class CountPhoneRequest(google.protobuf.message.Message):
+    """获取手机号数量请求"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PHONE_FIELD_NUMBER: builtins.int
+    phone: builtins.str
+    """手机号"""
+    def __init__(
+        self,
+        *,
+        phone: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["phone", b"phone"]) -> None: ...
+
+global___CountPhoneRequest = CountPhoneRequest
+
+@typing_extensions.final
+class CountResponse(google.protobuf.message.Message):
+    """获取数量响应"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    COUNT_FIELD_NUMBER: builtins.int
+    count: builtins.int
+    """数量"""
+    def __init__(
+        self,
+        *,
+        count: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["count", b"count"]) -> None: ...
+
+global___CountResponse = CountResponse
+
+@typing_extensions.final
+class CountUsernameRequest(google.protobuf.message.Message):
+    """获取用户名数量请求"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    USERNAME_FIELD_NUMBER: builtins.int
+    username: builtins.str
+    """用户名"""
+    def __init__(
+        self,
+        *,
+        username: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["username", b"username"]) -> None: ...
+
+global___CountUsernameRequest = CountUsernameRequest
