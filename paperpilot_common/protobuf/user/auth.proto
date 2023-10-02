@@ -47,7 +47,7 @@ message RefreshTokenResponse {
 
 
 // 认证公开接口（可匿名访问）
-service AuthService {
+service AuthPublicService {
     // 登录
     rpc Login(LoginRequest) returns (LoginResponse);
 
@@ -58,5 +58,5 @@ service AuthService {
     rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
 
     // 注册
-    rpc Register(user.CreateUserRequest) returns (user.UserDetail);
+    rpc Register(user.CreateUserRequest) returns (LoginResponse);
 }

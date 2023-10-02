@@ -7,7 +7,7 @@ from paperpilot_common.protobuf.user import auth_pb2 as paperpilot__common_dot_p
 from paperpilot_common.protobuf.user import user_pb2 as paperpilot__common_dot_protobuf_dot_user_dot_user__pb2
 
 
-class AuthServiceStub(object):
+class AuthPublicServiceStub(object):
     """认证公开接口（可匿名访问）"""
 
     def __init__(self, channel):
@@ -17,28 +17,28 @@ class AuthServiceStub(object):
             channel: A grpc.Channel.
         """
         self.Login = channel.unary_unary(
-            "/auth.AuthService/Login",
+            "/auth.AuthPublicService/Login",
             request_serializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.LoginRequest.SerializeToString,
             response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.LoginResponse.FromString,
         )
         self.Refresh = channel.unary_unary(
-            "/auth.AuthService/Refresh",
+            "/auth.AuthPublicService/Refresh",
             request_serializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.RefreshTokenRequest.SerializeToString,
             response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.RefreshTokenResponse.FromString,
         )
         self.Logout = channel.unary_unary(
-            "/auth.AuthService/Logout",
+            "/auth.AuthPublicService/Logout",
             request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
         self.Register = channel.unary_unary(
-            "/auth.AuthService/Register",
+            "/auth.AuthPublicService/Register",
             request_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.CreateUserRequest.SerializeToString,
-            response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserDetail.FromString,
+            response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.LoginResponse.FromString,
         )
 
 
-class AuthServiceServicer(object):
+class AuthPublicServiceServicer(object):
     """认证公开接口（可匿名访问）"""
 
     def Login(self, request, context):
@@ -66,7 +66,7 @@ class AuthServiceServicer(object):
         raise NotImplementedError("Method not implemented!")
 
 
-def add_AuthServiceServicer_to_server(servicer, server):
+def add_AuthPublicServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
         "Login": grpc.unary_unary_rpc_method_handler(
             servicer.Login,
@@ -86,15 +86,15 @@ def add_AuthServiceServicer_to_server(servicer, server):
         "Register": grpc.unary_unary_rpc_method_handler(
             servicer.Register,
             request_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.CreateUserRequest.FromString,
-            response_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserDetail.SerializeToString,
+            response_serializer=paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.LoginResponse.SerializeToString,
         ),
     }
-    generic_handler = grpc.method_handlers_generic_handler("auth.AuthService", rpc_method_handlers)
+    generic_handler = grpc.method_handlers_generic_handler("auth.AuthPublicService", rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
 # This class is part of an EXPERIMENTAL API.
-class AuthService(object):
+class AuthPublicService(object):
     """认证公开接口（可匿名访问）"""
 
     @staticmethod
@@ -113,7 +113,7 @@ class AuthService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/auth.AuthService/Login",
+            "/auth.AuthPublicService/Login",
             paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.LoginRequest.SerializeToString,
             paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.LoginResponse.FromString,
             options,
@@ -142,7 +142,7 @@ class AuthService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/auth.AuthService/Refresh",
+            "/auth.AuthPublicService/Refresh",
             paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.RefreshTokenRequest.SerializeToString,
             paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.RefreshTokenResponse.FromString,
             options,
@@ -171,7 +171,7 @@ class AuthService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/auth.AuthService/Logout",
+            "/auth.AuthPublicService/Logout",
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options,
@@ -200,9 +200,9 @@ class AuthService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/auth.AuthService/Register",
+            "/auth.AuthPublicService/Register",
             paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.CreateUserRequest.SerializeToString,
-            paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserDetail.FromString,
+            paperpilot__common_dot_protobuf_dot_user_dot_auth__pb2.LoginResponse.FromString,
             options,
             channel_credentials,
             insecure,

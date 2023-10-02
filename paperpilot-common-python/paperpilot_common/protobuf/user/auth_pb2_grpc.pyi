@@ -18,7 +18,7 @@ class _MaybeAsyncIterator(collections.abc.AsyncIterator[_T], collections.abc.Ite
 class _ServicerContext(grpc.ServicerContext, grpc.aio.ServicerContext):  # type: ignore
     ...
 
-class AuthServiceStub:
+class AuthPublicServiceStub:
     """认证公开接口（可匿名访问）"""
 
     def __init__(self, channel: typing.Union[grpc.Channel, grpc.aio.Channel]) -> None: ...
@@ -39,11 +39,11 @@ class AuthServiceStub:
     """登出"""
     Register: grpc.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.CreateUserRequest,
-        paperpilot_common.protobuf.user.user_pb2.UserDetail,
+        paperpilot_common.protobuf.user.auth_pb2.LoginResponse,
     ]
     """注册"""
 
-class AuthServiceAsyncStub:
+class AuthPublicServiceAsyncStub:
     """认证公开接口（可匿名访问）"""
 
     Login: grpc.aio.UnaryUnaryMultiCallable[
@@ -63,11 +63,11 @@ class AuthServiceAsyncStub:
     """登出"""
     Register: grpc.aio.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.CreateUserRequest,
-        paperpilot_common.protobuf.user.user_pb2.UserDetail,
+        paperpilot_common.protobuf.user.auth_pb2.LoginResponse,
     ]
     """注册"""
 
-class AuthServiceServicer(metaclass=abc.ABCMeta):
+class AuthPublicServiceServicer(metaclass=abc.ABCMeta):
     """认证公开接口（可匿名访问）"""
 
     @abc.abstractmethod
@@ -103,11 +103,11 @@ class AuthServiceServicer(metaclass=abc.ABCMeta):
         request: paperpilot_common.protobuf.user.user_pb2.CreateUserRequest,
         context: _ServicerContext,
     ) -> typing.Union[
-        paperpilot_common.protobuf.user.user_pb2.UserDetail,
-        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserDetail],
+        paperpilot_common.protobuf.user.auth_pb2.LoginResponse,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.auth_pb2.LoginResponse],
     ]:
         """注册"""
 
-def add_AuthServiceServicer_to_server(
-    servicer: AuthServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
+def add_AuthPublicServiceServicer_to_server(
+    servicer: AuthPublicServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
 ) -> None: ...
