@@ -8,6 +8,7 @@ import grpc
 import grpc.aio
 from django.conf import settings
 from django.utils.module_loading import import_string
+from grpc_reflection.v1alpha import reflection
 
 from paperpilot_common.grpc.signals.wrapper import SignalWrapper
 
@@ -42,6 +43,7 @@ def create_server(address):
     maximum_concurrent_rpcs = config.get("maximum_concurrent_rpcs", None)
     options = config.get("options", [])
     is_async = config.get("async", False)
+    server_reflection = config.get("reflection", True)
 
     key_path = get_existed_file_path(config.get("ssl_key", None))
     cert_path = get_existed_file_path(config.get("ssl_cert", None))
@@ -59,7 +61,10 @@ def create_server(address):
             options=options,
         )
 
-    add_servicers(server, servicers_list)
+    service_names = add_servicers(server, servicers_list)
+    if server_reflection:
+        reflection.enable_server_reflection(service_names, server)
+        logger.info("gRPC server reflection enabled")
 
     if key_path is None or cert_path is None:
         server.add_insecure_port(address)
@@ -99,10 +104,17 @@ def add_servicers(server, servicers_list):
     if len(servicers_list) == 0:
         logger.warning("No servicers configured. Did you add GRPSERVER['servicers'] list to settings?")
 
+    services_names = []
+
     for path in servicers_list:
         logger.debug("Adding servicers from %s", path)
         callback = import_string(path)
-        callback(ps)
+        service_name = callback(ps)
+        services_names.append(service_name)
+
+    services_names.append(reflection.SERVICE_NAME)
+
+    return services_names
 
 
 def load_interceptors(strings) -> list:
