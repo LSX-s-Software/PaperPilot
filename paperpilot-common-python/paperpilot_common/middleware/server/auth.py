@@ -2,8 +2,11 @@ from contextvars import ContextVar
 from typing import Any, Callable
 
 import grpc
+from django.conf import settings
 
+from paperpilot_common.exceptions import ApiException
 from paperpilot_common.middleware.server.base import AsyncServerMiddleware
+from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 
 
@@ -32,9 +35,23 @@ class UserContext:
 user_context: ContextVar[UserContext | None] = ContextVar("user_context", default=None)
 
 
+def get_auth_user() -> UserContext:
+    user = user_context.get()
+    if user is None:
+        raise ApiException(ResponseType.NotLogin)
+
+    return user
+
+
+class AuthMixin:
+    @property
+    def user(self) -> UserContext:
+        return get_auth_user()
+
+
 class AuthMiddleware(AsyncServerMiddleware):
     logger = get_logger("server.interceptor.auth")
-    auth_metadata_key: str = "x-kong-jwt-claim-name"
+    auth_metadata_key: str = settings.AUTH_METADATA_KEY
 
     def intercept(
         self,
