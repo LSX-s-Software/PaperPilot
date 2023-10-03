@@ -64,9 +64,7 @@ if __name__ == "__main__":
     os.environ["DJANGO_SECRET_KEY"] = "secret"
     os.environ["DJANGO_SETTINGS_MODULE"] = "server.settings"
 
-    os.environ["DATABASE_URL"] = "sqlite:///:memory:"
     os.environ["CACHE_URL"] = "locmem://"
-    os.environ["CELERY_BROKER_URL"] = "memory://"
 
     if len(sys.argv) > 1:
         pytest_args = sys.argv[1:]
