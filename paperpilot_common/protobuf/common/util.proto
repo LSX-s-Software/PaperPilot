@@ -20,12 +20,8 @@ message OssToken {
     string policy = 2;
     // 签名
     string signature = 3;
-    // 过期时间
-    google.protobuf.Timestamp expire_time = 4;
-    // 上传路径
-    string key = 5;
     // 回调地址
-    string callback_host = 6;
+    string callback_host = 4;
     // 回调参数
-    string callback_body = 7;
+    string callback_body = 5;
 }

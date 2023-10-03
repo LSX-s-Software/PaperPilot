@@ -5,7 +5,6 @@ isort:skip_file
 import builtins
 import google.protobuf.descriptor
 import google.protobuf.message
-import google.protobuf.timestamp_pb2
 import sys
 
 if sys.version_info >= (3, 8):
@@ -47,8 +46,6 @@ class OssToken(google.protobuf.message.Message):
     ACCESS_KEY_ID_FIELD_NUMBER: builtins.int
     POLICY_FIELD_NUMBER: builtins.int
     SIGNATURE_FIELD_NUMBER: builtins.int
-    EXPIRE_TIME_FIELD_NUMBER: builtins.int
-    KEY_FIELD_NUMBER: builtins.int
     CALLBACK_HOST_FIELD_NUMBER: builtins.int
     CALLBACK_BODY_FIELD_NUMBER: builtins.int
     access_key_id: builtins.str
@@ -57,11 +54,6 @@ class OssToken(google.protobuf.message.Message):
     """上传参数"""
     signature: builtins.str
     """签名"""
-    @property
-    def expire_time(self) -> google.protobuf.timestamp_pb2.Timestamp:
-        """过期时间"""
-    key: builtins.str
-    """上传路径"""
     callback_host: builtins.str
     """回调地址"""
     callback_body: builtins.str
@@ -72,12 +64,9 @@ class OssToken(google.protobuf.message.Message):
         access_key_id: builtins.str = ...,
         policy: builtins.str = ...,
         signature: builtins.str = ...,
-        expire_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
-        key: builtins.str = ...,
         callback_host: builtins.str = ...,
         callback_body: builtins.str = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["expire_time", b"expire_time"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
@@ -87,10 +76,6 @@ class OssToken(google.protobuf.message.Message):
             b"callback_body",
             "callback_host",
             b"callback_host",
-            "expire_time",
-            b"expire_time",
-            "key",
-            b"key",
             "policy",
             b"policy",
             "signature",

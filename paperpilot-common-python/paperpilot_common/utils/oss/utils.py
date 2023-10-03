@@ -1,31 +1,131 @@
-import base64
 import datetime
-import hashlib
-import hmac
-import json
 import random
 import time
-from typing import AnyStr, Dict, Optional, Tuple, TypedDict
-from urllib.parse import unquote
+from typing import AnyStr, Tuple
 from urllib.request import urlopen
 
-from Crypto.Hash import MD5
-from Crypto.PublicKey import RSA
-from Crypto.Signature import PKCS1_v1_5
 from django.core.cache import cache
-
-from paperpilot_common.utils.oss.configs import oss_settings
-from paperpilot_common.utils.types import JSONValue
+from django.db.models import TextChoices
 
 
-class OSSCallbackToken(TypedDict):
-    OSSAccessKeyId: str
+class OssDirectToken:
+    access_key_id: str
     host: str
     policy: str
     signature: str
-    expire: str
-    key: str
     callback: str
+
+    def __init__(self, access_key_id: str, host: str, policy: str, signature: str, callback: str):
+        self.access_key_id = access_key_id
+        self.host = host
+        self.policy = policy
+        self.signature = signature
+        self.callback = callback
+
+    def to_protobuf(self):
+        from paperpilot_common.protobuf.common.util_pb2 import OssToken
+
+        return OssToken(
+            access_key_id=self.access_key_id,
+            callback_host=self.host,
+            policy=self.policy,
+            signature=self.signature,
+            callback_body=self.callback,
+        )
+
+
+class ConditionCompare(TextChoices):
+    EQ = "eq"
+    START_WITH = "starts-with"
+    IN = "in"
+    NOT_IN = "not-in"
+
+
+class Condition:
+    value: str | list[str]
+    compare: ConditionCompare
+
+    def __init__(self, value: str | list[str], compare: ConditionCompare = None):
+        if compare:  # 传入比较类型
+            self.value = value
+            self.compare = compare
+        else:  # 未传入比较类型
+            if isinstance(value, list):  # 如果是列表
+                self.value = value
+                self.compare = ConditionCompare.IN  # 默认为in
+            else:  # 如果是字符串
+                if value.endswith("*"):  # 如果是以*结尾
+                    self.value = value[:-1]
+                    self.compare = ConditionCompare.START_WITH  # 默认为starts-with
+                else:  # 普通字符串
+                    self.value = value
+                    self.compare = ConditionCompare.EQ  # 默认为eq
+
+    def parse(self, key: str) -> list[str | list[str]]:
+        return [self.compare.value, f"${key}", self.value]
+
+
+def escape_special_characters(input_str: str) -> str:
+    escaped_str = input_str
+
+    # 使用转义字符替换特殊字符
+    escaped_str = escaped_str.replace("\\", "\\\\")  # 反斜杠
+    escaped_str = escaped_str.replace("/", "\\/")  # 斜杠
+    escaped_str = escaped_str.replace('"', '\\"')  # 双引号
+    escaped_str = escaped_str.replace("$", "\\$")  # 美元符
+    escaped_str = escaped_str.replace("\b", "\\b")  # 空格
+    escaped_str = escaped_str.replace("\f", "\\f")  # 换页
+    escaped_str = escaped_str.replace("\n", "\\n")  # 换行
+    escaped_str = escaped_str.replace("\r", "\\r")  # 回车
+    escaped_str = escaped_str.replace("\t", "\\t")  # 水平制表符
+
+    return escaped_str
+
+
+def handle_condition(conditions: list[list], key: str, value: str | list[str] | Condition | None) -> None:
+    """
+    处理条件
+    """
+    if not value:
+        return
+
+    if isinstance(value, str) or isinstance(value, list):
+        condition = Condition(value)
+    else:
+        condition = value
+
+    conditions.append(condition.parse(key))
+
+
+def parse_size(size: str | int) -> int:
+    """
+    解析大小
+
+    :param size: 大小
+    :return: 字节数
+    """
+    if isinstance(size, int):
+        return size
+
+    size = size.strip().lower()
+    multipliers = {"b": 1, "k": 1024, "m": 1024**2, "g": 1024**3, "t": 1024**4, "p": 1024**5}
+
+    if size[-1] == "b":
+        size = size[:-1]
+
+    if size == "":
+        return 0
+
+    try:
+        if size.isdigit():
+            return int(size)
+        for unit, multiplier in multipliers.items():
+            if size.endswith(unit):
+                num = float(size[:-1])
+                return int(num * multiplier)
+        raise ValueError("Invalid size format")
+    except ValueError:
+        raise ValueError("Invalid size format")
 
 
 def get_iso_8601(expire: float) -> str:
@@ -66,102 +166,6 @@ def get_random_name(file_name: str) -> str:
     new_name = new_name + "_%04d" % random.randint(0, 10000) + (("." + ext) if ext != "" else "")
 
     return new_name
-
-
-def get_token(
-    key: str,
-    callback: Dict[str, str],
-    policy: Optional[JSONValue] = None,
-) -> OSSCallbackToken:
-    """
-    获取直传签名token
-    """
-    # 获取Policy
-    expire_time = datetime.datetime.now() + datetime.timedelta(seconds=oss_settings.TOKEN_EXPIRE_SECOND)
-    expire = get_iso_8601(expire_time.timestamp())
-    if policy is None:
-        policy = {
-            "expiration": expire,  # 过期时间
-            "conditions": [
-                {"bucket": oss_settings.BUCKET_NAME},
-                [
-                    "content-length-range",
-                    0,
-                    oss_settings.MAX_SIZE_MB * 1024 * 1024,
-                ],  # 限制上传文件大小
-                ["eq", "$key", f"{key}"],  # 限制上传文件名
-            ],
-        }
-    policy = json.dumps(policy).strip()
-    policy_encode = base64.b64encode(policy.encode())
-
-    # 签名
-    h = hmac.new(
-        oss_settings.ACCESS_KEY_SECRET.encode(),
-        policy_encode,
-        hashlib.sha1,
-    )
-    sign = base64.encodebytes(h.digest()).strip()
-
-    # 回调参数
-    callback_param = json.dumps(callback).strip()
-    base64_callback_body = base64.b64encode(callback_param.encode())
-
-    return dict(
-        OSSAccessKeyId=oss_settings.ACCESS_KEY_ID,
-        host=(
-            f'{oss_settings.ENDPOINT.split("://")[0]}://{oss_settings.BUCKET_NAME}.'
-            f'{oss_settings.ENDPOINT.split("://")[1]}'
-        ),
-        policy=policy_encode.decode(),
-        signature=sign.decode(),
-        expire=expire,
-        key=key,
-        callback=base64_callback_body.decode(),
-    )
-
-
-def check_callback_signature(request) -> bool:
-    """
-    检测回调身份
-    """
-    authorization_base64 = request.META.get("HTTP_AUTHORIZATION", None)  # 获取AUTHORIZATION
-    pub_key_url_base64 = request.META.get("HTTP_X_OSS_PUB_KEY_URL", None)  # 获取公钥
-    if authorization_base64 is None or pub_key_url_base64 is None:
-        return False
-
-    try:
-        # 对x-oss-pub-key-url做base64解码后获取到公钥
-        pub_key_url = base64.b64decode(pub_key_url_base64).decode()
-
-        # 为了保证该public_key是由OSS颁发的，用户需要校验x-oss-pub-key-url的开头
-        if not pub_key_url.startswith("http://gosspublic.alicdn.com/") and not pub_key_url.startswith(
-            "https://gosspublic.alicdn.com/"
-        ):
-            return False
-        pub_key = get_pub_key(pub_key_url)
-
-        # 获取base64解码后的签名
-        authorization = base64.b64decode(authorization_base64)
-
-        # 获取待签名字符串
-        callback_body = request.body
-
-        if request.META["QUERY_STRING"] == "":
-            auth_str = unquote(request.META["PATH_INFO"]) + "\n" + callback_body.decode()
-        else:
-            auth_str = (
-                unquote(request.META["PATH_INFO"]) + "?" + request.META["QUERY_STRING"] + "\n" + callback_body.decode()
-            )
-
-        # 验证签名
-        auth_md5 = MD5.new(auth_str.encode())
-        rsa_pub = RSA.importKey(pub_key)
-        verifier = PKCS1_v1_5.new(rsa_pub)
-        verifier.verify(auth_md5, authorization)
-        return True
-    except Exception:
-        return False
 
 
 def _get_pub_key_online(pub_key_url: str) -> AnyStr:

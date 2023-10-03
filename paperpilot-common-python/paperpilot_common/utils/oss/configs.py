@@ -15,6 +15,7 @@ OssSettingDict = TypedDict(
         "URL_EXPIRE_SECOND": int,
         "TOKEN_EXPIRE_SECOND": int,
         "MAX_SIZE_MB": int,
+        "CALLBACK_BASE_URL": str,
     },
 )
 
@@ -30,6 +31,7 @@ class OssSettings(PackageSettings):
         "URL_EXPIRE_SECOND": 60 * 60 * 24 * 30,
         "TOKEN_EXPIRE_SECOND": 60,
         "MAX_SIZE_MB": 100,
+        "CALLBACK_BASE_URL": "",
     }
 
     IMPORT_STRINGS: List[str] = []
