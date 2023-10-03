@@ -19,7 +19,10 @@ class UserContext:
     id: uuid.UUID | None = None
 
     def __init__(self, user_id: str | None = None):
-        self.id = uuid.UUID(user_id)
+        if user_id:
+            self.id = uuid.UUID(user_id)
+        else:
+            self.id = None
 
     @property
     def is_anonymous(self) -> bool:
@@ -62,10 +65,9 @@ class AuthMiddleware(AsyncServerMiddleware):
         method_name: str,
     ) -> Any:
         try:
-            metadata = self.metadata_dict
-            user_id = metadata.get(self.auth_metadata_key)
-
             if user_context.get() is None:
+                metadata = self.metadata_dict
+                user_id = metadata.get(self.auth_metadata_key, None)
                 user_context.set(UserContext(user_id))
 
             return method(request_or_iterator, context)
