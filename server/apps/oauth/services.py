@@ -1,9 +1,8 @@
+import oauth.utils as utils
 from django.db.models import Q
-from google.protobuf.timestamp_pb2 import Timestamp
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.protobuf.user.auth_pb2 import LoginResponse, Token
 from paperpilot_common.response import ResponseType
-from paperpilot_common.utils.db.transaction import aatomic
 from paperpilot_common.utils.log import get_logger
 from user.models import User
 from user.services import user_service
@@ -12,7 +11,6 @@ from server.business.jwt import jwt_business
 from server.business.sms import sms_business
 
 from .cache import auth_cache
-from .utils import random_code
 
 # 登录失败异常
 login_failed = ApiException(ResponseType.LoginFailed, msg="用户名或密码错误，请重试")
@@ -180,7 +178,7 @@ class AuthService:
 
         :param phone: 手机号
         """
-        code = random_code()
+        code = utils.random_code()
 
         self.logger.debug(f"send sms code, phone: {phone}, code: {code}")
         await auth_cache.add_code(phone, code)

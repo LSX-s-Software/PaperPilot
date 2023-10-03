@@ -9,6 +9,7 @@ from paperpilot_common.exceptions import ApiException
 from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 
+from .cache import sms_cache
 from .config import (
     access_key_id,
     access_key_secret,
@@ -59,6 +60,14 @@ class SmsBusiness:
             )
             return
 
+        if await sms_cache.check_phone(phone_numbers):
+            self.logger.debug(f"frequency limit, phone: {phone_numbers}")
+            raise ApiException(
+                ResponseType.APIThrottled,
+                detail="发送短信过于频繁，请1分钟后再试",
+                record=False,
+            )
+
         send_sms_request = dysmsapi_20170525_models.SendSmsRequest(
             phone_numbers=phone_numbers,
             sign_name=sign_name,
@@ -69,6 +78,7 @@ class SmsBusiness:
         try:
             self.logger.info(f"send sms, phone: {phone_numbers}")
             result = await self.client.send_sms_async(send_sms_request)
+            await sms_cache.add_phone(phone_numbers)
             self.logger.info(
                 f"send sms success, phone: {phone_numbers}, result: {result.body}"
             )

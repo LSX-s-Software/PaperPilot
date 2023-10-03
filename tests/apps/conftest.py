@@ -98,8 +98,8 @@ async def user(db, user_id, username, phone, password):
 def code(mocker, phone):
     _code = "123456"
 
-    from oauth.utils import random_code
+    import oauth.utils as utils
 
-    random_code = mocker.Mock(return_value=_code)
+    utils.random_code = mocker.Mock(return_value=_code)
 
     return _code

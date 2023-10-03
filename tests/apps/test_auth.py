@@ -1,5 +1,6 @@
 import pytest
 from django.utils import timezone
+from google.protobuf.empty_pb2 import Empty
 from oauth.cache import auth_cache
 from oauth.urls import AuthPublicController
 from paperpilot_common.exceptions import ApiException
@@ -156,3 +157,14 @@ async def test_refresh__wrong(api, context, user: User):
         await api.Refresh(request, context)
 
     assert exc.value.response_type == ResponseType.RefreshTokenInvalid
+
+
+@pytest.mark.asyncio
+async def test_send_sms_code__success(api, context, phone, code):
+    request = SendSmsCodeRequest(phone=phone)
+
+    result = await api.SendSmsCode(request, context)
+
+    assert result == Empty()
+
+    assert await auth_cache.get_code(phone) == code
