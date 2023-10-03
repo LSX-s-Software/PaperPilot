@@ -1,3 +1,4 @@
+import uuid
 from contextvars import ContextVar
 from typing import Any, Callable
 
@@ -15,21 +16,21 @@ class UserContext:
     用户上下文
     """
 
-    user_id: str | None = None
+    id: uuid.UUID | None = None
 
     def __init__(self, user_id: str | None = None):
-        self.user_id = user_id
+        self.id = uuid.UUID(user_id)
 
     @property
     def is_anonymous(self) -> bool:
-        return self.user_id is None
+        return self.id is None
 
     @property
     def is_authenticated(self) -> bool:
-        return self.user_id is not None
+        return self.id is not None
 
     def __repr__(self) -> str:
-        return f"<UserContext user_id={self.user_id}>"
+        return f"<UserContext user_id={self.id}>"
 
 
 user_context: ContextVar[UserContext | None] = ContextVar("user_context", default=None)
@@ -51,7 +52,7 @@ class AuthMixin:
 
 class AuthMiddleware(AsyncServerMiddleware):
     logger = get_logger("server.interceptor.auth")
-    auth_metadata_key: str = settings.AUTH_METADATA_KEY
+    auth_metadata_key: str = getattr(settings, "AUTH_METADATA_KEY", "x-kong-jwt-claim-user_id")
 
     def intercept(
         self,
