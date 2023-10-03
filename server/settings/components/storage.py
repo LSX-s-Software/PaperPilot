@@ -9,7 +9,7 @@ STATIC_ROOT = str(BASE_DIR.joinpath("static"))
 # endregion
 
 # region 媒体文件
-MEDIA_URL = "/media/"
+MEDIA_URL = "/"
 # endregion
 
 # region oss
@@ -27,6 +27,7 @@ ALIYUN_OSS = {
     "URL_EXPIRE_SECOND": 60 * 60 * 24 * 30,
     "TOKEN_EXPIRE_SECOND": 60,
     "MAX_SIZE_MB": 100,
+    "CALLBACK_BASE_URL": config("CALLBACK_BASE_URL"),
 }
 
 # endregion

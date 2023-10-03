@@ -14,157 +14,166 @@ from user.services import user_service
 from server.business.jwt import jwt_business, jwt_cache
 
 
-@pytest.fixture
-def api():
-    return AuthPublicController()
+class TestAuth:
+    @pytest.fixture
+    def api(self):
+        return AuthPublicController()
 
+    @pytest.mark.asyncio
+    async def test_login__success(
+        self, api, context, user: User, password, phone
+    ):
+        request = LoginRequest(phone=phone, password=password)
 
-@pytest.mark.asyncio
-async def test_login__success(api, context, user: User, password, phone):
-    request = LoginRequest(phone=phone, password=password)
+        response = await api.Login(request, context)
 
-    response = await api.Login(request, context)
+        assert response.user == await user_service.get_user_info(user)
 
-    assert response.user == await user_service.get_user_info(user)
+        assert (
+            response.access.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
+        )
+        assert (await jwt_business.check_access(response.access.value))[
+            "user_id"
+        ] == user.id.hex
 
-    assert response.access.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
-    assert (await jwt_business.check_access(response.access.value))[
-        "user_id"
-    ] == user.id.hex
+        assert (
+            response.refresh.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
+        )
+        assert (await jwt_business.check_refresh(response.refresh.value))[
+            "user_id"
+        ] == user.id.hex
 
-    assert response.refresh.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
-    assert (await jwt_business.check_refresh(response.refresh.value))[
-        "user_id"
-    ] == user.id.hex
+    @pytest.mark.asyncio
+    async def test_login__wrong(self, db, api, context, password, phone):
+        request = LoginRequest(phone=phone, password=password)
 
+        with pytest.raises(ApiException) as exc:
+            await api.Login(request, context)
 
-@pytest.mark.asyncio
-async def test_login__wrong(db, api, context, password, phone):
-    request = LoginRequest(phone=phone, password=password)
+        assert exc.value.response_type == ResponseType.LoginFailed
 
-    with pytest.raises(ApiException) as exc:
-        await api.Login(request, context)
+    @pytest.mark.asyncio
+    async def test_count_phone(self, api, context, user: User, password, phone):
+        result = await api.CountPhone(CountPhoneRequest(phone=phone), context)
+        assert result.count == 1
 
-    assert exc.value.response_type == ResponseType.LoginFailed
+        result = await api.CountPhone(CountPhoneRequest(phone="0"), context)
+        assert result.count == 0
 
+    @pytest.mark.asyncio
+    async def test_count_username(
+        self, api, context, user: User, password, phone
+    ):
+        result = await api.CountUsername(
+            CountUsernameRequest(username=user.username), context
+        )
+        assert result.count == 1
 
-@pytest.mark.asyncio
-async def test_count_phone(api, context, user: User, password, phone):
-    result = await api.CountPhone(CountPhoneRequest(phone=phone), context)
-    assert result.count == 1
+        result = await api.CountUsername(
+            CountUsernameRequest(username="0"), context
+        )
+        assert result.count == 0
 
-    result = await api.CountPhone(CountPhoneRequest(phone="0"), context)
-    assert result.count == 0
+    @pytest.mark.asyncio
+    async def test_register__success(
+        self, api, context, db, password, phone, code
+    ):
+        await auth_cache.add_code(phone, code)
 
+        request = CreateUserRequest(
+            username="test",
+            password=password,
+            phone=phone,
+            code=code,
+        )
 
-@pytest.mark.asyncio
-async def test_count_username(api, context, user: User, password, phone):
-    result = await api.CountUsername(
-        CountUsernameRequest(username=user.username), context
-    )
-    assert result.count == 1
+        response = await api.Register(request, context)
 
-    result = await api.CountUsername(
-        CountUsernameRequest(username="0"), context
-    )
-    assert result.count == 0
+        user = await User.objects.filter(phone=phone).afirst()
 
+        assert user.check_password(password)
 
-@pytest.mark.asyncio
-async def test_register__success(api, context, db, password, phone, code):
-    await auth_cache.add_code(phone, code)
+        assert response.user == await user_service.get_user_info(user)
 
-    request = CreateUserRequest(
-        username="test",
-        password=password,
-        phone=phone,
-        code=code,
-    )
+        assert (
+            response.access.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
+        )
+        assert (await jwt_business.check_access(response.access.value))[
+            "user_id"
+        ] == user.id.hex
 
-    response = await api.Register(request, context)
+        assert (
+            response.refresh.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
+        )
+        assert (await jwt_business.check_refresh(response.refresh.value))[
+            "user_id"
+        ] == user.id.hex
 
-    user = await User.objects.filter(phone=phone).afirst()
+    @pytest.mark.asyncio
+    async def test_register__wrong_code(
+        self, api, context, db, password, phone, code
+    ):
+        request = CreateUserRequest(
+            username="test",
+            password=password,
+            phone=phone,
+            code=code,
+        )
 
-    assert user.check_password(password)
+        with pytest.raises(ApiException) as exc:
+            await api.Register(request, context)
 
-    assert response.user == await user_service.get_user_info(user)
+        assert exc.value.response_type == ResponseType.ParamValidationFailed
 
-    assert response.access.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
-    assert (await jwt_business.check_access(response.access.value))[
-        "user_id"
-    ] == user.id.hex
+    @pytest.mark.asyncio
+    async def test_register__wrong_phone_username(
+        self, api, context, user, username, password, phone, code
+    ):
+        await auth_cache.add_code(phone, code)
 
-    assert response.refresh.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
-    assert (await jwt_business.check_refresh(response.refresh.value))[
-        "user_id"
-    ] == user.id.hex
+        request = CreateUserRequest(
+            username=username,
+            password=password,
+            phone=phone,
+            code=code,
+        )
 
+        with pytest.raises(ApiException) as exc:
+            await api.Register(request, context)
 
-@pytest.mark.asyncio
-async def test_register__wrong_code(api, context, db, password, phone, code):
-    request = CreateUserRequest(
-        username="test",
-        password=password,
-        phone=phone,
-        code=code,
-    )
+        assert exc.value.response_type == ResponseType.ParamValidationFailed
 
-    with pytest.raises(ApiException) as exc:
-        await api.Register(request, context)
+    @pytest.mark.asyncio
+    async def test_refresh__success(self, api, context, user: User):
+        refresh_token = await jwt_business.generate_refresh(user.id.hex)
 
-    assert exc.value.response_type == ResponseType.ParamValidationFailed
+        request = RefreshTokenRequest(refresh=refresh_token.value)
 
+        response = await api.Refresh(request, context)
 
-@pytest.mark.asyncio
-async def test_register__wrong_phone_username(
-    api, context, user, username, password, phone, code
-):
-    await auth_cache.add_code(phone, code)
+        assert (
+            response.access.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
+        )
+        assert (await jwt_business.check_access(response.access.value))[
+            "user_id"
+        ] == user.id.hex
 
-    request = CreateUserRequest(
-        username=username,
-        password=password,
-        phone=phone,
-        code=code,
-    )
+    @pytest.mark.asyncio
+    async def test_refresh__wrong(self, api, context, user: User):
+        await jwt_cache.add_refresh("0")  # set a wrong refresh token to cache
+        request = RefreshTokenRequest(refresh="0")
 
-    with pytest.raises(ApiException) as exc:
-        await api.Register(request, context)
+        with pytest.raises(ApiException) as exc:
+            await api.Refresh(request, context)
 
-    assert exc.value.response_type == ResponseType.ParamValidationFailed
+        assert exc.value.response_type == ResponseType.RefreshTokenInvalid
 
+    @pytest.mark.asyncio
+    async def test_send_sms_code__success(self, api, context, phone, code):
+        request = SendSmsCodeRequest(phone=phone)
 
-@pytest.mark.asyncio
-async def test_refresh__success(api, context, user: User):
-    refresh_token = await jwt_business.generate_refresh(user.id.hex)
+        result = await api.SendSmsCode(request, context)
 
-    request = RefreshTokenRequest(refresh=refresh_token.value)
+        assert result == Empty()
 
-    response = await api.Refresh(request, context)
-
-    assert response.access.expire_time.ToDatetime(tzinfo=utc) > timezone.now()
-    assert (await jwt_business.check_access(response.access.value))[
-        "user_id"
-    ] == user.id.hex
-
-
-@pytest.mark.asyncio
-async def test_refresh__wrong(api, context, user: User):
-    await jwt_cache.add_refresh("0")  # set a wrong refresh token to cache
-    request = RefreshTokenRequest(refresh="0")
-
-    with pytest.raises(ApiException) as exc:
-        await api.Refresh(request, context)
-
-    assert exc.value.response_type == ResponseType.RefreshTokenInvalid
-
-
-@pytest.mark.asyncio
-async def test_send_sms_code__success(api, context, phone, code):
-    request = SendSmsCodeRequest(phone=phone)
-
-    result = await api.SendSmsCode(request, context)
-
-    assert result == Empty()
-
-    assert await auth_cache.get_code(phone) == code
+        assert await auth_cache.get_code(phone) == code

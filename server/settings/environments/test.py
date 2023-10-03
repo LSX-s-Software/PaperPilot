@@ -40,3 +40,14 @@ STORAGES = {
         "LOCATION": "/tmp",
     }
 }
+
+ALIYUN_OSS = {
+    "ACCESS_KEY_ID": "key_id",
+    "ACCESS_KEY_SECRET": "key_secret",
+    "ENDPOINT": "https://oss-cn-hangzhou.aliyuncs.com",
+    "BUCKET_NAME": "bucket_name",
+    "URL_EXPIRE_SECOND": 60 * 60 * 24 * 30,
+    "TOKEN_EXPIRE_SECOND": 60,
+    "MAX_SIZE_MB": 100,
+    "CALLBACK_BASE_URL": "http://localhost:8000",
+}

@@ -78,9 +78,10 @@ class User(models.Model):
         unique=True,
         verbose_name="手机号",
     )
+    AVATAR_PATH = "user/avatar"
     avatar = models.FileField(
-        upload_to="user/avatar",
-        default="user/avatar/default.jpg",
+        upload_to=AVATAR_PATH,
+        default=f"{AVATAR_PATH}/default.jpg",
         verbose_name="头像",
     )
 

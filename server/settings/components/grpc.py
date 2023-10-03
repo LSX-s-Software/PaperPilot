@@ -1,6 +1,6 @@
 GRPC_SERVER = {
     "servicers": [
-        # "user.urls.grpc_hook",
+        "user.urls.grpc_hook",
         "oauth.urls.grpc_hook",
     ],
     "interceptors": [

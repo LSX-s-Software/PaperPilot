@@ -50,6 +50,20 @@ class FakeServicerContext:
         """
         self._invocation_metadata = items
 
+    def authenticate(self, user_id: UUID | str):
+        """
+        add user_id to metadata
+        """
+        if isinstance(user_id, UUID):
+            user_id = user_id.hex
+
+        from paperpilot_common.middleware.server.auth import (
+            UserContext,
+            user_context,
+        )
+
+        user_context.set(UserContext(user_id))
+
 
 @pytest.fixture
 def context():
@@ -76,10 +90,21 @@ def phone():
     return "18312341234"
 
 
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def clear_db(db):
+    yield
+    from user.models import User
+
+    await User.objects.all().adelete()
+    assert await User.objects.all().acount() == 0
+
+
 @pytest_asyncio.fixture
 async def user(db, user_id, username, phone, password):
     from django.contrib.auth.hashers import make_password
     from user.models import User
+
+    await User.objects.filter(id=user_id).adelete()
 
     user = User(
         id=user_id,
