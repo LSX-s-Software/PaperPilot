@@ -3,11 +3,12 @@ import datetime
 import hashlib
 import hmac
 import json
-from urllib.parse import quote, unquote
+from urllib.parse import unquote
 
 from Crypto.Hash import MD5
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
+from django.conf import settings
 
 from paperpilot_common.utils.oss.configs import oss_settings
 from paperpilot_common.utils.oss.utils import (
@@ -52,7 +53,7 @@ def generate_direct_upload_token(
     :param callback_body: 回调内容，形如key=${object}&etag=${etag}&my_var=${x:my_var}
     :param min_size: 最小文件大小
     :param max_size: 最大文件大小
-    :param key: 文件存储路径（含文件名）
+    :param key: 文件存储路径（含文件名，不包括MEDIA_URL）
     :param cache_control: 缓存控制（HTTP请求Header）
     :param content_type: 类型（HTTP请求Header）
     :param content_disposition: 附件（HTTP请求Header）
@@ -67,9 +68,10 @@ def generate_direct_upload_token(
     if callback_url.startswith("/"):
         callback_url = callback_url[1:]
     if oss_settings.CALLBACK_BASE_URL.endswith("/"):
-        callback_url = quote(f"{oss_settings.CALLBACK_BASE_URL}{callback_url}")
+        callback_base_url = oss_settings.CALLBACK_BASE_URL[:-1]
     else:
-        callback_url = quote(f"{oss_settings.CALLBACK_BASE_URL}/{callback_url}")
+        callback_base_url = oss_settings.CALLBACK_BASE_URL
+    callback_complete_url = f"{callback_base_url}/{callback_url}"
 
     # 获取Policy，完整参数详见
     # https://help.aliyun.com/zh/oss/developer-reference/postobject?spm=a2c4g.11186623.0.i26#section-d5z-1ww-wdb
@@ -80,7 +82,7 @@ def generate_direct_upload_token(
         ["content-length-range", parse_size(min_size), parse_size(max_size)],  # 限制上传文件大小
     ]
 
-    handle_condition(conditions, "key", key)
+    handle_condition(conditions, "key", f"{settings.MEDIA_URL}{key}")
     handle_condition(conditions, "cache-control", cache_control)
     handle_condition(conditions, "content-type", content_type)
     handle_condition(conditions, "content-disposition", content_disposition)
@@ -113,7 +115,7 @@ def generate_direct_upload_token(
     # 回调参数，详见
     # https://help.aliyun.com/zh/oss/developer-reference/callback?spm=a2c4g.11186623.0.i74#a8a8e930e31fv
     callback_dict = {
-        "callbackUrl": callback_url,
+        "callbackUrl": callback_complete_url,
         "callbackBody": callback_body,
         "callbackBodyType": "application/x-www-form-urlencoded",
     }
