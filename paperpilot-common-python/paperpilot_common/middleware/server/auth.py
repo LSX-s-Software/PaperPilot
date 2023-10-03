@@ -39,18 +39,18 @@ class UserContext:
 user_context: ContextVar[UserContext | None] = ContextVar("user_context", default=None)
 
 
-def get_auth_user() -> UserContext:
+def get_user() -> UserContext:
     user = user_context.get()
     if user is None:
-        raise ApiException(ResponseType.NotLogin)
+        user_context.set(UserContext())
 
-    return user
+    return user_context.get()
 
 
 class AuthMixin:
     @property
     def user(self) -> UserContext:
-        return get_auth_user()
+        return get_user()
 
 
 class AuthMiddleware(AsyncServerMiddleware):
