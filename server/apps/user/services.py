@@ -24,7 +24,7 @@ class UserService:
                 )
 
         return UserInfo(
-            id=user.id,
+            id=user.id.hex,
             username=user.username,
             avatar=user.avatar.url,
         )

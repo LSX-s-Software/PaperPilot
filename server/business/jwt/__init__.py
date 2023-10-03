@@ -1,7 +1,9 @@
 import datetime
 
 import jwt
+from google.protobuf.timestamp_pb2 import Timestamp
 from paperpilot_common.exceptions import ApiException
+from paperpilot_common.protobuf.user.auth_pb2 import Token as TokenPb
 from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 
@@ -20,6 +22,17 @@ class Token:
     def __init__(self, value: str, expire_time: int):
         self.value = value
         self.expire_time = expire_time
+
+    def to_protobuf(self) -> TokenPb:
+        """
+        转换为 protobuf 类型
+        """
+        t = Timestamp()
+        t.FromSeconds(self.expire_time)
+        return TokenPb(
+            value=self.value,
+            expire_time=t,
+        )
 
 
 class JwtBusiness:
@@ -50,7 +63,7 @@ class JwtBusiness:
             "exp": int(
                 (datetime.datetime.utcnow() + access_lifetime).timestamp()
             ),  # 过期时间
-            "iat": int(datetime.datetime.utcnow()),  # 签发时间
+            "iat": int(datetime.datetime.utcnow().timestamp()),  # 签发时间
             "iss": self.ACCESS_ISS,  # 签发者
             "type": self.TYPE_ACCESS,  # token 类型
             "aud": self.ACCESS_AUD,  # 接收者
@@ -102,7 +115,7 @@ class JwtBusiness:
                 key=secret,
                 algorithms=[algorithm],
                 issuer=self.ACCESS_ISS,
-                audience=[self.ACCESS_AUD],
+                audience=self.ACCESS_AUD,
                 options={
                     "require": ["user_id", "exp", "iat", "iss", "type", "aud"],
                     "verify_signature": True,
@@ -167,7 +180,7 @@ class JwtBusiness:
                 key=secret,
                 algorithms=[algorithm],
                 issuer=self.REFRESH_ISS,
-                audience=[self.REFRESH_AUD],
+                audience=self.REFRESH_AUD,
                 options={
                     "require": ["user_id", "exp", "iat", "iss", "type", "aud"],
                     "verify_signature": True,

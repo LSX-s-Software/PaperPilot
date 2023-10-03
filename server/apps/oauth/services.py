@@ -31,11 +31,8 @@ class AuthService:
 
         :param user: 用户
         """
-        token = await jwt_business.generate_access(user.id)
-        return Token(
-            value=token.value,
-            expire_time=Timestamp().FromDatetime(token.expire_time),
-        )
+        token = await jwt_business.generate_access(user.id.hex)
+        return token.to_protobuf()
 
     async def _get_refresh_token(self, user: User) -> Token:
         """
@@ -43,11 +40,8 @@ class AuthService:
 
         :param user: 用户
         """
-        token = await jwt_business.generate_refresh(user.id)
-        return Token(
-            value=token.value,
-            expire_time=Timestamp().FromDatetime(token.expire_time),
-        )
+        token = await jwt_business.generate_refresh(user.id.hex)
+        return token.to_protobuf()
 
     async def _generate_login_response(self, user: User) -> LoginResponse:
         return LoginResponse(
@@ -56,7 +50,6 @@ class AuthService:
             refresh=await self._get_refresh_token(user),
         )
 
-    @aatomic
     async def login(self, phone: str, password: str) -> LoginResponse:
         """
         登录
@@ -82,7 +75,7 @@ class AuthService:
         self.logger.debug(f"login success, phone: {phone}")
 
         # 登录成功，更新登录时间
-        user.update_login_time()
+        await user.update_login_time()
 
         return await self._generate_login_response(user)
 
@@ -105,7 +98,7 @@ class AuthService:
             )
 
         # 解析 refresh token
-        payload = jwt_business.check_refresh(refresh)
+        payload = await jwt_business.check_refresh(refresh)
         user_id = payload["user_id"]
 
         # 尝试根据用户 id 获取用户
@@ -121,11 +114,10 @@ class AuthService:
         self.logger.debug(f"refresh success, user: {user_id}")
 
         # 刷新成功，更新登录时间
-        user.update_login_time()
+        await user.update_login_time()
 
         return await self._get_access_token(user)
 
-    @aatomic
     async def register(
         self,
         phone: str,

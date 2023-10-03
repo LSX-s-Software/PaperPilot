@@ -6,8 +6,6 @@ import paperpilot_common.protobuf.test.test_pb2
 from paperpilot_common.protobuf.test import test_pb2_grpc
 from paperpilot_common.utils.types import _ServicerContext
 
-from .services import test_service
-
 
 def grpc_hook(server):
     test_pb2_grpc.add_TestPublicServiceServicer_to_server(

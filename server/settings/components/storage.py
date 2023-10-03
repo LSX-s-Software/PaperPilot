@@ -13,7 +13,11 @@ MEDIA_URL = "/media/"
 # endregion
 
 # region oss
-DEFAULT_FILE_STORAGE = "paperpilot_common.utils.oss.backends.OssMediaStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "paperpilot_common.utils.oss.backends.OssMediaStorage",
+    }
+}
 
 ALIYUN_OSS = {
     "ACCESS_KEY_ID": config("ALIYUN_OSS_ACCESS_KEY_ID", ""),

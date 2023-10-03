@@ -5,7 +5,6 @@ from alibabacloud_dysmsapi20170525.client import (
     Client as Dysmsapi20170525Client,
 )
 from alibabacloud_tea_openapi import models as open_api_models
-from alibabacloud_tea_util import models as util_models
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger

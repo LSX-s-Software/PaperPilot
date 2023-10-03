@@ -20,6 +20,10 @@ def grpc_hook(server):
         AuthPublicController(), server
     )
 
+    return paperpilot_common.protobuf.user.auth_pb2.DESCRIPTOR.services_by_name[
+        "AuthPublicService"
+    ].full_name
+
 
 class AuthPublicController(auth_pb2_grpc.AuthPublicServiceServicer):
     """
@@ -49,7 +53,7 @@ class AuthPublicController(auth_pb2_grpc.AuthPublicServiceServicer):
         ],
     ]:
         return paperpilot_common.protobuf.user.auth_pb2.RefreshTokenResponse(
-            access=await auth_service.refresh(request.refresh_token)
+            access=await auth_service.refresh(request.refresh)
         )
 
     async def Logout(

@@ -1,13 +1,20 @@
-from server.settings import ZQ_EXCEPTION
+from server.settings.components.configs import DatabaseConfig
 
 DEBUG = False
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
-DATABASES = {
+DATABASES = DatabaseConfig.get(
+    "mysql://paperpilot:paperpilot@localhost:3306/paperpilot"
+)
+
+
+CACHES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": ":memory:",
-    }
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
+    "async_default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
 }
 
 SECRET_KEY = "not very secret in tests"
@@ -25,24 +32,11 @@ TEMPLATES = [
     },
 ]
 
-ZQ_EXCEPTION["EXCEPTION_UNKNOWN_HANDLE"] = False
-
 SENTRY_ENABLE = False
 
-DRF_LOGGER = {
-    "DEFAULT_DATABASE": "default",
-    "QUEUE_MAX_SIZE": 50,
-    "INTERVAL": 10,
-    "DATABASE": False,
-    "SIGNAL": False,
-    "PATH_TYPE": "FULL_PATH",
-    "SKIP_URL_NAME": [],
-    "SKIP_NAMESPACE": [],
-    "METHODS": None,
-    "STATUS_CODES": None,
-    "SENSITIVE_KEYS": [],
-    "ADMIN_SLOW_API_ABOVE": 500,
-    "ADMIN_TIMEDELTA": 0,
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "LOCATION": "/tmp",
+    }
 }
-
-DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
