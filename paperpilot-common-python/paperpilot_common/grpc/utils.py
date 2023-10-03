@@ -110,7 +110,14 @@ def add_servicers(server, servicers_list):
         logger.debug("Adding servicers from %s", path)
         callback = import_string(path)
         service_name = callback(ps)
-        services_names.append(service_name)
+
+        if not service_name:
+            continue
+
+        if isinstance(service_name, str):
+            service_name = [service_name]
+
+        services_names.extend(service_name)
 
     services_names.append(reflection.SERVICE_NAME)
 
