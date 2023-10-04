@@ -26,11 +26,16 @@ class SmsCache(Cache):
         """
         添加 phone 缓存
         """
-        await self.set_async(Key.phone(phone), True)
+        await self.set_async(
+            Key.phone(phone), True, timeout=self.default_timeout
+        )
 
     async def check_phone(self, phone: str) -> bool:
         """
         检查 phone 缓存
+
+        :param phone: 手机号
+        :return: 是否存在，False: 手机号未被限流
         """
         return await self.get_async(Key.phone(phone), default=False)
 

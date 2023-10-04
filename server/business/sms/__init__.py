@@ -49,16 +49,6 @@ class SmsBusiness:
         :param template_code: 短信模板ID
         :param template_param: 短信模板变量对应的实际值，JSON格式
         """
-        if not self.enable:
-            self.logger.warning("短信功能未开启")
-            self.logger.debug(
-                f"send fake sms, "
-                f"phone: {phone_numbers}, "
-                f"template_param: {template_param}, "
-                f"sign_name: {sign_name}, "
-                f"template_code: {template_code}"
-            )
-            return
 
         if await sms_cache.check_phone(phone_numbers):
             self.logger.debug(f"frequency limit, phone: {phone_numbers}")
@@ -77,7 +67,31 @@ class SmsBusiness:
 
         try:
             self.logger.info(f"send sms, phone: {phone_numbers}")
+
+            if not self.enable:
+                self.logger.warning("短信功能未开启")
+                self.logger.debug(
+                    f"send fake sms, "
+                    f"phone: {phone_numbers}, "
+                    f"template_param: {template_param}, "
+                    f"sign_name: {sign_name}, "
+                    f"template_code: {template_code}"
+                )
+                await sms_cache.add_phone(phone_numbers)
+                return
+
             result = await self.client.send_sms_async(send_sms_request)
+
+            if result.body.code != "OK":
+                self.logger.error(
+                    f"send sms failed, phone: {phone_numbers}, "
+                    f"result: {result.body}"
+                )
+                raise ApiException(
+                    ResponseType.ThirdServiceError,
+                    detail=result.body.message,
+                )
+
             await sms_cache.add_phone(phone_numbers)
             self.logger.info(
                 f"send sms success, phone: {phone_numbers}, result: {result.body}"
