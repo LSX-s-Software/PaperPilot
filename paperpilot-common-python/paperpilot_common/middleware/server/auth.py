@@ -5,9 +5,7 @@ from typing import Any, Callable
 import grpc
 from django.conf import settings
 
-from paperpilot_common.exceptions import ApiException
 from paperpilot_common.middleware.server.base import AsyncServerMiddleware
-from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 
 
@@ -65,10 +63,9 @@ class AuthMiddleware(AsyncServerMiddleware):
         method_name: str,
     ) -> Any:
         try:
-            if user_context.get() is None:
-                metadata = self.metadata_dict
-                user_id = metadata.get(self.auth_metadata_key, None)
-                user_context.set(UserContext(user_id))
+            metadata = dict(context.invocation_metadata())
+            user_id = metadata.get(self.auth_metadata_key, None)
+            user_context.set(UserContext(user_id))
 
             return method(request_or_iterator, context)
         except Exception as e:
