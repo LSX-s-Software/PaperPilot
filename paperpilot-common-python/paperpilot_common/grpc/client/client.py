@@ -2,7 +2,8 @@ import grpc.aio
 
 from paperpilot_common.utils.log import get_logger
 
-from .config import clients
+from ..config import clients
+from .wrapper import StubCacheWrapper
 
 
 class GrpcClient:
@@ -24,7 +25,7 @@ class GrpcClient:
     def _connect(self):
         self.channel = grpc.aio.insecure_channel(self.server_host)
         self.logger.info(f"connect to {self.server_name} server {self.server_host}")
-        self._stub = self.stub_cls(self.channel)
+        self._stub = StubCacheWrapper(self.stub_cls(self.channel))
 
     @property
     def stub(self):

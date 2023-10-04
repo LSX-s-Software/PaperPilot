@@ -42,7 +42,7 @@ class Cache:
 
     async def set_async(self, key: str, value: Any, timeout: int = default_timeout) -> None:
         self.logger.debug(f"async set key: {self.key(key)}, value: {value}, timeout: {timeout}")
-        await self.async_cache.aset(self.key(key), value, timeout)
+        await self.async_cache.aset(key=self.key(key), value=value, timeout=timeout)
 
     async def delete_async(self, key: str) -> None:
         self.logger.debug(f"async delete key: {self.key(key)}")
