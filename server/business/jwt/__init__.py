@@ -42,7 +42,7 @@ class JwtBusiness:
 
     logger = get_logger("business.jwt")
 
-    ACCESS_ISS = "kong"  # access token 签发者
+    ACCESS_ISS = "client"  # access token 签发者
     REFRESH_ISS = "paperpilot"  # refresh token 签发者
     ACCESS_AUD = "kong"  # access token 接收者
     REFRESH_AUD = "paperpilot"  # refresh token 接收者

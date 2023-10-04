@@ -10,7 +10,7 @@ DJANGO_APPS: list[str] = [
 THIRD_PARTY_APPS: list[str] = [
     "paperpilot_common.utils.oss",  # oss
     "django_extensions",  # Django 扩展
-    "cacheops",  # ORM缓存
+    # "cacheops",  # ORM缓存
     "paperpilot_common.grpc",  # grpc
     "paperpilot_common.utils.admin_logs",  # admin日志
 ]
