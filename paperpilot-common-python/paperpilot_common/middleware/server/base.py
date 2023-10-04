@@ -1,68 +1,18 @@
+"""Base class for server-side interceptors."""
+
 import abc
-import uuid
 from asyncio import iscoroutine
-from typing import Any, Callable, Optional, Tuple
+from typing import Any, Callable, Tuple
 
 import grpc
 from grpc import aio as grpc_aio  # Needed for grpcio pre-1.33.2
 
-from paperpilot_common.helper.context import WithContext, context_proxy
 
-
-class BaseMiddleware(grpc.ServerInterceptor, metaclass=abc.ABCMeta):
+class ServerInterceptor(grpc.ServerInterceptor, metaclass=abc.ABCMeta):
     """Base class for server-side interceptors.
 
     To implement an interceptor, subclass this class and override the intercept method.
     """
-
-    @property
-    def method(self) -> str:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.method
-
-    @property
-    def package(self) -> str:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.package
-
-    @property
-    def method_name(self) -> str:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.method_name
-
-    @property
-    def service(self) -> str:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.service
-
-    @property
-    def metadata_dict(self) -> dict:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.metadata_dict
-
-    @staticmethod
-    def _context_handle(handler_call_details: grpc.HandlerCallDetails) -> None:
-        method: str = handler_call_details.method  # type: ignore
-        _, package_and_service, method_name = method.split("/")
-        *maybe_package, service = package_and_service.rsplit(".", maxsplit=1)
-        package = maybe_package[0] if maybe_package else ""
-
-        metadata_dict = {}
-        for item in handler_call_details.invocation_metadata:  # type:ignore
-            metadata_dict.update({item.key: item.value})
-
-        context_proxy.req_id = metadata_dict.get("request_id", str(uuid.uuid4()))
-        context_proxy.method = method
-        context_proxy.package = package
-        context_proxy.service = service
-        context_proxy.method_name = method_name
-        context_proxy.metadata_dict = metadata_dict
-        context_proxy.inited = True
 
     @abc.abstractmethod
     def intercept(
@@ -95,35 +45,32 @@ class BaseMiddleware(grpc.ServerInterceptor, metaclass=abc.ABCMeta):
         return method(request_or_iterator, context)
 
     # Implementation of grpc.ServerInterceptor, do not override.
-    def intercept_service(
-        self,
-        continuation: Callable[[grpc.HandlerCallDetails], Optional[grpc.RpcMethodHandler]],
-        handler_call_details: grpc.HandlerCallDetails,
-    ) -> Optional[grpc.RpcMethodHandler]:
+    def intercept_service(self, continuation, handler_call_details):
         """Implementation of grpc.ServerInterceptor.
 
         This is not part of the grpc_interceptor.ServerInterceptor API, but must have
         a public name. Do not override it, unless you know what you're doing.
         """
-        next_handler: Optional[grpc.RpcMethodHandler] = continuation(handler_call_details)
+        next_handler = continuation(handler_call_details)
         # Returns None if the method isn't implemented.
         if next_handler is None:
-            return None
-        handler_factory, next_handler_method, grpc_type = _get_factory_and_method(next_handler)
+            return
 
-        def invoke_intercept_method(request_or_iterator: Any, context: grpc.ServicerContext) -> Any:
+        handler_factory, next_handler_method = _get_factory_and_method(next_handler)
+
+        def invoke_intercept_method(request_or_iterator, context):
             method_name = handler_call_details.method
-            if not context_proxy.inited:
-                with WithContext():
-                    self._context_handle(handler_call_details)
-                    context_proxy.grpc_type = grpc_type
-
-            return self.intercept(next_handler_method, request_or_iterator, context, method_name)
+            return self.intercept(
+                next_handler_method,
+                request_or_iterator,
+                context,
+                method_name,
+            )
 
         return handler_factory(
             invoke_intercept_method,
-            request_deserializer=next_handler.request_deserializer,  # type: ignore
-            response_serializer=next_handler.response_serializer,  # type: ignore
+            request_deserializer=next_handler.request_deserializer,
+            response_serializer=next_handler.response_serializer,
         )
 
 
@@ -132,55 +79,6 @@ class AsyncServerMiddleware(grpc_aio.ServerInterceptor, metaclass=abc.ABCMeta):
 
     To implement an interceptor, subclass this class and override the intercept method.
     """
-
-    @property
-    def method(self) -> str:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.method
-
-    @property
-    def package(self) -> str:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.package
-
-    @property
-    def method_name(self) -> str:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.method_name
-
-    @property
-    def service(self) -> str:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.service
-
-    @property
-    def metadata_dict(self) -> dict:
-        if not context_proxy.inited:
-            raise ValueError("Not init")
-        return context_proxy.metadata_dict
-
-    @staticmethod
-    def _context_handle(handler_call_details: grpc.HandlerCallDetails) -> None:
-        method: str = handler_call_details.method  # type: ignore
-        _, package_and_service, method_name = method.split("/")
-        *maybe_package, service = package_and_service.rsplit(".", maxsplit=1)
-        package = maybe_package[0] if maybe_package else ""
-
-        metadata_dict = {}
-        for item in handler_call_details.invocation_metadata:  # type:ignore
-            metadata_dict.update({item.key: item.value})
-
-        context_proxy.req_id = metadata_dict.get("request_id", str(uuid.uuid4()))
-        context_proxy.method = method
-        context_proxy.package = package
-        context_proxy.service = service
-        context_proxy.method_name = method_name
-        context_proxy.metadata_dict = metadata_dict
-        context_proxy.inited = True
 
     @abc.abstractmethod
     async def intercept(
@@ -223,16 +121,12 @@ class AsyncServerMiddleware(grpc_aio.ServerInterceptor, metaclass=abc.ABCMeta):
         have a public name. Do not override it, unless you know what you're doing.
         """
         next_handler = await continuation(handler_call_details)
-        handler_factory, next_handler_method, grpc_type = _get_factory_and_method(next_handler)
+        handler_factory, next_handler_method = _get_factory_and_method(next_handler)
 
         if next_handler.response_streaming:
 
             async def invoke_intercept_method(request, context):
                 method_name = handler_call_details.method
-                if not context_proxy.inited:
-                    with WithContext():
-                        self._context_handle(handler_call_details)
-                        context_proxy.grpc_type = grpc_type
                 coroutine_or_asyncgen = self.intercept(
                     next_handler_method,
                     request,
@@ -264,10 +158,6 @@ class AsyncServerMiddleware(grpc_aio.ServerInterceptor, metaclass=abc.ABCMeta):
 
             async def invoke_intercept_method(request, context):
                 method_name = handler_call_details.method
-                if not context_proxy.inited:
-                    with WithContext():
-                        self._context_handle(handler_call_details)
-                        context_proxy.grpc_type = grpc_type
                 return await self.intercept(
                     next_handler_method,
                     request,
@@ -284,14 +174,69 @@ class AsyncServerMiddleware(grpc_aio.ServerInterceptor, metaclass=abc.ABCMeta):
 
 def _get_factory_and_method(
     rpc_handler: grpc.RpcMethodHandler,
-) -> Tuple[Callable, Callable, str]:
-    if rpc_handler.unary_unary:  # type: ignore
-        return grpc.unary_unary_rpc_method_handler, rpc_handler.unary_unary, "unary_unary"  # type: ignore
-    elif rpc_handler.unary_stream:  # type: ignore
-        return grpc.unary_stream_rpc_method_handler, rpc_handler.unary_stream, "unary_stream"  # type: ignore
-    elif rpc_handler.stream_unary:  # type: ignore
-        return grpc.stream_unary_rpc_method_handler, rpc_handler.stream_unary, "stream_unary"  # type: ignore
-    elif rpc_handler.stream_stream:  # type: ignore
-        return grpc.stream_stream_rpc_method_handler, rpc_handler.stream_stream, "stream_stream"  # type: ignore
+) -> Tuple[Callable, Callable]:
+    if rpc_handler.unary_unary:
+        return grpc.unary_unary_rpc_method_handler, rpc_handler.unary_unary
+    elif rpc_handler.unary_stream:
+        return grpc.unary_stream_rpc_method_handler, rpc_handler.unary_stream
+    elif rpc_handler.stream_unary:
+        return grpc.stream_unary_rpc_method_handler, rpc_handler.stream_unary
+    elif rpc_handler.stream_stream:
+        return grpc.stream_stream_rpc_method_handler, rpc_handler.stream_stream
     else:  # pragma: no cover
         raise RuntimeError("RPC handler implementation does not exist")
+
+
+class MethodName:
+    """Represents a gRPC method name.
+
+    gRPC methods are defined by three parts, represented by the three attributes.
+
+    Attributes:
+        package: This is defined by the `package foo.bar;` designation in the protocol
+            buffer definition, or it could be defined by the protocol buffer directory
+            structure, depending on the language
+            (see https://developers.google.com/protocol-buffers/docs/proto3#packages).
+        service: This is the service name in the protocol buffer definition (e.g.,
+            `service SearchService { ... }`.
+        method: This is the method name. (e.g., `rpc Search(...) returns (...);`).
+    """
+
+    def __init__(self, package: str, service: str, method: str):
+        self.package = package
+        self.service = service
+        self.method = method
+
+    def __repr__(self) -> str:
+        """Object-like representation."""
+        return f"MethodName(package='{self.package}', service='{self.service}'," f" method='{self.method}')"
+
+    @property
+    def fully_qualified_service(self):
+        """Return the service name prefixed with the package.
+
+        Example:
+            >>> MethodName("foo.bar", "SearchService", "Search").fully_qualified_service
+            'foo.bar.SearchService'
+        """
+        return f"{self.package}.{self.service}" if self.package else self.service
+
+
+def parse_method_name(method_name: str) -> MethodName:
+    """Parse a method name into package, service and endpoint components.
+
+    Arguments:
+        method_name: A string of the form "/foo.bar.SearchService/Search", as passed to
+            ServerInterceptor.intercept().
+
+    Returns:
+        A MethodName object.
+
+    Example:
+        >>> parse_method_name("/foo.bar.SearchService/Search")
+        MethodName(package='foo.bar', service='SearchService', method='Search')
+    """
+    _, package_and_service, method = method_name.split("/")
+    *maybe_package, service = package_and_service.rsplit(".", maxsplit=1)
+    package = maybe_package[0] if maybe_package else ""
+    return MethodName(package, service, method)

@@ -55,7 +55,7 @@ class AuthMiddleware(AsyncServerMiddleware):
     logger = get_logger("server.interceptor.auth")
     auth_metadata_key: str = getattr(settings, "AUTH_METADATA_KEY", "x-kong-jwt-claim-user_id")
 
-    def intercept(
+    async def intercept(
         self,
         method: Callable,
         request_or_iterator: Any,
@@ -67,7 +67,7 @@ class AuthMiddleware(AsyncServerMiddleware):
             user_id = metadata.get(self.auth_metadata_key, None)
             user_context.set(UserContext(user_id))
 
-            return method(request_or_iterator, context)
+            return await method(request_or_iterator, context)
         except Exception as e:
             self.logger.exception(e)
             raise e
