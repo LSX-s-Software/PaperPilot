@@ -12,10 +12,10 @@ from google.protobuf.internal import builder as _builder
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n,paperpilot_common/protobuf/common/exce.proto\x12\x04\x65xec\x1a\x1bgoogle/protobuf/empty.proto"!\n\x04\x45xec\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0b\n\x03msg\x18\x02 \x01(\tb\x06proto3'
+    b'\n,paperpilot_common/protobuf/common/exce.proto\x12\x04\x65xec\x1a\x1fgoogle/protobuf/timestamp.proto"c\n\x0c\x41piException\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0e\n\x06\x64\x65tail\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\x12$\n\x04\x64\x61ta\x18\x04 \x01(\x0b\x32\x16.exec.ApiExceptionData"\x7f\n\x10\x41piExceptionData\x12\x0b\n\x03\x65id\x18\x01 \x01(\t\x12\x11\n\tsentry_id\x18\x02 \x01(\t\x12(\n\x04time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12!\n\x04info\x18\x04 \x01(\x0b\x32\x13.exec.ExceptionInfo"h\n\rExceptionInfo\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\x11\n\ttraceback\x18\x03 \x03(\t\x12\x12\n\ninner_type\x18\x04 \x01(\t\x12\x13\n\x0binner_value\x18\x05 \x01(\tb\x06proto3'
 )
 
 _globals = globals()
@@ -23,6 +23,10 @@ _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "paperpilot_common.protobuf.common.exce_pb2", _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
     DESCRIPTOR._options = None
-    _globals["_EXEC"]._serialized_start = 83
-    _globals["_EXEC"]._serialized_end = 116
+    _globals["_APIEXCEPTION"]._serialized_start = 87
+    _globals["_APIEXCEPTION"]._serialized_end = 186
+    _globals["_APIEXCEPTIONDATA"]._serialized_start = 188
+    _globals["_APIEXCEPTIONDATA"]._serialized_end = 315
+    _globals["_EXCEPTIONINFO"]._serialized_start = 317
+    _globals["_EXCEPTIONINFO"]._serialized_end = 421
 # @@protoc_insertion_point(module_scope)

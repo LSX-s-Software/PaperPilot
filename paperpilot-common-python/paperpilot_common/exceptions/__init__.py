@@ -9,6 +9,9 @@ from typing import TYPE_CHECKING, Optional
 from django.conf import settings
 from django.utils.timezone import now
 
+from paperpilot_common.protobuf.common import exce_pb2
+from paperpilot_common.response.utils import get_response_type
+
 if TYPE_CHECKING:
     from paperpilot_common.exceptions.types import ExceptionData, ExceptionInfo
     from paperpilot_common.response import ResponseData, ResponseType
@@ -123,19 +126,25 @@ class ApiException(Exception):
         sha.update(exp_id.encode("utf-8"))
         return sha.hexdigest()[:6]
 
-    @staticmethod
-    def get_exception_info() -> "ExceptionInfo":
+    def get_exception_info(self) -> "ExceptionInfo":
         """
         获取异常信息
         :return: 异常信息
         """
         exc_type, exc_value, exc_traceback_obj = exc_info()
-        return {
+        info: "ExceptionInfo" = {
             "type": str(exc_type),
-            "msg": str(exc_value),
-            "info": traceback.format_exc(),
-            "stack": traceback.format_stack(),
+            "value": str(exc_value),
+            "traceback": traceback.format_stack(),
+            "inner_type": None,
+            "inner_value": None,
         }
+
+        if self.inner:
+            info["inner_type"] = str(type(self.inner))
+            info["inner_value"] = str(self.inner)
+
+        return info
 
     @property
     def exception_data(self) -> "ExceptionData":
@@ -145,10 +154,27 @@ class ApiException(Exception):
         """
         data: "ExceptionData" = {
             "eid": self.eid,
+            "sentry_id": self.event_id,
             "time": self.time,
+            "info": None,
         }
 
         if settings.DEBUG:
-            data["exception"] = self.exc_data
+            data["info"] = self.exc_data
 
         return data
+
+    @classmethod
+    def from_protos(cls, pb: "exce_pb2.ApiException") -> "ApiException":
+        """
+        从grpc protos创建异常
+        :param pb: grpc protos
+        :return: 异常
+        """
+
+        exc = cls(
+            type=get_response_type(pb.code),
+            msg=pb.detail,
+            record=(pb.data.sentry_id is not None),
+            detail=pb.message,
+        )

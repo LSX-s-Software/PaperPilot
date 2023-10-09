@@ -26,6 +26,7 @@ djangorestframework-simplejwt = "^5.3.0"
 drf-standardized-errors = "^0.12.5"
 isodate = "^0.6.1"
 grpcio-reflection = "^1.59.0"
+sentry-sdk = {extras = ["django"], version = "^1.31.0"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"

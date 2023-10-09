@@ -4,15 +4,17 @@ from typing import List, Optional, TypedDict
 
 class ExceptionInfo(TypedDict, total=True):
     type: str
-    msg: str
-    info: str
-    stack: List[str]
+    value: str
+    traceback: List[str]
+    inner_type: Optional[str]
+    inner_value: Optional[str]
 
 
 class ExceptionData(TypedDict, total=False):
     eid: Optional[str]
+    sentry_id: Optional[str]
     time: datetime
-    exception: Optional[ExceptionInfo]
+    info: Optional[ExceptionInfo]
 
 
 ExtraHeaders = TypedDict(

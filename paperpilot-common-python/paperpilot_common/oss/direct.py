@@ -10,15 +10,8 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from django.conf import settings
 
-from paperpilot_common.utils.oss.configs import oss_settings
-from paperpilot_common.utils.oss.utils import (
-    Condition,
-    OssDirectToken,
-    get_iso_8601,
-    get_pub_key,
-    handle_condition,
-    parse_size,
-)
+from .configs import oss_settings
+from .utils import Condition, OssDirectToken, get_iso_8601, get_pub_key, handle_condition, parse_size
 
 default_callback_body = (
     "object=${object}&"

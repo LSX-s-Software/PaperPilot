@@ -1,255 +1,173 @@
-from typing import Optional, Union
-
-import django.core.exceptions as django_exceptions
-import rest_framework.exceptions as drf_exceptions
-import rest_framework_simplejwt.exceptions as jwt_exceptions
-from django.http import Http404
-from drf_standardized_errors.formatter import ExceptionFormatter
-from drf_standardized_errors.types import ExceptionHandlerContext
-from rest_framework.response import Response
-from rest_framework.views import set_rollback
+from google.protobuf import any_pb2
+from google.rpc import status_pb2
 
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.exceptions.configs import zq_exception_settings
-from paperpilot_common.exceptions.types import ExtraHeaders
+from paperpilot_common.helper.field import datetime_to_timestamp
+from paperpilot_common.middleware.server.auth import get_user
+from paperpilot_common.protobuf.common import exce_pb2
 from paperpilot_common.response import ResponseType
-from paperpilot_common.response.types import ApiExceptionResponse
+from paperpilot_common.response.types import ResponseData
+from paperpilot_common.utils.log import get_logger
+from paperpilot_common.utils.singleton import Singleton
 
 if zq_exception_settings.SENTRY_ENABLE:  # pragma: no cover
     import sentry_sdk
 
 
-class ApiExceptionHandler:
-    exc: Exception
-    context: ExceptionHandlerContext
+def map_exception_to_response_type(exception):
+    from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
+    from django.db import DatabaseError, IntegrityError
+    from django.http import Http404
+    from django.urls.exceptions import NoReverseMatch
+    from rest_framework.exceptions import APIException
 
-    def __init__(self, exc: Exception, context: ExceptionHandlerContext) -> None:
-        self.exc = exc
-        self.context = context
+    if isinstance(exception, ValidationError):
+        # Django 验证错误，可以映射为参数错误的 ResponseType
+        return ResponseType.ParamValidationFailed
+    elif isinstance(exception, IntegrityError):
+        # 数据库完整性错误，可以映射为数据库服务出错的 ResponseType
+        return ResponseType.ParamValidationFailed
+    elif isinstance(exception, DatabaseError):
+        # 数据库错误，可以映射为数据库服务出错的 ResponseType
+        return ResponseType.DatabaseError
+    elif isinstance(exception, Http404):
+        # HTTP 404 错误，可以映射为资源不存在的 ResponseType
+        return ResponseType.ResourceNotFound
+    elif isinstance(exception, ObjectDoesNotExist):
+        # Django 对象不存在异常，可以映射为资源不存在的 ResponseType
+        return ResponseType.ResourceNotFound
+    elif isinstance(exception, APIException):
+        # REST framework 中的 API 异常，可以映射为客户端错误的 ResponseType
+        return ResponseType.ClientError
+    elif isinstance(exception, NoReverseMatch):
+        # Django URL 反向匹配异常，可以映射为请求接口不存在的 ResponseType
+        return ResponseType.APINotFound
+    elif isinstance(exception, PermissionDenied):
+        # Django 权限拒绝异常，可以映射为用户无权限的 ResponseType
+        return ResponseType.PermissionDenied
+    elif isinstance(exception, ValueError):
+        # 值错误异常，可以映射为参数错误的 ResponseType
+        return ResponseType.ParamError
+    elif isinstance(exception, KeyError):
+        # 键错误异常，可以映射为参数错误的 ResponseType
+        return ResponseType.ParamError
+    elif isinstance(exception, FileNotFoundError):
+        # 文件未找到异常，可以映射为资源不存在的 ResponseType
+        return ResponseType.ResourceNotFound
+    elif isinstance(exception, IOError):
+        # 输入/输出异常，可以映射为服务器错误的 ResponseType
+        return ResponseType.ServerError
+    elif isinstance(exception, TypeError):
+        # 类型错误异常，可以映射为参数错误的 ResponseType
+        return ResponseType.ParamError
+    elif isinstance(exception, AttributeError):
+        # 属性错误异常，可以映射为参数错误的 ResponseType
+        return ResponseType.ParamError
+    elif isinstance(exception, NotImplementedError):
+        # 未实现异常，可以映射为接口未实现的 ResponseType
+        return ResponseType.Unimplemented
+    elif isinstance(exception, Exception):
+        # 其他异常，可以映射为服务器错误的 ResponseType
+        return ResponseType.ServerError
 
-    def run(self) -> Optional[ApiExceptionResponse]:
+
+class ApiExceptionHandler(metaclass=Singleton):
+    logger = get_logger("server.interceptor.exception")
+
+    def _convert(self, exc: Exception) -> ApiException:
+        if not isinstance(exc, ApiException):
+            self.logger.debug(f"convert exception {exc.__class__.__name__} to ApiException")
+            response_type = map_exception_to_response_type(exc)
+            exc = ApiException(response_type, inner=exc, detail=str(exc), record=True)
+
+        return exc
+
+    def notify_sentry(self, data: ResponseData, exc: ApiException) -> str:
         """
-        处理异常
-        :return: 响应数据或失败为None
-        """
-        exc = self.convert_known_exceptions(self.exc)  # 将django的异常转换为drf的异常
-
-        if zq_exception_settings.EXCEPTION_UNKNOWN_HANDLE:  # 未知异常处理（非drf、api的异常）
-            exc = self.convert_unhandled_exceptions(exc)  # 将未知异常转换为drf异常
-        exc = self.convert_drf_exceptions(exc)  # 将drf异常转换为api异常
-        set_rollback()  # 设置事务回滚
-        response = None
-
-        if isinstance(exc, ApiException):  # 如果是api异常则进行解析
-            response = self.get_response(exc)
-            if exc.record:  # 如果需要记录
-                if zq_exception_settings.SENTRY_ENABLE:
-                    self._notify_sentry(exc, response)
-                # 将event_id写入响应数据
-                response.data["data"]["event_id"] = exc.event_id
-                # 将异常信息记录到response中，便于logger记录
-                response.exception_data = exc
-
-        return response
-
-    def _notify_sentry(self, exc: ApiException, response: Response) -> None:
-        """
-        通知sentry, 可在notify_sentry中自定义其他内容
+        通知sentry
         :param exc: Api异常
-        :param response: 响应数据
-        :return: None
+        :param data: 响应数据
+        :return: sentry_id
         """
-        try:
-            self.notify_sentry(exc, response)  # 调用自定义通知
-        except Exception:
-            pass
+        user = get_user()
+        if user.is_authenticated:
+            sentry_sdk.api.set_tag("role", "user")
+            sentry_sdk.api.set_user(
+                {
+                    "id": user.id,
+                }
+            )
+        else:
+            sentry_sdk.api.set_tag("role", "guest")
 
         # 默认异常汇报
         sentry_sdk.api.set_tag("exception_type", exc.response_type.name)
         sentry_sdk.set_context(
             "exp_info",
             {
-                "eid": response.data["data"]["eid"],
-                "code": response.data["code"],
-                "detail": response.data["detail"],
-                "msg": response.data["msg"],
+                "eid": data["data"]["eid"],
+                "code": data["code"],
+                "detail": data["detail"],
+                "msg": data["msg"],
             },
         )
-        sentry_sdk.set_context("details", response.data["data"]["details"])
-        exc.event_id = sentry_sdk.api.capture_exception(self.exc)  # 发送至sentry
 
-    def notify_sentry(self, exc: ApiException, response: Response) -> None:
-        """
-        自定义sentry通知
-        :param exc: Api异常
-        :param response: 响应数据
-        :return: None
-        """
-        user = self.context["request"].user
-        if user.is_authenticated:
-            sentry_sdk.api.set_tag("role", "user")
-            sentry_sdk.api.set_user(
-                {
-                    "id": user.id,
-                    "email": user.username,
-                    "phone": user.phone if hasattr(user, "phone") else None,
-                }
-            )
-        else:
-            sentry_sdk.api.set_tag("role", "guest")
-
-    def get_response(self, exc: ApiException) -> Response:
-        """
-        获取响应数据
-        :param exc: Api异常
-        :return:
-        """
-        headers = self.get_headers(exc.inner)
-        data = exc.response_data
-
-        info = None
-        if exc.inner:
-            if isinstance(exc.inner, drf_exceptions.APIException):
-                info = ExceptionFormatter(exc.inner, self.context, self.exc).run()
-            else:
-                info = exc.inner.args[0] if exc.inner.args else None
-        data["data"]["details"] = info
-
-        return Response(
+        sentry_sdk.set_context(
+            "details",
             data,
-            status=exc.response_type.status_code,
-            headers=headers,
         )
 
-    @staticmethod
-    def get_headers(exc: Exception) -> ExtraHeaders:
-        """
-        获取额外响应头
-        :param exc: 异常
-        :return: headers
-        """
-        headers = {}
-        if getattr(exc, "auth_header", None):
-            headers["WWW-Authenticate"] = exc.auth_header
-        if getattr(exc, "wait", None):
-            headers["Retry-After"] = "%d" % exc.wait
-        return headers
+        eid = sentry_sdk.api.capture_exception(exc.inner if exc.inner else exc)  # 优先发送内部错误
+        self.logger.debug(f"notify sentry {eid}")
 
-    @staticmethod
-    def convert_known_exceptions(exc: Exception) -> Exception:
+        return eid
+
+    def grpc_handle(self, exc: Exception) -> status_pb2.Status:
+        exc = self._convert(exc)
+        response_data = exc.response_data
+
+        if exc.record:  # 如果需要记录
+            if zq_exception_settings.SENTRY_ENABLE:
+                sentry_id = self.notify_sentry(response_data, exc)
+                response_data["data"]["sentry_id"] = sentry_id
+
+        protos = self.get_grpc_protos(response_data)
+
+        detail = any_pb2.Any()
+        detail.Pack(protos)
+
+        return status_pb2.Status(
+            code=exc.response_type.grpc_status_code.value[0],
+            message=protos.detail,  # 面向开发者
+            details=[detail],
+        )
+
+    def get_grpc_protos(self, response_data) -> exce_pb2.ApiException:
         """
-        By default, Django's built-in `Http404` and `PermissionDenied` are converted
-        to their DRF equivalent.
+        获取grpc protos
+        :param response_data: 响应数据
+        :return: grpc protos
         """
-        if isinstance(exc, Http404):
-            return drf_exceptions.NotFound()
-        elif isinstance(exc, django_exceptions.PermissionDenied):
-            return drf_exceptions.PermissionDenied()
-        # jwt
-        elif isinstance(exc, jwt_exceptions.InvalidToken):
-            return ApiException(
-                type=ResponseType.TokenInvalid,
-                inner=exc,
-            )
-        elif isinstance(exc, jwt_exceptions.AuthenticationFailed):
-            return ApiException(
-                type=ResponseType.LoginFailed,
-                inner=exc,
-            )
-        elif isinstance(exc, jwt_exceptions.TokenError):
-            return ApiException(
-                type=ResponseType.TokenInvalid,
-                detail="Token解析错误",
-                inner=exc,
+        if response_data["data"]["info"]:
+            info = exce_pb2.ExceptionInfo(
+                type=response_data["data"]["info"]["type"],
+                value=response_data["data"]["info"]["value"],
+                traceback=response_data["data"]["info"]["traceback"],
+                inner_type=response_data["data"]["info"]["inner_type"],
+                inner_value=response_data["data"]["info"]["inner_value"],
             )
         else:
-            return exc
+            info = None
 
-    @staticmethod
-    def convert_unhandled_exceptions(
-        exc: Exception,
-    ) -> Union[drf_exceptions.APIException, ApiException]:
-        """
-        Any non-DRF unhandled exception is converted to an APIException which
-        has a 500 status code.
-        """
-        if not isinstance(exc, drf_exceptions.APIException) and not isinstance(exc, ApiException):
-            return drf_exceptions.APIException(detail=str(exc))
-        else:
-            return exc
-
-    @staticmethod
-    def convert_drf_exceptions(
-        exc: Union[drf_exceptions.APIException, ApiException, Exception],
-    ) -> ApiException | Exception:
-        """
-        转换drf异常
-        :param exc: drf异常
-        :return: ApiException
-        """
-        if isinstance(exc, ApiException):
-            return exc
-        # 处理drf异常
-        record = False
-        response_type = ResponseType.ServerError
-        detail = None
-        msg = None
-
-        if isinstance(exc, drf_exceptions.ParseError):
-            response_type = ResponseType.JSONParseFailed
-        elif isinstance(exc, drf_exceptions.AuthenticationFailed):
-            response_type = ResponseType.LoginFailed
-        elif isinstance(exc, drf_exceptions.NotAuthenticated):
-            # 未登录
-            response_type = ResponseType.NotLogin
-        elif isinstance(exc, drf_exceptions.PermissionDenied):
-            response_type = ResponseType.PermissionDenied
-        elif isinstance(exc, drf_exceptions.NotFound):
-            response_type = ResponseType.APINotFound
-        elif isinstance(exc, drf_exceptions.ValidationError):
-            # 校验失败
-            record = True
-            response_type = ResponseType.ParamValidationFailed
-        elif isinstance(exc, drf_exceptions.MethodNotAllowed):
-            # 方法错误
-            record = True
-            response_type = ResponseType.MethodNotAllowed
-            detail = f"不允许{getattr(exc, 'args', None)[0]}请求"
-        elif isinstance(exc, drf_exceptions.NotAcceptable):
-            record = True
-            response_type = ResponseType.HeaderNotAcceptable
-            detail = f"不支持{getattr(exc, 'args', None)[0]}的响应格式"
-        elif isinstance(exc, drf_exceptions.UnsupportedMediaType):
-            record = True
-            response_type = ResponseType.UnsupportedMediaType
-            detail = f"不支持{getattr(exc, 'args', None)[0]}的请求格式"
-            msg = f"暂不支持{getattr(exc, 'args', None)[0]}文件上传，请使用支持的文件格式重试"
-        elif isinstance(exc, drf_exceptions.Throttled):
-            record = True
-            response_type = ResponseType.APIThrottled
-            detail = f"请求频率过高，请{getattr(exc, 'args', None)[0]}s后再试"
-            msg = f"请求太快了，请{getattr(exc, 'args', None)[0]}s后再试"
-        elif isinstance(exc, drf_exceptions.APIException):
-            record = True
-            response_type = ResponseType.ServerError
-        else:
-            # 不处理其他异常
-            return exc
-
-        return ApiException(response_type, msg, exc, record, detail)
-
-
-def exception_handler(exc: Exception, context: ExceptionHandlerContext) -> Optional[ApiExceptionResponse]:
-    """
-    自定义异常处理
-
-    :param exc: 异常
-    :param context: 上下文
-    :return: 处理程序
-    """
-    handler_class = zq_exception_settings.EXCEPTION_HANDLER_CLASS
-
-    if handler_class != ApiExceptionHandler and not issubclass(handler_class, ApiExceptionHandler):
-        raise ImportError(f"{handler_class} is not a subclass of ApiExceptionHandler")
-
-    return handler_class(exc, context).run()
+        return exce_pb2.ApiException(
+            code=response_data["code"],
+            detail=response_data["detail"],
+            message=response_data["msg"],
+            data=exce_pb2.ApiExceptionData(
+                eid=response_data["data"]["eid"],
+                sentry_id=response_data["data"]["sentry_id"],
+                time=datetime_to_timestamp(response_data["data"]["time"]),
+                info=info,
+            ),
+        )
