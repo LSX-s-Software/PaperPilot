@@ -15,7 +15,7 @@ MEDIA_URL = "/"
 # region oss
 STORAGES = {
     "default": {
-        "BACKEND": "paperpilot_common.utils.oss.backends.OssMediaStorage",
+        "BACKEND": "paperpilot_common.oss.backends.OssMediaStorage",
     }
 }
 

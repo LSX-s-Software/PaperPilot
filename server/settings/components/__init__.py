@@ -10,3 +10,4 @@ from server.settings.components.grpc import *
 from server.settings.components.sentry import *
 from server.settings.components.sms import *
 from server.settings.components.storage import *
+from server.settings.components.trace import *

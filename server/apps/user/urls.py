@@ -6,9 +6,9 @@ import google.protobuf
 import google.protobuf.empty_pb2
 import paperpilot_common.protobuf
 from paperpilot_common.middleware.server.auth import AuthMixin
+from paperpilot_common.oss.direct import generate_direct_upload_token
+from paperpilot_common.oss.utils import get_random_name
 from paperpilot_common.protobuf.user import user_pb2, user_pb2_grpc
-from paperpilot_common.utils.oss.direct import generate_direct_upload_token
-from paperpilot_common.utils.oss.utils import get_random_name
 from paperpilot_common.utils.types import _ServicerContext
 
 from .models import User
