@@ -36,7 +36,7 @@ class TestPublicController(test_pb2_grpc.TestPublicServiceServicer, AuthMixin):
             paperpilot_common.protobuf.test.test_pb2.TestResult
         ],
     ]:
-        self.logger.debug(dict(context.invocation_metadata()))
+        self.logger.info(dict(context.invocation_metadata()))
         if self.user.is_anonymous:
             return await test_service.get_anonymous_test()
         else:
