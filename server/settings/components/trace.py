@@ -42,7 +42,7 @@ if SENTRY_ENABLE:
 
 JAEGER_HOST = config("JAEGER_HOST", None)
 
-register_to_jaeger("paperpilot-backend-user", JAEGER_HOST)
+# register_to_jaeger("paperpilot-backend-user", JAEGER_HOST)
 
 DjangoInstrumentor().instrument(is_sql_commentor_enabled=True)
 RedisInstrumentor().instrument()
