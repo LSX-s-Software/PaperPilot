@@ -8,6 +8,10 @@ FROM python as python-build-stage
 
 ARG DJANGO_ENV=production
 
+# change mirror
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
+    && sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+
 # Install apt packages
 RUN apt-get update && apt-get install --no-install-recommends -y \
   # dependencies for building Python packages
@@ -33,10 +37,10 @@ RUN echo "$DJANGO_ENV" \
 # RUN poetry install
 
 RUN pip wheel --wheel-dir /usr/src/app/wheels  \
-  -r requirements.txt
+  -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 
 # PaperPilot
-RUN pip wheel --wheel-dir /usr/src/app/wheels git+https://github.com/Nagico/paperpilot-common.git#subdirectory=paperpilot-common-python
+RUN pip wheel --wheel-dir /usr/src/app/wheels git+https://github.com/Nagico/paperpilot-common.git#subdirectory=paperpilot-common-python -i https://mirrors.aliyun.com/pypi/simple/
 
 # Delete setuptools and pip to avoid conflicts with the system packages
 RUN rm -rf /usr/src/app/wheels/setuptools* /usr/src/app/wheels/pip*
@@ -50,6 +54,10 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 WORKDIR ${APP_HOME}
 
+# change mirror
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
+    && sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+
 # Install required system dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
   # psycopg2 dependencies
@@ -62,10 +70,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
-
-# change mirror
-RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
-    && sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
 # All absolute dir copies ignore workdir instruction. All relative dir copies are wrt to the workdir instruction
 # copy python dependency wheels from python-build-stage
