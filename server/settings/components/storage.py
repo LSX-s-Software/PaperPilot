@@ -27,7 +27,7 @@ ALIYUN_OSS = {
     "URL_EXPIRE_SECOND": 60 * 60 * 24 * 30,
     "TOKEN_EXPIRE_SECOND": 60,
     "MAX_SIZE_MB": 100,
-    "CALLBACK_BASE_URL": config("CALLBACK_BASE_URL"),
+    "CALLBACK_BASE_URL": config("CALLBACK_BASE_URL", "http://127.0.0.1:8000"),
 }
 
 # endregion
