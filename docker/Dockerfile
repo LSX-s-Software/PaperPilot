@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libpq-dev \
   git
   # poetry
-RUN pip install poetry
+RUN pip install poetry -i https://mirrors.aliyun.com/pypi/simple/
 
 WORKDIR /tmp
 
