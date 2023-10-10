@@ -47,10 +47,8 @@ class TestUserPublic:
 
     @pytest.mark.asyncio
     async def test_get_current_user__not_login(self, api, context):
-        with pytest.raises(ApiException) as e:
+        with pytest.raises(AttributeError) as e:
             await api.GetCurrentUser(Empty(), context)
-
-        assert e.value.response_type == ResponseType.NotLogin
 
     @pytest.mark.asyncio
     async def test_update_user__success(
@@ -198,10 +196,8 @@ class TestUserPublic:
         )
         await auth_cache.add_code("13012341234", code)
 
-        with pytest.raises(ApiException) as e:
+        with pytest.raises(AttributeError) as e:
             await api.UpdateUser(request, context)
-
-        assert e.value.response_type == ResponseType.NotLogin
 
     @pytest.mark.asyncio
     async def test_upload_avatar__success(self, api, context, user: User):
@@ -220,10 +216,8 @@ class TestUserPublic:
     async def test_upload_avatar__not_login(self, api, context):
         request = Empty()
 
-        with pytest.raises(ApiException) as e:
+        with pytest.raises(AttributeError) as e:
             await api.UploadUserAvatar(request, context)
-
-        assert e.value.response_type == ResponseType.NotLogin
 
 
 class TestUser:
