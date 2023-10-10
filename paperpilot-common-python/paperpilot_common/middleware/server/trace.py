@@ -38,8 +38,12 @@ class TraceMiddleware(AsyncServerMiddleware):
         start_time: float = time.time()
 
         # 获取request trace id
-        trace_id = dict(context.invocation_metadata()).get("x-trace-id", uuid.uuid4())
-        trace_id_context.set(UUID(trace_id))
+        trace_id = dict(context.invocation_metadata()).get("x-trace-id", None)
+        if trace_id:
+            trace_id_context.set(UUID(trace_id))
+        else:
+            self.logger.warning("trace_id not found")
+            trace_id_context.set(uuid.uuid4())
 
         try:
             # run grpc handler
