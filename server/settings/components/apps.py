@@ -10,7 +10,7 @@ DJANGO_APPS: list[str] = [
 THIRD_PARTY_APPS: list[str] = [
     "paperpilot_common.oss",  # oss
     "django_extensions",  # Django 扩展
-    "cacheops",  # ORM缓存
+    # "cacheops",  # ORM缓存
     "paperpilot_common.grpc",  # grpc
     "paperpilot_common.utils.admin_logs",  # admin日志
 ]
@@ -23,7 +23,7 @@ INSTALLED_APPS: list[str] = (
     DJANGO_APPS
     + THIRD_PARTY_APPS
     + LOCAL_APPS
-    + ["django_cleanup.apps.CleanupConfig"]  # 清理OSS文件, 需要放在最后
+    # + ["django_cleanup.apps.CleanupConfig"]  # 清理OSS文件, 需要放在最后
 )
 
 MIDDLEWARE: list[str] = [
