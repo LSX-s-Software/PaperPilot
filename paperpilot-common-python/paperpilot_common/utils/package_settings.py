@@ -1,13 +1,38 @@
 from typing import TYPE_CHECKING, Dict, List, Optional, Set, Union
 
 from django.conf import settings
-from rest_framework.settings import import_from_string, perform_import
+from django.utils.module_loading import import_string
 
 if TYPE_CHECKING:
     from paperpilot_common.utils.types import SimpleValue
 
     SettingValue = Union[None, SimpleValue, List["SettingValue"], Dict[str, "SettingValue"]]
     SettingDict = Dict[str, SettingValue]
+
+
+def import_from_string(val, setting_name):
+    """
+    Attempt to import a class from a string representation.
+    """
+    try:
+        return import_string(val)
+    except ImportError as e:
+        msg = "Could not import '%s' for API setting '%s'. %s: %s." % (val, setting_name, e.__class__.__name__, e)
+        raise ImportError(msg)
+
+
+def perform_import(val, setting_name):
+    """
+    If the given setting is a string import notation,
+    then perform the necessary import or imports.
+    """
+    if val is None:
+        return None
+    elif isinstance(val, str):
+        return import_from_string(val, setting_name)
+    elif isinstance(val, (list, tuple)):
+        return [import_from_string(item, setting_name) for item in val]
+    return val
 
 
 class PackageSettings:
