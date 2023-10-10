@@ -24,6 +24,8 @@ omit =
   /server/asgi.py
   /server/wsgi.py
   /server/urls.py
+  /server/settings/*
+  /server/urls.py
 
 
 [report]
