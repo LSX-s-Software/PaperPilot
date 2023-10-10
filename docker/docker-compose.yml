@@ -4,7 +4,7 @@ name: paperpilot-user
 services:
   ### server container ##########################################
   test:
-    image: ccr.ccs.tencentyun.com/paperpilot/paperpilot-user:latest
+    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:user
     env_file: ./.env
     networks:
       - paperpilot
