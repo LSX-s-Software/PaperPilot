@@ -15,7 +15,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   default-libmysqlclient-dev \
   pkg-config \
   # psycopg2 dependencies
-  libpq-dev
+  libpq-dev \
+  git
   # poetry
 RUN pip install poetry
 
