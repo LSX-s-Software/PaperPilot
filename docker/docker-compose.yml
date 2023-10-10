@@ -1,0 +1,18 @@
+version: "3.8"
+name: paperpilot-test
+
+services:
+  ### server container ##########################################
+  test:
+    image: ccr.ccs.tencentyun.com/paperpilot/paperpilot-test:latest
+    env_file: ./.env
+    networks:
+      - paperpilot
+      - kong_kong-net
+
+### Add Network Bridge info #########################################
+networks:
+  paperpilot:
+    external: true
+  kong_kong-net:
+    external: true
