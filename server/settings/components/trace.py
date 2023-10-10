@@ -1,19 +1,4 @@
-import MySQLdb
 import sentry_sdk
-from opentelemetry import trace
-from opentelemetry.instrumentation.dbapi import trace_integration
-from opentelemetry.instrumentation.django import DjangoInstrumentor
-from opentelemetry.instrumentation.grpc import (
-    GrpcAioInstrumentorClient,
-    GrpcAioInstrumentorServer,
-)
-from opentelemetry.instrumentation.redis import RedisInstrumentor
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import (
-    ConsoleSpanExporter,
-    SimpleSpanProcessor,
-)
-from paperpilot_common.trace import register_to_jaeger
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from server.settings.util import config
@@ -40,17 +25,26 @@ if SENTRY_ENABLE:
         send_default_pii=False,
     )
 
-JAEGER_HOST = config("JAEGER_HOST", None)
 
-# register_to_jaeger("paperpilot-backend-user", JAEGER_HOST)
-
-DjangoInstrumentor().instrument(is_sql_commentor_enabled=True)
-RedisInstrumentor().instrument()
-
-trace_integration(MySQLdb, "connect", "mysql")
-
-grpc_server_instrumentor = GrpcAioInstrumentorServer()
-grpc_server_instrumentor.instrument()
-
-grpc_client_instrumentor = GrpcAioInstrumentorClient()
-grpc_client_instrumentor.instrument()
+# from opentelemetry.instrumentation.dbapi import trace_integration
+# from opentelemetry.instrumentation.django import DjangoInstrumentor
+# from opentelemetry.instrumentation.grpc import (
+#     GrpcAioInstrumentorClient,
+#     GrpcAioInstrumentorServer,
+# )
+# from opentelemetry.instrumentation.redis import RedisInstrumentor
+#
+# JAEGER_HOST = config("JAEGER_HOST", None)
+#
+# # register_to_jaeger("paperpilot-backend-user", JAEGER_HOST)
+#
+# DjangoInstrumentor().instrument(is_sql_commentor_enabled=True)
+# RedisInstrumentor().instrument()
+#
+# trace_integration(MySQLdb, "connect", "mysql")
+#
+# grpc_server_instrumentor = GrpcAioInstrumentorServer()
+# grpc_server_instrumentor.instrument()
+#
+# grpc_client_instrumentor = GrpcAioInstrumentorClient()
+# grpc_client_instrumentor.instrument()
