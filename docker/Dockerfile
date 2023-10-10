@@ -85,4 +85,4 @@ COPY ./server/ server/
 
 EXPOSE 8001
 
-ENTRYPOINT ["python", "manage.py", "grpcserver", "--noreload"]
+ENTRYPOINT ["python", "manage.py", "grpcserver", "0.0.0.0:8001", "--noreload"]
