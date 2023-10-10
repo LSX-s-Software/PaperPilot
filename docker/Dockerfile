@@ -1,18 +1,14 @@
 # define an alias for the specfic python version used in this file.
-FROM python:3.11-slim-bullseye as python-build
-FROM python:3.11-alpine as python-run
+FROM python:3.11-alpine as python
 
 # Python build stage
-FROM python-build as python-build-stage
+FROM python as python-build-stage
 
-# Install apt packages
-RUN apt-get update && apt-get install --no-install-recommends -y \
-  # dependencies for building Python packages
-  build-essential \
-  default-libmysqlclient-dev \
-  pkg-config \
-  # psycopg2 dependencies
-  libpq-dev \
+## Install apk packages
+RUN apk update && apk add \
+#  # dependencies for building Python packages
+#  build-essential \
+#  pkg-config \
   git
 
 WORKDIR /tmp
@@ -23,7 +19,7 @@ RUN pip wheel --wheel-dir /usr/src/app/wheels git+https://github.com/Nagico/pape
 # Delete setuptools and pip to avoid conflicts with the system packages
 RUN rm -rf /usr/src/app/wheels/setuptools* /usr/src/app/wheels/pip*
 
-FROM python-run as python-run-stage
+FROM python as python-run-stage
 
 ARG APP_HOME=/app
 
