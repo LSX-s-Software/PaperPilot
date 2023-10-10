@@ -19,7 +19,7 @@ GRPC_SERVER = {
 GRPC_CLIENT = {
     "clients": {
         "user": {
-            "server_host": config("USER_GRPC_HOST"),
+            "server_host": config("USER_GRPC_HOST", "user:8000"),
         },
     }
 }

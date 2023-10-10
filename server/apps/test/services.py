@@ -1,11 +1,9 @@
 import uuid
 
 from django.utils import timezone
-from paperpilot_common.exceptions import ApiException
 from paperpilot_common.helper.field import datetime_to_timestamp
 from paperpilot_common.protobuf.test.test_pb2 import TestResult
 from paperpilot_common.protobuf.user.user_pb2 import UserId
-from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 
 from server.business.grpc import user_client
