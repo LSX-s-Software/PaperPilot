@@ -32,6 +32,7 @@ jobs:
         run: |
           poetry export --with test --without dev --output requirements.txt --without-urls
           poetry run pip install -r requirements.txt
+          poetry run pip install git+https://github.com/Nagico/paperpilot-common.git#subdirectory=paperpilot-common-python
       - name: Style check
         run: |
           poetry run black --check server
