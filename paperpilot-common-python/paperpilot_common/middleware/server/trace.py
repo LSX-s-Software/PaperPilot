@@ -9,6 +9,7 @@ from grpc_status import rpc_status
 
 from paperpilot_common.exceptions.handler import ApiExceptionHandler
 from paperpilot_common.middleware.server.base import AsyncServerMiddleware, parse_method_name
+from paperpilot_common.utils.db import close_old_connections
 from paperpilot_common.utils.log import get_logger
 
 trace_id_context: ContextVar[UUID] = ContextVar("trace_id", default=UUID(int=0))
@@ -45,6 +46,7 @@ class TraceMiddleware(AsyncServerMiddleware):
             self.logger.warning("trace_id not found")
             trace_id_context.set(uuid.uuid4())
 
+            close_old_connections()
         try:
             # run grpc handler
             response = await method(request_or_iterator, context)
