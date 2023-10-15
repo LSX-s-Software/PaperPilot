@@ -20,7 +20,6 @@ def map_exception_to_response_type(exception):
     from django.db import DatabaseError, IntegrityError
     from django.http import Http404
     from django.urls.exceptions import NoReverseMatch
-    from rest_framework.exceptions import APIException
 
     if isinstance(exception, ValidationError):
         # Django 验证错误，可以映射为参数错误的 ResponseType
@@ -37,9 +36,6 @@ def map_exception_to_response_type(exception):
     elif isinstance(exception, ObjectDoesNotExist):
         # Django 对象不存在异常，可以映射为资源不存在的 ResponseType
         return ResponseType.ResourceNotFound
-    elif isinstance(exception, APIException):
-        # REST framework 中的 API 异常，可以映射为客户端错误的 ResponseType
-        return ResponseType.ClientError
     elif isinstance(exception, NoReverseMatch):
         # Django URL 反向匹配异常，可以映射为请求接口不存在的 ResponseType
         return ResponseType.APINotFound
