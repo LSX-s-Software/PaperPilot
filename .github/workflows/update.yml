@@ -19,9 +19,9 @@ jobs:
 
     - name: Update Subtree
       run: |
-        git subtree pull --prefix=test test main
-        git subtree pull --prefix=user user main
-        git subtree pull --prefix=reflection reflection main
+        git subtree pull --prefix=paperpilot-backend-test test main
+        git subtree pull --prefix=paperpilot-backend-user user main
+        git subtree pull --prefix=paperpilot-backend-reflection reflection main
 
     - name: Push Changes
       run: |
