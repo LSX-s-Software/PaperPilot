@@ -4,7 +4,7 @@ from paperpilot_common.utils.cache import Cache
 class Key:
     @staticmethod
     def code(phone: str) -> str:
-        return f"phone:{phone}"
+        return f"code:{phone}"
 
 
 class AuthCache(Cache):
@@ -22,7 +22,9 @@ class AuthCache(Cache):
         :param phone: 手机号
         :param code: 验证码
         """
-        await self.set_async(Key.code(phone), code)
+        await self.set_async(
+            Key.code(phone), code, timeout=self.default_timeout
+        )
 
     async def get_code(self, phone: str) -> str | None:
         """

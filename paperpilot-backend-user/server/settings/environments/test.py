@@ -1,10 +1,11 @@
 from server.settings.components.configs import DatabaseConfig
+from server.settings.util import config
 
 DEBUG = False
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
 DATABASES = DatabaseConfig.get(
-    "mysql://paperpilot:paperpilot@localhost:3306/paperpilot"
+    config("TEST_DATABASE_URL", default="sqlite:///db.sqlite3"),
 )
 
 

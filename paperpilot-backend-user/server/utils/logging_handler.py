@@ -1,7 +1,6 @@
 # 先声明一个类继承logging.Handler
 import logging
 import os
-import sys
 
 from loguru import logger
 
