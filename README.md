@@ -1,6 +1,6 @@
 <div align="center">
 
-# PaperPilot 后端 - 论文服务
+# PaperPilot 后端 - 项目服务
 
 <!-- markdownlint-disable-next-line MD036 -->
 _✨ Author: [Nagico](https://github.com/Nagico/) ✨_

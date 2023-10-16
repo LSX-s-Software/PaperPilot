@@ -1,14 +1,16 @@
 version: "3.8"
-name: paperpilot-user
+name: paperpilot-project
 
 services:
   ### server container ##########################################
-  test:
-    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:user
+  project:
+    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:project
     env_file: ./.env
     networks:
       - paperpilot
       - kong_kong-net
+    ports:
+      - "18002:8001"
 
 ### Add Network Bridge info #########################################
 networks:
