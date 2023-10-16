@@ -1,7 +1,7 @@
 name: Update Subtree Modules
 on:
-  schedule:
-    - cron: '0 20 * * *' # 上午 4 点执行
+  # schedule:
+  #   - cron: '0 20 * * *' # 上午 4 点执行
   workflow_dispatch: 
 
 jobs:
