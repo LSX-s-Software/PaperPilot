@@ -19,6 +19,9 @@ jobs:
 
     - name: Update Subtree
       run: |
+        git remote add test https://github.com/Nagico/paperpilot-backend-test.git
+        git remote add user https://github.com/Nagico/paperpilot-backend-user.git
+        git remote add reflection https://github.com/Nagico/paperpilot-backend-reflection.git
         git subtree pull --prefix=paperpilot-backend-test test main
         git subtree pull --prefix=paperpilot-backend-user user main
         git subtree pull --prefix=paperpilot-backend-reflection reflection main
