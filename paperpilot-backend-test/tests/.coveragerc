@@ -23,6 +23,7 @@ omit =
   /manage.py
   /server/asgi.py
   /server/wsgi.py
+  /server/settings/*
   /server/urls.py
 
 

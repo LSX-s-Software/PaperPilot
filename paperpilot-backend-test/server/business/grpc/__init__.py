@@ -1,1 +1,1 @@
-from .user import user_client
+from .user import user_client  # noqa: F401

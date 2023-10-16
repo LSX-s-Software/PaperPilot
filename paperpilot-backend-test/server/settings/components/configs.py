@@ -128,6 +128,12 @@ class LogConfig:
                 "propagate": True,
                 "level": "${level}",
             },
+            # grpc全局绑定
+            "grpc": {
+                "handlers": ["server"],
+                "propagate": True,
+                "level": "${level}",
+            },
             "celery": {
                 "handlers": ["server"],
                 "propagate": False,
@@ -147,6 +153,12 @@ class LogConfig:
             "werkzeug": {
                 "handlers": ["debug"],
                 "propagate": False,
+                "level": "${level}",
+            },
+            # 其他
+            "root": {
+                "handlers": ["server"],
+                "propagate": True,
                 "level": "${level}",
             },
         },
