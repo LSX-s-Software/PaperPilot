@@ -1,0 +1,44 @@
+syntax = "proto3";
+package exec;
+import "google/protobuf/timestamp.proto";
+
+
+// 标准异常响应
+message ApiException{
+    // 错误码，详见：paperpilot-common-python/paperpilot_common.response.ResponseType
+    string code = 1;
+    // 获取异常详情(面向开发者)
+    string detail = 2;
+    // 获取异常信息(面向用户)
+    string message = 3;
+    // 其他数据
+    ApiExceptionData data = 4;
+}
+
+
+// 详细异常数据
+message ApiExceptionData {
+    // 异常 id(可选，仅限异常被数据库记录时返回)
+    string eid = 1;
+    // sentry id(可选，仅限异常被sentry记录时返回)
+    string sentry_id = 2;
+    // 时间
+    google.protobuf.Timestamp time = 3;
+    // python异常信息(可选，仅限debug时返回)
+    ExceptionInfo info = 4;
+}
+
+
+// python异常信息
+message ExceptionInfo {
+    // 异常类型
+    string type = 1;
+    // 异常内容
+    string value = 2;
+    // 异常堆栈
+    repeated string traceback = 3;
+    // 内部异常类型
+    string inner_type = 4;
+    // 内部异常内容
+    string inner_value = 5;
+}
