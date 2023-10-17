@@ -1,0 +1,31 @@
+name: Update Subtree Modules
+on:
+  # schedule:
+  #   - cron: '0 20 * * *' # 上午 4 点执行
+  workflow_dispatch: 
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set Up Git Config
+      run: |
+        git config --global user.name "Github Actions"
+        git config --global user.email "actions@github.com"
+
+    - name: Update Subtree
+      run: |
+        git remote add test https://github.com/Nagico/paperpilot-backend-test.git
+        git remote add user https://github.com/Nagico/paperpilot-backend-user.git
+        git remote add reflection https://github.com/Nagico/paperpilot-backend-reflection.git
+        git subtree pull --prefix=paperpilot-backend-test test main
+        git subtree pull --prefix=paperpilot-backend-user user main
+        git subtree pull --prefix=paperpilot-backend-reflection reflection main
+
+    - name: Push Changes
+      run: |
+        git push
