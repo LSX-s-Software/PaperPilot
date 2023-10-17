@@ -1,6 +1,14 @@
 # PaperPilot 主仓库
 多平台多人协作文献管理软件
 
+## 项目子仓库
+
+> 主仓库**不会实时更新**，如需查看最新进展，请访问下列子仓库
+
+- [PaperPilotApp](https://github.com/LSX-s-Software/PaperPilotApp)
+- [paperpilot-common](https://github.com/Nagico/paperpilot-common)
+- [paperpilot-backend](https://github.com/Nagico/paperpilot-backend)
+
 ## 核心功能
 
 > 功能正在开发中
