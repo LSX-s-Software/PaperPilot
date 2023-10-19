@@ -12,7 +12,7 @@ from paperpilot_common.utils.log import get_logger
 class FakeStub:
     logger = get_logger("grpc.client.project.fake_stub")
 
-    def CheckUserJoinedProject(
+    async def CheckUserJoinedProject(
         self, request: CheckUserJoinedProjectRequest
     ) -> BoolValue:
         self.logger.info(
