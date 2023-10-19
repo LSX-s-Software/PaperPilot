@@ -99,7 +99,7 @@ message CreatePaperRequest {
 
 service PaperService {
     // 添加论文
-    rpc AddPaper(CreatePaperRequest) returns (PaperDetail);
+    rpc AddPaper(PaperDetail) returns (PaperDetail);
 
     // 更新论文
     rpc UpdatePaper(PaperDetail) returns (PaperDetail);

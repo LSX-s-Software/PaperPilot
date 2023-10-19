@@ -17,7 +17,7 @@ class PaperServiceStub(object):
         """
         self.AddPaper = channel.unary_unary(
             "/paper.PaperService/AddPaper",
-            request_serializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.CreatePaperRequest.SerializeToString,
+            request_serializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.SerializeToString,
             response_deserializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.FromString,
         )
         self.UpdatePaper = channel.unary_unary(
@@ -47,7 +47,7 @@ def add_PaperServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
         "AddPaper": grpc.unary_unary_rpc_method_handler(
             servicer.AddPaper,
-            request_deserializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.CreatePaperRequest.FromString,
+            request_deserializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.FromString,
             response_serializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.SerializeToString,
         ),
         "UpdatePaper": grpc.unary_unary_rpc_method_handler(
@@ -81,7 +81,7 @@ class PaperService(object):
             request,
             target,
             "/paper.PaperService/AddPaper",
-            paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.CreatePaperRequest.SerializeToString,
+            paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.SerializeToString,
             paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.FromString,
             options,
             channel_credentials,

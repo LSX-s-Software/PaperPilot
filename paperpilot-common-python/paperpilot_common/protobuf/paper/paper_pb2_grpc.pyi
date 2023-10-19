@@ -20,7 +20,7 @@ class _ServicerContext(grpc.ServicerContext, grpc.aio.ServicerContext):  # type:
 class PaperServiceStub:
     def __init__(self, channel: typing.Union[grpc.Channel, grpc.aio.Channel]) -> None: ...
     AddPaper: grpc.UnaryUnaryMultiCallable[
-        paperpilot_common.protobuf.paper.paper_pb2.CreatePaperRequest,
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
     ]
     """添加论文"""
@@ -32,7 +32,7 @@ class PaperServiceStub:
 
 class PaperServiceAsyncStub:
     AddPaper: grpc.aio.UnaryUnaryMultiCallable[
-        paperpilot_common.protobuf.paper.paper_pb2.CreatePaperRequest,
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
     ]
     """添加论文"""
@@ -46,7 +46,7 @@ class PaperServiceServicer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def AddPaper(
         self,
-        request: paperpilot_common.protobuf.paper.paper_pb2.CreatePaperRequest,
+        request: paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
         context: _ServicerContext,
     ) -> typing.Union[
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
