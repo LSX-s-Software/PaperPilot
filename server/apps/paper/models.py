@@ -25,7 +25,7 @@ class Paper(models.Model):
 
     tags = models.JSONField(default=list, verbose_name="标签列表")
 
-    publication_date = models.DateField(verbose_name="发表日期")
+    publication_date = models.DateField(null=True, verbose_name="发表日期")
     publication = models.CharField(max_length=255, verbose_name="出版方")
     volume = models.CharField(max_length=255, verbose_name="卷")
     issue = models.CharField(max_length=255, verbose_name="期")
@@ -34,7 +34,8 @@ class Paper(models.Model):
     doi = models.CharField(max_length=255, verbose_name="DOI")
     url = models.CharField(max_length=255, verbose_name="URL")
 
-    file = models.FileField(upload_to="paper/", verbose_name="文件")
+    FILE_PATH = "paper"
+    file = models.FileField(upload_to=FILE_PATH, verbose_name="文件")
 
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间")
