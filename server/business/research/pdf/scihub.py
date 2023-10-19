@@ -2,10 +2,11 @@ from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
 from server.business.research.pdf.base import PdfFetch, PdfFile
+from server.business.research.pdf.config import SCIHUB_BASE_URL
 
 
 class ScihubFetch(PdfFetch):
-    base_url = "https://sci-hub.se"
+    base_url = SCIHUB_BASE_URL
     logger_name = "business.research.pdf.scihub"
 
     headers = {

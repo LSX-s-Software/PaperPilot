@@ -214,7 +214,7 @@ class PaperService:
 
         paper = Paper()
 
-        await self.paper_updater.update(paper, vo)
+        await self.paper_public_updater.update(paper, vo)
         paper.project_id = project_id
         await paper.asave()
 
