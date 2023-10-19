@@ -101,7 +101,11 @@ class PaperPublicController(
             paperpilot_common.protobuf.paper.paper_pb2.PaperDetail
         ],
     ]:
-        pass
+        return await paper_service.create_paper_by_link(
+            user_id=self.user.id,
+            project_id=uuid.UUID(request.project_id),
+            url=request.link,
+        )
 
     async def UpdatePaper(
         self,
@@ -132,7 +136,7 @@ class PaperPublicController(
         ],
     ]:
         token = generate_direct_upload_token(
-            callback_url=f"callback/paper/file/?id={request.paper_id}",
+            callback_url=f"callback/paper/file/?paper_id={request.paper_id}&fetch_metadata={request.fetch_metadata}",
             content_type=["application/pdf"],
             key=f"{Paper.FILE_PATH}/{get_random_name('.pdf')}",
             min_size="1b",

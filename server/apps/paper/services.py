@@ -1,8 +1,12 @@
+import datetime
 import uuid
 
+from asgiref.sync import sync_to_async
+from django.core.files.base import ContentFile
 from paper.models import Paper
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.helper.field import datetime_to_timestamp
+from paperpilot_common.oss.utils import get_random_name
 from paperpilot_common.protobuf.common.util_pb2 import Date
 from paperpilot_common.protobuf.paper.paper_pb2 import PaperDetail, PaperInfo
 from paperpilot_common.protobuf.project.project_pb2 import (
@@ -12,6 +16,7 @@ from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 
 from server.business.grpc.project import project_client
+from server.business.research import ScihubFetch
 
 from .cache import project_cache
 from .updaters import PaperPublicUpdater, PaperUpdater
@@ -23,6 +28,8 @@ class PaperService:
 
     paper_updater = PaperUpdater()
     paper_public_updater = PaperPublicUpdater()
+
+    pdf_fetch = ScihubFetch()
 
     async def _check_user_project(
         self, user_id: uuid.UUID, project_id: uuid.UUID
@@ -275,6 +282,58 @@ class PaperService:
         await self.paper_updater.update(paper, vo, save=True)
 
         return await self._get_paper_detail(paper)
+
+    async def create_paper_by_link(
+        self, user_id: uuid.UUID, project_id: uuid.UUID, url: str
+    ) -> PaperDetail:
+        """
+        通过链接创建论文
+
+        :param user_id: 用户ID
+        :param project_id: 项目ID
+        :param url: 链接
+        """
+        await self._check_user_project(user_id, project_id)
+
+        pdf_file = await self.pdf_fetch.fetch(url)
+
+        if not pdf_file.success:
+            raise ApiException(
+                ResponseType.ThirdServiceError,
+                msg="获取PDF文件失败",
+                detail="很抱歉，您输入的链接暂不支持直接创建论文，请尝试其他方法创建",
+                record=False,
+            )
+
+        paper = Paper()
+
+        paper.url = url
+
+        metadata = pdf_file.metadata
+
+        if "author" in metadata:
+            paper.authors = metadata["author"]
+        if "year" in metadata:
+            paper.publication_date = datetime.date(metadata["year"], 1, 1)
+        if "title" in metadata:
+            paper.title = metadata["title"]
+        if "publication" in metadata:
+            paper.publication = metadata["publication"]
+        if "doi" in metadata:
+            paper.doi = metadata["doi"]
+
+        paper.project_id = project_id
+
+        await self._upload_file(paper, pdf_file.file)
+
+        await paper.asave()
+
+        return await self._get_paper_detail(paper)
+
+    @sync_to_async
+    def _upload_file(self, paper: Paper, file: bytes):
+        filename = get_random_name(".pdf")
+        paper.file.save(filename, ContentFile(file, name=filename))
 
 
 paper_service: PaperService = PaperService()

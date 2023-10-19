@@ -382,6 +382,29 @@ class TestPaperPublic:
 
         assert exc.value.response_type == ResponseType.ResourceNotFound
 
+    @pytest.mark.asyncio
+    async def test_create_paper_by_link(
+        self, api, context, user_id, project_id
+    ):
+        from paperpilot_common.protobuf.paper.paper_pb2 import (
+            CreatePaperByLinkRequest,
+        )
+
+        request = CreatePaperByLinkRequest(
+            project_id=project_id.hex,
+            link="https://ieeexplore.ieee.org/abstract/document/8952379",
+        )
+
+        context.authenticate(user_id)
+
+        response = await api.CreatePaperByLink(request, context)
+        assert response.project_id == project_id.hex
+        assert response.file != ""
+        assert (
+            response.title
+            == "RANDR: Record and Replay for Android Applications via Targeted Runtime Instrumentation"
+        )
+
 
 class TestPaperController:
     @pytest.fixture
