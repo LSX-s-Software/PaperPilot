@@ -3,7 +3,7 @@ name: paperpilot-paper
 
 services:
   ### server container ##########################################
-  test:
+  paper:
     image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:paper
     env_file: ./.env
     networks:
