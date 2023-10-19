@@ -1,12 +1,16 @@
+import re
+
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
 from server.business.research.pdf.base import PdfFetch, PdfFile
-from server.business.research.pdf.config import SCIHUB_BASE_URL
+
+# from server.business.research.pdf.config import SCIHUB_BASE_URL
 
 
 class ScihubFetch(PdfFetch):
-    base_url = SCIHUB_BASE_URL
+    # base_url = SCIHUB_BASE_URL
+    base_url = "https://sci-hub.se"
     logger_name = "business.research.pdf.scihub"
 
     headers = {
@@ -53,22 +57,25 @@ class ScihubFetch(PdfFetch):
         soup = BeautifulSoup(html, "html.parser")
         pdf_url = soup.find("embed", {"id": "pdf"}).attrs["src"]
         self.logger.debug(f"pdf_url: {pdf_url}")
-        pdf_file.file = await self._download(f"{self.base_url}/{pdf_url}")
+        # pdf_file.file = await self._download(f"{self.base_url}/{pdf_url}")
         pdf_file.success = True
 
         try:
-            metadata = soup.find("div", {"id": "citation"}).text.split(". ")
+            metadata = soup.find("div", {"id": "citation"}).text
 
-            if len(metadata) == 5:
+            pattern = r"^(.*?)\s\((\d{4})\)\.\s(.*?)\.\s(.*?)\.\sdoi:(\S+)"
+            match = re.match(pattern, metadata).groups()
+
+            if len(match) >= 5:
                 pdf_file.metadata = {
                     "author": [
                         f"{author.strip().strip('&').strip()}."
-                        for author in metadata[0].split("., ")
+                        for author in match[0].split("., ")
                     ],
-                    "year": int(metadata[1][1:-1]),
-                    "title": metadata[2],
-                    "publication": metadata[3],
-                    "doi": metadata[4].strip("doi:").strip(),
+                    "year": int(match[1]),
+                    "title": match[2].strip(),
+                    "publication": match[3].strip(),
+                    "doi": match[4].strip(),
                 }
         except Exception as e:
             self.logger.debug(f"parse metadata failed: {e}")
@@ -103,6 +110,6 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
         ScihubFetch().fetch(
-            "https://ieeexplore.ieee.org/abstract/document/8952379"
+            "https://ieeexplore.ieee.org/abstract/document/8966712"
         )
     )
