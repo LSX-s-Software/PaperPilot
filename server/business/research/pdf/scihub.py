@@ -68,7 +68,7 @@ class ScihubFetch(PdfFetch):
                     "year": int(metadata[1][1:-1]),
                     "title": metadata[2],
                     "publication": metadata[3],
-                    "doi": metadata[4].strip("doi:"),
+                    "doi": metadata[4].strip("doi:").strip(),
                 }
         except Exception as e:
             self.logger.debug(f"parse metadata failed: {e}")
