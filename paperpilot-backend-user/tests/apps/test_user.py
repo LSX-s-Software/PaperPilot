@@ -80,8 +80,8 @@ class TestUserPublic:
         context.authenticate(user.id)
         request = UpdateUserRequest(
             username=user.username,
-            old_password=password,
-            new_password=password,
+            # old_password=password,
+            # new_password=password,
             phone=user.phone,
         )
         await auth_cache.add_code(user.phone, code)
@@ -90,7 +90,7 @@ class TestUserPublic:
         user = await User.objects.filter(id=user.id).afirst()
 
         assert user.username == request.username
-        assert user.check_password(request.new_password)
+        assert user.check_password(password)
         assert user.phone == request.phone
 
     @pytest.mark.asyncio

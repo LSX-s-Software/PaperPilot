@@ -11,7 +11,7 @@ class UserUpdater(Updater):
     logger_name = "service.user.updater"
 
     async def diff_password(self, obj: User, vo: UpdateUserRequest) -> bool:
-        return vo.new_password is not None
+        return vo.new_password != ""
 
     async def update_password(self, obj: User, vo: UpdateUserRequest) -> None:
         if obj.check_password(vo.old_password) is False:
