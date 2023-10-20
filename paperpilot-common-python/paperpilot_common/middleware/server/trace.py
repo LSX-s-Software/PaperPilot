@@ -1,6 +1,5 @@
 import time
 import uuid
-from contextvars import ContextVar
 from typing import Any, Callable
 from uuid import UUID
 
@@ -9,20 +8,9 @@ from grpc_status import rpc_status
 
 from paperpilot_common.exceptions.handler import ApiExceptionHandler
 from paperpilot_common.middleware.server.base import AsyncServerMiddleware, parse_method_name
+from paperpilot_common.middleware.server.context import get_trace_id, trace_id_context
 from paperpilot_common.utils.db import close_old_connections
 from paperpilot_common.utils.log import get_logger
-
-trace_id_context: ContextVar[UUID] = ContextVar("trace_id", default=UUID(int=0))
-
-
-def get_trace_id() -> UUID:
-    """
-    获取trace_id
-    """
-    trace_id = trace_id_context.get()
-    if trace_id is None:
-        trace_id = uuid.uuid4()
-    return trace_id
 
 
 class TraceMiddleware(AsyncServerMiddleware):

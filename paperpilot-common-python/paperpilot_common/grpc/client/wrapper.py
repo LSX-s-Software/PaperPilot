@@ -1,14 +1,13 @@
 import functools
 
-from paperpilot_common.grpc.client.cache import StubCache
-from paperpilot_common.middleware.server.trace import get_trace_id
+from paperpilot_common.middleware.server.context import get_trace_id
 from paperpilot_common.utils.log import get_logger
 
 
 class StubCacheWrapper:
-    cache: StubCache
-
     def __init__(self, stub):
+        from paperpilot_common.grpc.client.cache import StubCache
+
         self.stub = stub
         self.stub_name = stub.__class__.__name__
         self.cache = StubCache(self.stub_name)
