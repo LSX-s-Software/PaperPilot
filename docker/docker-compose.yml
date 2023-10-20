@@ -1,0 +1,25 @@
+version: "3.8"
+name: paperpilot-coordinator
+
+services:
+  ### server container ##########################################
+  coordinator:
+    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:coordinator
+    env_file: ./.env
+    networks:
+      - paperpilot
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paperpilot-coordinator.rule=Host(`coordinator.paperpilot.ziqiang.net.cn`)"
+      - "traefik.http.routers.paperpilot-coordinator.entrypoints=websecure"
+      - "traefik.http.routers.paperpilot-coordinator.service=paperpilot-coordinator"
+      - "traefik.http.services.paperpilot-coordinator.loadbalancer.server.port=8000"
+
+
+### Add Network Bridge info #########################################
+networks:
+  paperpilot:
+    external: true
+  traefik:
+    external: true

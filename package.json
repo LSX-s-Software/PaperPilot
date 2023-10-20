@@ -1,0 +1,30 @@
+{
+  "name": "paperpilot-backend-coordination",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Nagico/paperpilot-backend-coordination.git"
+  },
+  "author": "Nagico",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nagico/paperpilot-backend-coordination/issues"
+  },
+  "homepage": "https://github.com/Nagico/paperpilot-backend-coordination#readme",
+  "dependencies": {
+    "ot-json1": "^1.0.2",
+    "redis": "^4.6.10",
+    "sharedb": "^4.1.1",
+    "sharedb-mongo": "^4.1.0",
+    "sharedb-redis-pubsub": "^4.0.0",
+    "websocket-push-stream": "^0.1.1",
+    "ws": "^8.14.2"
+  }
+}
