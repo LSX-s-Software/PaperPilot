@@ -6,6 +6,10 @@ import pytz
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.middleware.server.context import trace_id_context
 from paperpilot_common.oss.callback import OssCallbackChecker
+from paperpilot_common.protobuf.paper.paper_pb2 import (
+    PaperDetail,
+    UpdateAttachmentRequest,
+)
 from paperpilot_common.protobuf.user.user_pb2 import (
     UpdateUserAvatarRequest,
     UserDetail,
@@ -16,6 +20,7 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
+from server.business.grpc.paper import paper_client
 from server.business.grpc.user import user_client
 
 
@@ -118,3 +123,70 @@ class CallbackUserAvatarView(BaseCallbackView):
                 .isoformat(),
             }
         )
+
+
+class CallbackPaperFileView(BaseCallbackView):
+    logger_name = "callback.paper.file.view"
+    paper_service = paper_client.stub
+
+    async def handle(
+        self, query: dict[str, str], body: dict[str, str], request: Request
+    ) -> JSONResponse:
+        paper_id = query.get("paper_id", None)
+        if paper_id is None:
+            raise ApiException(
+                ResponseType.ParamEmpty, "paper_id不能为空", record=True
+            )
+
+        key = body.get("object", None)
+        if key is None:
+            raise ApiException(
+                ResponseType.ParamEmpty, "object不能为空", record=True
+            )
+
+        self.logger.debug(
+            f"callback update paper file, paper_id: {paper_id}, object: {key}"
+        )
+
+        paper_detail: PaperDetail = await self.paper_service.UpdateAttachment(
+            UpdateAttachmentRequest(
+                paper_id=paper_id,
+                file=key,
+                fetch_metadata=query.get("fetch_metadata", "false").lower()
+                == "true",
+            )
+        )
+
+        result = {
+            "id": paper_detail.id,
+            "file": paper_detail.file,
+        }
+
+        if paper_detail.title != "":
+            result["title"] = paper_detail.title
+        if paper_detail.abstract != "":
+            result["abstract"] = paper_detail.abstract
+        if len(list(paper_detail.keywords)) != 0:
+            result["keywords"] = list(paper_detail.keywords)
+        if len(list(paper_detail.authors)) != 0:
+            result["authors"] = list(paper_detail.authors)
+        if len(list(paper_detail.tags)) != 0:
+            result["tags"] = list(paper_detail.tags)
+        if paper_detail.publication_date.ByteSize() != 0:
+            result[
+                "publication_date"
+            ] = f"{paper_detail.publication_date.year}-{paper_detail.publication_date.month}-{paper_detail.publication_date.day}"
+        if paper_detail.publication != "":
+            result["publication"] = paper_detail.publication
+        if paper_detail.issue != "":
+            result["issue"] = paper_detail.issue
+        if paper_detail.volume != "":
+            result["volume"] = paper_detail.volume
+        if paper_detail.pages != "":
+            result["pages"] = paper_detail.pages
+        if paper_detail.doi != "":
+            result["doi"] = paper_detail.doi
+        if paper_detail.url != "":
+            result["url"] = paper_detail.url
+
+        return JSONResponse(result)

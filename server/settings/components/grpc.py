@@ -25,5 +25,8 @@ GRPC_CLIENT = {
         "project": {
             "server_host": config("PROJECT_GRPC_HOST", "project:8001"),
         },
+        "paper": {
+            "server_host": config("PAPER_GRPC_HOST", "paper:8001"),
+        },
     }
 }

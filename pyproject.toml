@@ -20,8 +20,6 @@ sentry-sdk = "^1.31.0"
 pytz = "^2023.3.post1"
 starlette = "^0.31.1"
 aiohttp = "^3.8.6"
-daphne = "^4.0.0"
-twisted = {extras = ["http2", "tls"], version = "^23.8.0"}
 uvicorn = "^0.23.2"
 
 

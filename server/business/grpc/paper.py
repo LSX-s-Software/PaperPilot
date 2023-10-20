@@ -1,6 +1,8 @@
 from paperpilot_common.grpc.client import GrpcClient
 from paperpilot_common.protobuf.paper.paper_pb2_grpc import PaperServiceStub
 
+from server import settings
+
 
 class PaperClient(GrpcClient):
     """
@@ -8,7 +10,7 @@ class PaperClient(GrpcClient):
     """
 
     server_name = "paper"
-    server_host = "localhost"
+    server_host = settings.GRPC_CLIENT["clients"]["paper"]["server_host"]
     stub_cls = PaperServiceStub
 
     @property
