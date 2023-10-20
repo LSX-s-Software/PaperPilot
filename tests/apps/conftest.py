@@ -1,4 +1,3 @@
-import uuid
 from typing import Tuple
 from uuid import UUID
 
