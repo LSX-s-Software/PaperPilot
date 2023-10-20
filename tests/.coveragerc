@@ -1,0 +1,42 @@
+# this file only takes effect if you run command in the `tests` folder
+# in order to support PyCharm test default config: Working directory is in the tests folder
+
+[run]
+omit =
+  */migrations/*
+  */__version__.py
+  */tests/*
+  */tests.py
+  */setup.py
+  */setup.cfg
+  */.tox/*
+  */.venv/*
+  */business/*
+  */asgi.py
+  */wsgi.py
+  */celery.py
+  */docs/*
+  */logging_handler.py
+  */async_tasks/management/*
+  */async_tasks/utils.py
+  /runtests.py
+  /manage.py
+  /server/asgi.py
+  /server/wsgi.py
+  /server/urls.py
+  /server/settings/*
+  /server/urls.py
+
+
+[report]
+exclude_lines =
+  pragma: no cover
+  def __repr__
+  if TYPE_CHECKING
+  raise AssertionError
+  raise NotImplementedError
+  if 0:
+  if __name__ == .__main__.:
+  class .*\bProtocol\):
+  @(abc\.)?abstractmethod
+  if settings._ENV == "test"
