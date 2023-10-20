@@ -61,7 +61,7 @@ class OssCallbackChecker:
         :param pub_key_url_base64: url base64
         :return:
         """
-        if self.verifier.get(pub_key_url_base64, None) is not None:
+        if self.verifier.get(pub_key_url_base64, None) is None:
             # 对x-oss-pub-key-url做base64解码后获取到公钥
             pub_key_url = base64.b64decode(pub_key_url_base64).decode()
 
