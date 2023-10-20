@@ -25,6 +25,11 @@ class PaperServiceStub(object):
             request_serializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.SerializeToString,
             response_deserializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.FromString,
         )
+        self.UpdateAttachment = channel.unary_unary(
+            "/paper.PaperService/UpdateAttachment",
+            request_serializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.UpdateAttachmentRequest.SerializeToString,
+            response_deserializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.FromString,
+        )
 
 
 class PaperServiceServicer(object):
@@ -42,6 +47,12 @@ class PaperServiceServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def UpdateAttachment(self, request, context):
+        """更新论文附件"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
 
 def add_PaperServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +64,11 @@ def add_PaperServiceServicer_to_server(servicer, server):
         "UpdatePaper": grpc.unary_unary_rpc_method_handler(
             servicer.UpdatePaper,
             request_deserializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.FromString,
+            response_serializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.SerializeToString,
+        ),
+        "UpdateAttachment": grpc.unary_unary_rpc_method_handler(
+            servicer.UpdateAttachment,
+            request_deserializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.UpdateAttachmentRequest.FromString,
             response_serializer=paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.SerializeToString,
         ),
     }
@@ -111,6 +127,35 @@ class PaperService(object):
             target,
             "/paper.PaperService/UpdatePaper",
             paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.SerializeToString,
+            paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def UpdateAttachment(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/paper.PaperService/UpdateAttachment",
+            paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.UpdateAttachmentRequest.SerializeToString,
             paperpilot__common_dot_protobuf_dot_paper_dot_paper__pb2.PaperDetail.FromString,
             options,
             channel_credentials,

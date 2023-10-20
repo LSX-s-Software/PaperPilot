@@ -29,6 +29,11 @@ class PaperServiceStub:
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
     ]
     """更新论文"""
+    UpdateAttachment: grpc.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.paper.paper_pb2.UpdateAttachmentRequest,
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
+    ]
+    """更新论文附件"""
 
 class PaperServiceAsyncStub:
     AddPaper: grpc.aio.UnaryUnaryMultiCallable[
@@ -41,6 +46,11 @@ class PaperServiceAsyncStub:
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
     ]
     """更新论文"""
+    UpdateAttachment: grpc.aio.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.paper.paper_pb2.UpdateAttachmentRequest,
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
+    ]
+    """更新论文附件"""
 
 class PaperServiceServicer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
@@ -63,6 +73,16 @@ class PaperServiceServicer(metaclass=abc.ABCMeta):
         collections.abc.Awaitable[paperpilot_common.protobuf.paper.paper_pb2.PaperDetail],
     ]:
         """更新论文"""
+    @abc.abstractmethod
+    def UpdateAttachment(
+        self,
+        request: paperpilot_common.protobuf.paper.paper_pb2.UpdateAttachmentRequest,
+        context: _ServicerContext,
+    ) -> typing.Union[
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
+        collections.abc.Awaitable[paperpilot_common.protobuf.paper.paper_pb2.PaperDetail],
+    ]:
+        """更新论文附件"""
 
 def add_PaperServiceServicer_to_server(
     servicer: PaperServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]

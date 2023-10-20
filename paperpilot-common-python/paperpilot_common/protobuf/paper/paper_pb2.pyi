@@ -310,6 +310,37 @@ class CreatePaperRequest(google.protobuf.message.Message):
 global___CreatePaperRequest = CreatePaperRequest
 
 @typing_extensions.final
+class UpdateAttachmentRequest(google.protobuf.message.Message):
+    """更新论文附件请求"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PAPER_ID_FIELD_NUMBER: builtins.int
+    FILE_FIELD_NUMBER: builtins.int
+    FETCH_METADATA_FIELD_NUMBER: builtins.int
+    paper_id: builtins.str
+    """论文 ID"""
+    file: builtins.str
+    """文件 url"""
+    fetch_metadata: builtins.bool
+    """是否自动获取元数据"""
+    def __init__(
+        self,
+        *,
+        paper_id: builtins.str = ...,
+        file: builtins.str = ...,
+        fetch_metadata: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "fetch_metadata", b"fetch_metadata", "file", b"file", "paper_id", b"paper_id"
+        ],
+    ) -> None: ...
+
+global___UpdateAttachmentRequest = UpdateAttachmentRequest
+
+@typing_extensions.final
 class UploadAttachmentRequest(google.protobuf.message.Message):
     """上传附件请求"""
 

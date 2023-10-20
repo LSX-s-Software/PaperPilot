@@ -103,6 +103,19 @@ service PaperService {
 
     // 更新论文
     rpc UpdatePaper(PaperDetail) returns (PaperDetail);
+
+    // 更新论文附件
+    rpc UpdateAttachment(UpdateAttachmentRequest) returns (PaperDetail);
+}
+
+// 更新论文附件请求
+message UpdateAttachmentRequest {
+    // 论文 ID
+    string paper_id = 1;
+    // 文件 url
+    string file = 2;
+    // 是否自动获取元数据
+    bool fetch_metadata = 3;
 }
 
 // 上传附件请求
