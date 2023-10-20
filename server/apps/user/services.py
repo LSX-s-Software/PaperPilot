@@ -121,7 +121,7 @@ class UserService:
 
     async def update_user_avatar(
         self, user_id: str, avatar_url: str
-    ) -> UserInfo:
+    ) -> UserDetail:
         """
         更新用户头像
 
@@ -134,7 +134,7 @@ class UserService:
         await user.asave()
         await user.arefresh_from_db()
 
-        return await self.get_user_info(user)
+        return await self.get_user_detail(user)
 
 
 user_service: UserService = UserService()
