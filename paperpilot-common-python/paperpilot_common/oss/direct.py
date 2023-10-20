@@ -3,15 +3,11 @@ import datetime
 import hashlib
 import hmac
 import json
-from urllib.parse import unquote
 
-from Crypto.Hash import MD5
-from Crypto.PublicKey import RSA
-from Crypto.Signature import PKCS1_v1_5
 from django.conf import settings
 
 from .configs import oss_settings
-from .utils import Condition, OssDirectToken, get_iso_8601, get_pub_key, handle_condition, parse_size
+from .utils import Condition, OssDirectToken, get_iso_8601, handle_condition, parse_size
 
 default_callback_body = (
     "object=${object}&"
@@ -128,46 +124,3 @@ def generate_direct_upload_token(
         signature=sign.decode(),
         callback=base64_callback_body.decode(),
     )
-
-
-def check_callback_signature(request) -> bool:
-    """
-    检测回调身份
-    """
-    authorization_base64 = request.META.get("HTTP_AUTHORIZATION", None)  # 获取AUTHORIZATION
-    pub_key_url_base64 = request.META.get("HTTP_X_OSS_PUB_KEY_URL", None)  # 获取公钥
-    if authorization_base64 is None or pub_key_url_base64 is None:
-        return False
-
-    try:
-        # 对x-oss-pub-key-url做base64解码后获取到公钥
-        pub_key_url = base64.b64decode(pub_key_url_base64).decode()
-
-        # 为了保证该public_key是由OSS颁发的，用户需要校验x-oss-pub-key-url的开头
-        if not pub_key_url.startswith("http://gosspublic.alicdn.com/") and not pub_key_url.startswith(
-            "https://gosspublic.alicdn.com/"
-        ):
-            return False
-        pub_key = get_pub_key(pub_key_url)
-
-        # 获取base64解码后的签名
-        authorization = base64.b64decode(authorization_base64)
-
-        # 获取待签名字符串
-        callback_body = request.body
-
-        if request.META["QUERY_STRING"] == "":
-            auth_str = unquote(request.META["PATH_INFO"]) + "\n" + callback_body.decode()
-        else:
-            auth_str = (
-                unquote(request.META["PATH_INFO"]) + "?" + request.META["QUERY_STRING"] + "\n" + callback_body.decode()
-            )
-
-        # 验证签名
-        auth_md5 = MD5.new(auth_str.encode())
-        rsa_pub = RSA.importKey(pub_key)
-        verifier = PKCS1_v1_5.new(rsa_pub)
-        verifier.verify(auth_md5, authorization)
-        return True
-    except Exception:
-        return False

@@ -166,29 +166,3 @@ def get_random_name(file_name: str) -> str:
     new_name = new_name + "_%04d" % random.randint(0, 10000) + (("." + ext) if ext != "" else "")
 
     return new_name
-
-
-def _get_pub_key_online(pub_key_url: str) -> AnyStr:
-    """
-    从网络获取pub key
-    """
-    response = urlopen(pub_key_url)
-    return response.read()
-
-
-def get_pub_key(pub_key_url: str) -> AnyStr:
-    """
-    获取公钥
-    :param pub_key_url: url
-    :return:
-    """
-    key = f"oss:pub_key:{pub_key_url}"
-
-    try:
-        res = cache.get(key, None)
-        if res is None:
-            res = _get_pub_key_online(pub_key_url)
-            cache.set(key, res)
-        return res
-    except Exception:
-        return _get_pub_key_online(pub_key_url)
