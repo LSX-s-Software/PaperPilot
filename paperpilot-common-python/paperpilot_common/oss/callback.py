@@ -87,7 +87,7 @@ class OssCallbackChecker:
         :return: 是否通过
         """
         authorization_base64 = headers.get("AUTHORIZATION", None)  # 获取AUTHORIZATION
-        pub_key_url_base64 = headers.get("X_OSS_PUB_KEY_URL", None)  # 获取公钥
+        pub_key_url_base64 = headers.get("X-OSS-PUB-KEY-URL", None)  # 获取公钥
         if authorization_base64 is None or pub_key_url_base64 is None:
             return False
 
