@@ -10,6 +10,8 @@ from paperpilot_common.middleware.server.auth import AuthMixin
 from paperpilot_common.protobuf.project import project_pb2_grpc
 from paperpilot_common.utils.types import _ServicerContext
 
+from .services import project_service
+
 
 def grpc_hook(server):
     project_pb2_grpc.add_ProjectServiceServicer_to_server(
@@ -40,7 +42,8 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ListProjectResponse
         ],
     ]:
-        pass
+        return await project_service.list_user_joined_projects(self.request.id)
+        # pass
 
     async def GetProjectInfo(
         self,
@@ -52,7 +55,8 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ProjectInfo
         ],
     ]:
-        pass
+        return await project_service.get_project_info(request.id)
+        # pass
 
     async def CreateProject(
         self,
@@ -64,7 +68,10 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ProjectInfo
         ],
     ]:
-        pass
+        return await project_service.create_project(
+            request.name, request.description, request.invite_code
+        )
+        # pass
 
     async def UpdateProjectInfo(
         self,
@@ -76,7 +83,8 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ProjectInfo
         ],
     ]:
-        pass
+        return await project_service.update_project(request.id)
+        # pass
 
     async def DeleteProject(
         self,
@@ -86,6 +94,7 @@ class ProjectPublicController(
         google.protobuf.empty_pb2.Empty,
         collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
     ]:
+        return await project_service.delete_project(self.project.id)
         pass
 
     async def JoinProject(
@@ -98,6 +107,7 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ProjectInfo
         ],
     ]:
+        return await project_service.join_project(request.invite_code)
         pass
 
     async def QuitProject(
@@ -108,6 +118,7 @@ class ProjectPublicController(
         google.protobuf.empty_pb2.Empty,
         collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
     ]:
+        return await project_service.quit_project(self.project.id)
         pass
 
 
@@ -120,4 +131,7 @@ class ProjectController(project_pb2_grpc.ProjectServiceServicer):
         google.protobuf.wrappers_pb2.BoolValue,
         collections.abc.Awaitable[google.protobuf.wrappers_pb2.BoolValue],
     ]:
+        return await project_service.check_user_joined_project(
+            request.user_id, request.project_id
+        )
         pass
