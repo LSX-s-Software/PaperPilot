@@ -2,7 +2,7 @@ from server.settings.util import config
 
 GRPC_SERVER = {
     "servicers": [
-        "translation.urls.grpc_hook",
+        "translation.grpc_hook",
     ],
     "interceptors": [
         "paperpilot_common.middleware.server.trace.TraceMiddleware",
