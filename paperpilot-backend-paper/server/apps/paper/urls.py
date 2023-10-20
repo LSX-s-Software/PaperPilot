@@ -135,6 +135,11 @@ class PaperPublicController(
             paperpilot_common.protobuf.paper.paper_pb2.UploadAttachmentResponse
         ],
     ]:
+        await paper_service.check_paper_permission(
+            user_id=self.user.id,
+            paper_id=uuid.UUID(request.paper_id),
+        )
+
         token = generate_direct_upload_token(
             callback_url=f"callback/paper/file/?paper_id={request.paper_id}&fetch_metadata={request.fetch_metadata}",
             content_type=["application/pdf"],
@@ -165,6 +170,22 @@ class PaperPublicController(
 
 
 class PaperController(paper_pb2_grpc.PaperServiceServicer):
+    async def UpdateAttachment(
+        self,
+        request: paperpilot_common.protobuf.paper.paper_pb2.UpdateAttachmentRequest,
+        context: _ServicerContext,
+    ) -> typing.Union[
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
+        collections.abc.Awaitable[
+            paperpilot_common.protobuf.paper.paper_pb2.PaperDetail
+        ],
+    ]:
+        return await paper_service.update_attachment(
+            paper_id=uuid.UUID(request.paper_id),
+            file=request.file,
+            fetch_metadata=request.fetch_metadata,
+        )
+
     async def AddPaper(
         self,
         request: paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,

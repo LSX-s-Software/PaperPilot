@@ -64,6 +64,20 @@ class PaperService:
                 ResponseType.PermissionDenied, msg="无权限访问该项目内容", record=True
             )
 
+    async def check_paper_permission(
+        self, user_id: uuid.UUID, paper_id: uuid.UUID
+    ) -> None:
+        """
+        检查用户是否有权限操作论文
+
+        :param user_id: 用户ID
+        :param paper_id: 论文ID
+        :return: None
+        """
+        paper = await self._get_paper(paper_id)
+
+        await self._check_user_project(user_id, paper.project_id)
+
     async def _get_paper(self, paper: Paper | uuid.UUID | str) -> Paper:
         """
         获取论文对象
@@ -334,6 +348,30 @@ class PaperService:
     def _upload_file(self, paper: Paper, file: bytes):
         filename = get_random_name(".pdf")
         paper.file.save(filename, ContentFile(file, name=filename))
+
+    async def update_attachment(
+        self, paper_id: uuid.UUID, file: str, fetch_metadata: bool
+    ) -> PaperDetail:
+        """
+        更新论文附件
+
+        :param paper_id: 论文ID
+        :param file: 文件
+        :param fetch_metadata: 是否获取元数据
+        :return: 获取的论文数据
+        """
+        paper = await self._get_paper(paper_id)
+
+        paper.file.name = file
+
+        await paper.asave()
+
+        paper_detail = PaperDetail(id=paper.id.hex, file=paper.file.url)
+
+        if fetch_metadata:
+            pass
+
+        return paper_detail
 
 
 paper_service: PaperService = PaperService()
