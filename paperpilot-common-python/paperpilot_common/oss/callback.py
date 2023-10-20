@@ -107,7 +107,6 @@ class OssCallbackChecker:
 
             # 验证签名
             auth_md5 = MD5.new(auth_str.encode())
-            verifier.verify(auth_md5, authorization)
-            return True
+            return verifier.verify(auth_md5, authorization)
         except Exception:
             return False
