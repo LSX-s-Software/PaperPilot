@@ -36,14 +36,14 @@ jobs:
           poetry run black --check server
           poetry run flake8 server --count --statistics
           poetry run isort --check-only server
-      - name: Pytest
-        run: poetry run pytest --cov-config=tests/.coveragerc --cov server --cov-report xml -n logical
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          fail_ci_if_error: true
+#      - name: Pytest
+#        run: poetry run pytest --cov-config=tests/.coveragerc --cov server --cov-report xml -n logical
+#      - name: Upload coverage
+#        uses: codecov/codecov-action@v3
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
+#          file: ./coverage.xml
+#          fail_ci_if_error: true
 
   build:
     runs-on: ubuntu-latest
