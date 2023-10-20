@@ -1,16 +1,14 @@
 version: "3.8"
-name: paperpilot-paper
+name: paperpilot-file
 
 services:
   ### server container ##########################################
   paper:
-    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:paper
+    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:file
     env_file: ./.env
     networks:
       - paperpilot
       - kong_kong-net
-    ports:
-      - "18003:8001"
 
 ### Add Network Bridge info #########################################
 networks:
