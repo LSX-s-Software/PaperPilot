@@ -78,11 +78,12 @@ class UserPublicController(user_pb2_grpc.UserPublicServiceServicer, AuthMixin):
         ],
     ]:
         token = generate_direct_upload_token(
-            callback_url=f"callback/user/avatar/?id={self.user.id.hex}",
+            callback_url=f"callback/user/avatar/?user_id={self.user.id.hex}",
             content_type=["image/jpeg"],
             key=f"{User.AVATAR_PATH}/{get_random_name('.jpg')}",
             min_size="1kb",
             max_size="1mb",
+            # callback_body="object=${object}",
         )
         return (
             paperpilot_common.protobuf.user.user_pb2.UploadUserAvatarResponse(
