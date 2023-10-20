@@ -6,6 +6,7 @@ from django.utils import timezone
 from paper.models import Paper
 from paper.urls import PaperController, PaperPublicController
 from paperpilot_common.exceptions import ApiException
+from paperpilot_common.protobuf.paper.paper_pb2 import UpdateAttachmentRequest
 from paperpilot_common.response import ResponseType
 
 
@@ -508,3 +509,25 @@ class TestPaperController:
 
         assert response.project_id == uuid.UUID(int=0).hex
         assert response.file == "/test.pdf"
+
+    @pytest.mark.asyncio
+    async def test_update_attachment(
+        self, api, context, project_id, paper_detail, papers
+    ):
+        paper = await Paper.objects.aget(id=papers[0])
+
+        response = await api.UpdateAttachment(
+            UpdateAttachmentRequest(
+                paper_id=paper.id.hex,
+                file="paper/test.pdf",
+                fetch_metadata=False,
+            ),
+            context,
+        )
+
+        assert response.id == paper.id.hex
+        assert response.file == "/paper/test.pdf"
+
+        assert (
+            await Paper.objects.aget(id=paper.id)
+        ).file.name == "paper/test.pdf"
