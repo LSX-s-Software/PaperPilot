@@ -6,6 +6,7 @@ import json
 
 from django.conf import settings
 
+from ..middleware.server.context import get_trace_id
 from .configs import oss_settings
 from .utils import Condition, OssDirectToken, get_iso_8601, handle_condition, parse_size
 
@@ -16,7 +17,7 @@ default_callback_body = (
     "height=${imageInfo.height}&"
     "width=${imageInfo.width}&"
     "etag=${etag}&"
-    "client_ip=${clientIp}&"
+    "client_ip=${clientIp}"
 )
 
 
@@ -71,7 +72,11 @@ def generate_direct_upload_token(
         ["content-length-range", parse_size(min_size), parse_size(max_size)],  # 限制上传文件大小
     ]
 
-    handle_condition(conditions, "key", f"{settings.MEDIA_URL}{key}")
+    upload_key = f"{settings.MEDIA_URL}{key}"
+    if upload_key.startswith("/"):
+        upload_key = upload_key[1:]
+
+    handle_condition(conditions, "key", upload_key)
     handle_condition(conditions, "cache-control", cache_control)
     handle_condition(conditions, "content-type", content_type)
     handle_condition(conditions, "content-disposition", content_disposition)
@@ -100,6 +105,8 @@ def generate_direct_upload_token(
         hashlib.sha1,
     )
     sign = base64.encodebytes(h.digest()).strip()
+
+    callback_body = f"{callback_body}&trace_id={get_trace_id().hex}"
 
     # 回调参数，详见
     # https://help.aliyun.com/zh/oss/developer-reference/callback?spm=a2c4g.11186623.0.i74#a8a8e930e31fv
