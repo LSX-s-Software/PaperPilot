@@ -24,7 +24,7 @@ from .updaters import PaperPublicUpdater, PaperUpdater
 
 class PaperService:
     logger = get_logger("paper.service")
-    project = project_client.stub
+    project = project_client
 
     paper_updater = PaperUpdater()
     paper_public_updater = PaperPublicUpdater()
@@ -48,7 +48,7 @@ class PaperService:
 
         if result is None:  # 缓存中不存在
             # 调用grpc接口获取
-            result = await self.project.CheckUserJoinedProject(
+            result = await self.project.stub.CheckUserJoinedProject(
                 CheckUserJoinedProjectRequest(
                     user_id=user_id.hex, project_id=project_id.hex
                 )
