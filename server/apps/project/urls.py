@@ -13,10 +13,11 @@ from paperpilot_common.utils.types import _ServicerContext
 from starlette.routing import Route
 
 from .services import project_service
-from .views import InvitationView
+from .views import InvitationHtmlView, InvitationView
 
 routes = [
     Route("/invitation/", InvitationView),
+    Route("/invite/", InvitationHtmlView),
 ]
 
 
