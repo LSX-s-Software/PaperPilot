@@ -66,11 +66,13 @@ class ProjectService:
         project = await self._get_project(project)
 
         self.logger.debug(f"update project info: {project}")
-        await project.update(
-            name=request.name,
-            description=request.description,
-            invite_code=request.invite_code,
-        )
+
+        project.name = request.name
+        project.description = request.description
+        project.invite_code = request.invite_code
+
+        await project.asave()
+
         return ProjectInfo(
             id=project.id.hex,
             name=project.name,
