@@ -122,7 +122,7 @@ def user_mock(mocker):
     mock = mocker.AsyncMock(side_effect=get_info)
 
     mocker.patch(
-        "project.services.ProjectService.user_service.GetUserInfo",
+        "project.services.ProjectService.user_service.stub.GetUserInfo",
         new=mock,
     )
 

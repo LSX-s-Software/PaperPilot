@@ -36,7 +36,8 @@ class TestProjectPublic:
         )
 
         assert response.total == 10
-        assert len(response.projects) == 10
+        assert len(response.projects) == 5
+        assert response.next_page == 2
 
         for i, project in enumerate(response.projects):
             assert project.id == projects[i].id.hex

@@ -12,7 +12,6 @@ from project.models import Project, UserProject
 from project.utils import get_random_invite_code
 
 from server.business.grpc import user_client
-from server.business.grpc.user import UserClient
 
 
 class ProjectService:
