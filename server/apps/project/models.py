@@ -1,34 +1,6 @@
 import uuid
 
 from django.db import models
-from paperpilot_common.utils.log import get_logger
-
-
-class ProjectManager(models.Manager):
-    use_in_migrations = True
-    logger = get_logger("model.project_manager")
-
-    async def _create_project(
-        self, name: str, description: str, invite_code: str
-    ) -> "Project":
-        """
-        创建项目
-        """
-        project = self.model(
-            name=name,
-            description=description,
-            invite_code=invite_code,
-        )
-        self.logger.info(f"create project: {project}")
-        await project.asave(using=self._db)
-        return project
-
-    async def create_project(
-        self, name: str, description: str, invite_code: str
-    ) -> "Project":
-        return await self._create_project(
-            name=name, description=description, invite_code=invite_code
-        )
 
 
 class Project(models.Model):

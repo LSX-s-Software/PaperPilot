@@ -1,14 +1,15 @@
 import uuid
 
-from django.contrib.auth.models import User
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.protobuf.project.project_pb2 import (
     ListProjectResponse,
     ProjectInfo,
 )
+from paperpilot_common.protobuf.user.user_pb2 import UserId, UserInfo
 from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 from project.models import Project, UserProject
+from project.utils import get_random_invite_code
 
 from server.business.grpc import user_client
 
@@ -36,37 +37,67 @@ class ProjectService:
 
         return project
 
-    async def get_project_info(
-        self, project: Project | uuid.UUID | str
+    async def _get_project_info(
+        self, project: Project | uuid.UUID
     ) -> ProjectInfo:
         """
         获取项目信息
 
         :param project: 项目对象或项目ID
-        :return: 项目信息
         """
         project = await self._get_project(project)
 
-        self.logger.debug(f"get project info: {project}")
+        ups = UserProject.objects.filter(project=project)
+
+        members = []
+        owner_id = None
+
+        async for up in ups:
+            if up.is_owner:
+                owner_id = up.user_id.hex
+            member_info: UserInfo = await self.user_service.GetUserInfo(
+                UserId(id=up.user_id.hex)
+            )
+            members.append(member_info)
+
         return ProjectInfo(
             id=project.id.hex,
             name=project.name,
             description=project.description,
             invite_code=project.invite_code,
+            owner_id=owner_id,
+            members=members,
         )
+
+    async def get_project_info(
+        self, user_id: uuid.UUID, project: uuid.UUID
+    ) -> ProjectInfo:
+        """
+        获取项目信息
+
+        :param user_id: 用户ID
+        :param project: 项目ID
+        :return: 项目信息
+        """
+        await self._check_user(user_id, project)
+
+        self.logger.debug(f"get project info: {project}")
+        return await self._get_project_info(project)
 
     # return await project_service.update_project(self.project.id, request)
     async def update_project(
-        self, project: Project | uuid.UUID | str, request
+        self, user_id: uuid.UUID, request: ProjectInfo
     ) -> ProjectInfo:
         """
         更新项目信息
 
-        :param project: 项目对象或项目ID
+        :param user_id: 用户ID
         :param request: 更新请求
         :return: 项目信息
         """
-        project = await self._get_project(project)
+        await self._check_user(user_id, request.id)
+
+        project = await self._get_project(request.id)
 
         self.logger.debug(f"update project info: {project}")
 
@@ -123,14 +154,7 @@ class ProjectService:
 
         projects = []
         async for project in queryset:
-            projects.append(
-                ProjectInfo(
-                    id=project.id.hex,
-                    name=project.name,
-                    description=project.description,
-                    invite_code=project.invite_code,
-                )
-            )
+            projects.append(await self._get_project_info(project))
 
         return ListProjectResponse(
             projects=projects,
@@ -139,80 +163,151 @@ class ProjectService:
         )
 
     async def create_project(
-        self, name: str, description: str, invite_code: str
+        self, user_id: uuid.UUID, name: str, description: str
     ) -> ProjectInfo:
         """
         创建项目
 
+        :param user_id: 用户ID
         :param name: 项目名称
         :param description: 项目描述
-        :param invite_code: 邀请码
         :return: 项目信息
         """
-        project = await Project.objects.create_project(
-            name, description, invite_code
-        )
-        self.logger.debug(f"create project: {project}")
-        return ProjectInfo(
-            id=project.id.hex,
-            name=project.name,
-            description=project.description,
-            invite_code=project.invite_code,
+        project = await Project.objects.acreate(
+            name=name,
+            description=description,
+            invite_code=get_random_invite_code(),
         )
 
-    async def delete_project(self, project: Project | uuid.UUID | str):
+        await UserProject.objects.acreate(
+            user_id=user_id,
+            project=project,
+            is_owner=True,
+        )
+
+        self.logger.debug(f"create project: {project}")
+        return await self._get_project_info(project)
+
+    async def delete_project(self, user_id: uuid.UUID, project_id: uuid.UUID):
         """
         删除项目
 
-        :param project: 项目对象或项目ID
+        :param user_id: 用户ID
+        :param project_id: 项目ID
         """
-        project = await self._get_project(project)
+        await self._check_owner(user_id, project_id)
 
-        self.logger.debug(f"delete project: {project}")
-        await project.adelete()
+        self.logger.debug(f"delete project: {project_id}")
+        await Project.objects.filter(id=project_id).adelete()
 
     # urls.py的调用：return await project_service.join_project(request.invite_code)
-    async def join_project(self, invite_code: str):
+    async def join_project(self, user_id: uuid.UUID, invite_code: str):
         """
         加入项目
 
+        :param user_id: 用户ID
         :param invite_code: 邀请码
         """
         project = await Project.objects.filter(invite_code=invite_code).afirst()
         if project is None:
             raise ApiException(
-                ResponseType.ResourceNotFound, msg="项目不存在", record=True
+                ResponseType.ResourceNotFound,
+                msg="邀请码错误",
+                detail="您的邀请码错误，请核对后重试",
             )
 
         self.logger.debug(f"join project: {project}")
-        await self.user.projects.add(project)
+
+        if await UserProject.objects.filter(
+            user_id=user_id, project=project
+        ).exists():
+            return
+
+        await UserProject.objects.acreate(
+            user_id=user_id,
+            project=project,
+            is_owner=False,
+        )
 
     # project_service.quit_project(request.id)
-    async def quit_project(self, project: Project | uuid.UUID | str):
+    async def quit_project(self, user_id: uuid.UUID, project_id: uuid.UUID):
         """
         退出项目
 
+        :param user_id: 用户ID
+        :param project_id: 项目ID
+        """
+        await self._check_user(user_id, project_id)
+
+        self.logger.debug(f"quit project: {project_id}")
+
+        up = await UserProject.objects.filter(
+            user_id=user_id, project=project_id
+        ).afirst()
+
+        if up.is_owner:
+            raise ApiException(
+                ResponseType.PermissionDenied, msg="项目所有者不能退出项目", record=True
+            )
+
+        await up.adelete()
+
+    async def _check_user(
+        self, user_id: uuid.UUID, project: Project | uuid.UUID | str
+    ) -> None:
+        """
+        检查用户是否加入项目，抛出异常
+
+        :param user_id: 用户ID
         :param project: 项目对象或项目ID
         """
-        project = await self._get_project(project)
+        project_id = project.id if isinstance(project, Project) else project
+        project_id = (
+            uuid.UUID(project_id) if isinstance(project_id, str) else project_id
+        )
 
-        self.logger.debug(f"quit project: {project}")
-        await self.user.projects.remove(project)
+        if not await UserProject.objects.filter(
+            user_id=user_id, project_id=project_id
+        ).exists():
+            raise ApiException(
+                ResponseType.PermissionDenied, msg="用户未加入项目", record=True
+            )
+
+    async def _check_owner(
+        self, user_id: uuid.UUID, project: Project | uuid.UUID | str
+    ) -> None:
+        """
+        检查用户是否为项目所有者，抛出异常
+
+        :param user_id: 用户ID
+        :param project: 项目对象或项目ID
+        """
+        # 获取uuid格式的project id
+        project_id = project.id if isinstance(project, Project) else project
+        project_id = (
+            uuid.UUID(project_id) if isinstance(project_id, str) else project_id
+        )
+
+        if not await UserProject.objects.filter(
+            user_id=user_id, project_id=project_id, is_owner=True
+        ).exists():
+            raise ApiException(
+                ResponseType.PermissionDenied, msg="用户不是项目所有者", record=True
+            )
 
     async def check_user_joined_project(
-        self, user: User | uuid.UUID | str, project: Project | uuid.UUID | str
-    ):
+        self, user_id: uuid.UUID, project_id: uuid.UUID
+    ) -> bool:
         """
         检查用户是否加入项目
 
-        :param user: 用户对象或用户ID
-        :param project: 项目对象或项目ID
+        :param user_id: 用户ID
+        :param project_id: 项目对象或项目ID
         """
-        user = await self._get_user(user)
-        project = await self._get_project(project)
-
-        self.logger.debug(f"check user joined project: {project}")
-        return await user.projects.filter(id=project.id).exists()
+        self.logger.debug(f"check user {user_id} joined project: {project_id}")
+        return await UserProject.objects.filter(
+            user_id=user_id, project_id=project_id
+        ).exists()
 
 
 project_service: ProjectService = ProjectService()

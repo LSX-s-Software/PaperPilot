@@ -1,5 +1,6 @@
 import collections.abc
 import typing
+from uuid import UUID
 
 import google.protobuf
 import google.protobuf.empty_pb2
@@ -42,7 +43,12 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ListProjectResponse
         ],
     ]:
-        return await project_service.list_user_joined_projects(self.user.id)
+        return await project_service.list_user_joined_projects(
+            user_id=self.user.id,
+            page=request.page or 1,
+            page_size=request.page_size or 20,
+            order_by=request.order_by or "-create_time",
+        )
 
     async def GetProjectInfo(
         self,
@@ -54,7 +60,10 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ProjectInfo
         ],
     ]:
-        return await project_service.get_project_info(request.id)
+        return await project_service.get_project_info(
+            user_id=self.user.id,
+            project=UUID(request.id),
+        )
 
     async def CreateProject(
         self,
@@ -67,7 +76,9 @@ class ProjectPublicController(
         ],
     ]:
         return await project_service.create_project(
-            request.name, request.description, request.invite_code
+            user_id=self.user.id,
+            name=request.name,
+            description=request.description,
         )
 
     async def UpdateProjectInfo(
@@ -80,7 +91,9 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ProjectInfo
         ],
     ]:
-        return await project_service.update_project(self.project.id, request)
+        return await project_service.update_project(
+            user_id=self.user.id, request=request
+        )
 
     async def DeleteProject(
         self,
@@ -90,7 +103,9 @@ class ProjectPublicController(
         google.protobuf.empty_pb2.Empty,
         collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
     ]:
-        return await project_service.delete_project(request.id)
+        return await project_service.delete_project(
+            user_id=self.user.id, project_id=UUID(request.id)
+        )
 
     async def JoinProject(
         self,
@@ -102,7 +117,9 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ProjectInfo
         ],
     ]:
-        return await project_service.join_project(request.invite_code)
+        return await project_service.join_project(
+            user_id=self.user.id, invite_code=request.invite_code
+        )
 
     async def QuitProject(
         self,
@@ -112,7 +129,9 @@ class ProjectPublicController(
         google.protobuf.empty_pb2.Empty,
         collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
     ]:
-        return await project_service.quit_project(request.id)
+        return await project_service.quit_project(
+            user_id=self.user.id, project_id=UUID(request.id)
+        )
 
 
 class ProjectController(project_pb2_grpc.ProjectServiceServicer):
@@ -124,6 +143,9 @@ class ProjectController(project_pb2_grpc.ProjectServiceServicer):
         google.protobuf.wrappers_pb2.BoolValue,
         collections.abc.Awaitable[google.protobuf.wrappers_pb2.BoolValue],
     ]:
-        return await project_service.check_user_joined_project(
-            request.user_id, request.project_id
+        return google.protobuf.wrappers_pb2.BoolValue(
+            value=await project_service.check_user_joined_project(
+                user_id=UUID(request.user_id),
+                project_id=UUID(request.project_id),
+            )
         )
