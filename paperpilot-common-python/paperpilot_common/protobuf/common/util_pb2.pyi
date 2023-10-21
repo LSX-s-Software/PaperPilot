@@ -46,7 +46,7 @@ class OssToken(google.protobuf.message.Message):
     ACCESS_KEY_ID_FIELD_NUMBER: builtins.int
     POLICY_FIELD_NUMBER: builtins.int
     SIGNATURE_FIELD_NUMBER: builtins.int
-    CALLBACK_HOST_FIELD_NUMBER: builtins.int
+    HOST_FIELD_NUMBER: builtins.int
     CALLBACK_BODY_FIELD_NUMBER: builtins.int
     access_key_id: builtins.str
     """oss access key id"""
@@ -54,8 +54,8 @@ class OssToken(google.protobuf.message.Message):
     """上传参数"""
     signature: builtins.str
     """签名"""
-    callback_host: builtins.str
-    """回调地址"""
+    host: builtins.str
+    """直传地址"""
     callback_body: builtins.str
     """回调参数"""
     def __init__(
@@ -64,7 +64,7 @@ class OssToken(google.protobuf.message.Message):
         access_key_id: builtins.str = ...,
         policy: builtins.str = ...,
         signature: builtins.str = ...,
-        callback_host: builtins.str = ...,
+        host: builtins.str = ...,
         callback_body: builtins.str = ...,
     ) -> None: ...
     def ClearField(
@@ -74,8 +74,8 @@ class OssToken(google.protobuf.message.Message):
             b"access_key_id",
             "callback_body",
             b"callback_body",
-            "callback_host",
-            b"callback_host",
+            "host",
+            b"host",
             "policy",
             b"policy",
             "signature",

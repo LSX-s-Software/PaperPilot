@@ -20,8 +20,8 @@ message OssToken {
     string policy = 2;
     // 签名
     string signature = 3;
-    // 回调地址
-    string callback_host = 4;
+    // 直传地址
+    string host = 4;
     // 回调参数
     string callback_body = 5;
 }

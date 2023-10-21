@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n,paperpilot_common/protobuf/common/util.proto\x12\x04util\x1a\x1fgoogle/protobuf/timestamp.proto"0\n\x04\x44\x61te\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\x05"r\n\x08OssToken\x12\x15\n\raccess_key_id\x18\x01 \x01(\t\x12\x0e\n\x06policy\x18\x02 \x01(\t\x12\x11\n\tsignature\x18\x03 \x01(\t\x12\x15\n\rcallback_host\x18\x04 \x01(\t\x12\x15\n\rcallback_body\x18\x05 \x01(\tb\x06proto3'
+    b'\n,paperpilot_common/protobuf/common/util.proto\x12\x04util\x1a\x1fgoogle/protobuf/timestamp.proto"0\n\x04\x44\x61te\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x0b\n\x03\x64\x61y\x18\x03 \x01(\x05"i\n\x08OssToken\x12\x15\n\raccess_key_id\x18\x01 \x01(\t\x12\x0e\n\x06policy\x18\x02 \x01(\t\x12\x11\n\tsignature\x18\x03 \x01(\t\x12\x0c\n\x04host\x18\x04 \x01(\t\x12\x15\n\rcallback_body\x18\x05 \x01(\tb\x06proto3'
 )
 
 _globals = globals()
@@ -26,5 +26,5 @@ if _descriptor._USE_C_DESCRIPTORS == False:
     _globals["_DATE"]._serialized_start = 87
     _globals["_DATE"]._serialized_end = 135
     _globals["_OSSTOKEN"]._serialized_start = 137
-    _globals["_OSSTOKEN"]._serialized_end = 251
+    _globals["_OSSTOKEN"]._serialized_end = 242
 # @@protoc_insertion_point(module_scope)
