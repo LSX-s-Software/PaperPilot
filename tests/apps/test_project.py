@@ -413,16 +413,15 @@ class TestProjectPublic:
     ):
         context.authenticate(user_id)
 
-        await api.JoinProject(
-            ProjectInviteCode(
-                invite_code=projects[0].invite_code,
-            ),
-            context,
-        )
+        with pytest.raises(ApiException) as exc:
+            await api.JoinProject(
+                ProjectInviteCode(
+                    invite_code=projects[0].invite_code,
+                ),
+                context,
+            )
 
-        assert await UserProject.objects.filter(
-            user_id=user_id, project_id=projects[0].id
-        ).aexists()
+        assert exc.value.response_type == ResponseType.ParamValidationFailed
 
     @pytest.mark.asyncio
     async def test_quit_project(
