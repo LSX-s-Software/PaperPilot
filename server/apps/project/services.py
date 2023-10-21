@@ -12,11 +12,12 @@ from project.models import Project, UserProject
 from project.utils import get_random_invite_code
 
 from server.business.grpc import user_client
+from server.business.grpc.user import UserClient
 
 
 class ProjectService:
     logger = get_logger("project.service")
-    user_service = user_client.stub
+    user_service = user_client
 
     async def _get_project(self, project: Project | uuid.UUID | str) -> Project:
         """
@@ -52,10 +53,12 @@ class ProjectService:
         members = []
         owner_id = None
 
+        # user_service = UserClient()
+
         async for up in ups:
             if up.is_owner:
                 owner_id = up.user_id.hex
-            member_info: UserInfo = await self.user_service.GetUserInfo(
+            member_info: UserInfo = await self.user_service.stub.GetUserInfo(
                 UserId(id=up.user_id.hex)
             )
             members.append(member_info)
@@ -202,7 +205,9 @@ class ProjectService:
         await Project.objects.filter(id=project_id).adelete()
 
     # urls.py的调用：return await project_service.join_project(request.invite_code)
-    async def join_project(self, user_id: uuid.UUID, invite_code: str):
+    async def join_project(
+        self, user_id: uuid.UUID, invite_code: str
+    ) -> ProjectInfo:
         """
         加入项目
 
@@ -222,13 +227,15 @@ class ProjectService:
         if await UserProject.objects.filter(
             user_id=user_id, project=project
         ).aexists():
-            return
+            return await self._get_project_info(project)
 
         await UserProject.objects.acreate(
             user_id=user_id,
             project=project,
             is_owner=False,
         )
+
+        return await self._get_project_info(project)
 
     # project_service.quit_project(request.id)
     async def quit_project(self, user_id: uuid.UUID, project_id: uuid.UUID):

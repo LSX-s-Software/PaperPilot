@@ -22,7 +22,7 @@ LOGGING = LogConfig.get_config()
 
 LOG_FORMAT = (
     "<green>{time:HH:mm:ss}</green> <red>|</red> "
-    "<level>{level.icon}</level> <red>|</red> "
+    "<level>{level}</level> <red>|</red> "
     # "<cyan>{name}</cyan>:<cyan>{function}</cyan> <red>|</red> "
     "<cyan>[{extra[title]}]</cyan> <red>-</red> <level>{message}</level>"
 )

@@ -10,8 +10,14 @@ import paperpilot_common.protobuf.project.project_pb2
 from paperpilot_common.middleware.server.auth import AuthMixin
 from paperpilot_common.protobuf.project import project_pb2_grpc
 from paperpilot_common.utils.types import _ServicerContext
+from starlette.routing import Route
 
 from .services import project_service
+from .views import InvitationView
+
+routes = [
+    Route("/invitation/", InvitationView),
+]
 
 
 def grpc_hook(server):
@@ -130,9 +136,10 @@ class ProjectPublicController(
         google.protobuf.empty_pb2.Empty,
         collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
     ]:
-        return await project_service.quit_project(
+        await project_service.quit_project(
             user_id=self.user.id, project_id=UUID(request.id)
         )
+        return google.protobuf.empty_pb2.Empty()
 
 
 class ProjectController(project_pb2_grpc.ProjectServiceServicer):

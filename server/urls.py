@@ -1,8 +1,10 @@
+import project.urls
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
 from django.urls import include, path
 from django.views.generic import RedirectView
+from starlette.routing import Mount
 
 
 def get_attr(self, *args, **kwargs):
@@ -61,3 +63,7 @@ if settings.DEBUG:  # pragma: no cover
         *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
         *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
     ]
+
+routes = [
+    Mount("/project/", routes=project.urls.routes),
+]
