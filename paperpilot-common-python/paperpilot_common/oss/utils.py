@@ -27,7 +27,7 @@ class OssDirectToken:
 
         return OssToken(
             access_key_id=self.access_key_id,
-            callback_host=self.host,
+            host=self.host,
             policy=self.policy,
             signature=self.signature,
             callback_body=self.callback,
