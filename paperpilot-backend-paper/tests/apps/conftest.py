@@ -80,7 +80,7 @@ def user_id(mocker):
     mock = mocker.AsyncMock(return_value=BoolValue(value=True))
 
     mocker.patch(
-        "paper.services.PaperService.project.CheckUserJoinedProject",
+        "paper.services.PaperService.project.stub.CheckUserJoinedProject",
         new=mock,
     )
 
@@ -94,7 +94,7 @@ def wrong_user_id(mocker):
     mock = mocker.AsyncMock(return_value=BoolValue(value=False))
 
     mocker.patch(
-        "paper.services.PaperService.project.CheckUserJoinedProject",
+        "paper.services.PaperService.project.stub.CheckUserJoinedProject",
         new=mock,
     )
 
