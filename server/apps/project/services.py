@@ -8,11 +8,14 @@ from paperpilot_common.protobuf.project.project_pb2 import (
 )
 from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
-from project.models import Project
+from project.models import Project, UserProject
+
+from server.business.grpc import user_client
 
 
 class ProjectService:
     logger = get_logger("project.service")
+    user_service = user_client.stub
 
     async def _get_project(self, project: Project | uuid.UUID | str) -> Project:
         """
@@ -81,28 +84,58 @@ class ProjectService:
         )
 
     async def list_user_joined_projects(
-        self, user: User | uuid.UUID | str
+        self, user_id: uuid.UUID, page: int, page_size: int, order_by: str
     ) -> ListProjectResponse:
         """
         获取用户参与的项目列表
 
-        :param user: 用户对象或用户ID
+        :param user_id: 用户ID
+        :param page: 页码
+        :param page_size: 每页大小
+        :param order_by: 排序字段
         :return: 项目列表
         """
-        user = await self._get_user(user)
+        self.logger.debug(f"list user joined projects: {user_id}")
 
-        self.logger.debug(f"list user joined projects: {user}")
-        projects = await user.projects.all()
-        return ListProjectResponse(
-            projects=[
+        # 获取所有与用户关联的UserProject对象
+        user_projects = UserProject.objects.filter(user_id=user_id)
+
+        # 获取所有与UserProject对象关联的项目
+        queryset = Project.objects.filter(user_projects__in=user_projects)
+
+        total = await queryset.acount()
+
+        if total == 0:  # 无
+            return ListProjectResponse(
+                projects=[],
+                total=0,
+                next_page=0,
+            )
+
+        # 计算下一页
+        next_page = page + 1 if page * page_size < total else 0
+
+        # 排序
+        queryset = queryset.order_by(order_by)
+
+        # 分页
+        queryset = queryset[(page - 1) * page_size : page * page_size]
+
+        projects = []
+        async for project in queryset:
+            projects.append(
                 ProjectInfo(
                     id=project.id.hex,
                     name=project.name,
                     description=project.description,
                     invite_code=project.invite_code,
                 )
-                for project in projects
-            ]
+            )
+
+        return ListProjectResponse(
+            projects=projects,
+            total=total,
+            next_page=next_page,
         )
 
     async def create_project(
