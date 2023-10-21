@@ -39,7 +39,7 @@ RUN pip wheel --wheel-dir /usr/src/app/wheels  \
 RUN pip wheel --wheel-dir /usr/src/app/wheels git+https://github.com/Nagico/paperpilot-common.git#subdirectory=paperpilot-common-python
 
 # Delete setuptools and pip to avoid conflicts with the system packages
-RUN rm -rf /usr/src/app/wheels/setuptools* /usr/src/app/wheels/pip* /usr/src/app/wheels/urllib3-2*
+RUN rm -rf /usr/src/app/wheels/setuptools* /usr/src/app/wheels/pip*
 
 FROM python as python-run-stage
 
@@ -77,6 +77,7 @@ RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
 
 # copy application code to WORKDIR
 COPY  ./manage.py manage.py
+COPY  ./main.py main.py
 COPY ./server/ server/
 
 EXPOSE 8001

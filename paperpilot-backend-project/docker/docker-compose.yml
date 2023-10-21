@@ -12,6 +12,14 @@ services:
     ports:
       - "18002:8001"
 
+  project-http:
+    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:project
+    env_file: ./.env
+    networks:
+      - paperpilot
+      - kong_kong-net
+    entrypoint: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+
 ### Add Network Bridge info #########################################
 networks:
   paperpilot:

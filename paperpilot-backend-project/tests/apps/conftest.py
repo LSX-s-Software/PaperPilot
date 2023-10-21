@@ -1,9 +1,11 @@
+import random
+import string
 from typing import Tuple
 from uuid import UUID
 
 import pytest
 import pytest_asyncio
-from django.utils import timezone
+from paperpilot_common.protobuf.user.user_pb2 import UserId, UserInfo
 
 
 class FakeServicerContext:
@@ -71,60 +73,159 @@ def context():
 
 
 @pytest.fixture
-def user_id():
+def user_id(user_mock):
     return UUID("678574dd4a274d3cbfac10666b7613ef")
 
 
 @pytest.fixture
-def username():
-    return "test-username"
+def owner2_id(user_mock):
+    return UUID("678574dd4a274d3cbfac10666b7613e1")
 
 
 @pytest.fixture
-def password():
-    return "test-password"
+def not_owner_id(user_mock):
+    return UUID("678574dd4a274d3cbfac10666b7613e0")
 
 
 @pytest.fixture
-def phone():
-    return "18312341234"
+def user_mock(mocker):
+    user_info = UserInfo(
+        id=UUID("678574dd4a274d3cbfac10666b7613ef").hex,
+        username="test-user",
+        avatar="/test.jpg",
+    )
+
+    owner2_info = UserInfo(
+        id=UUID("678574dd4a274d3cbfac10666b7613e1").hex,
+        username="test-owner2",
+        avatar="/test.jpg",
+    )
+
+    not_owner_info = UserInfo(
+        id=UUID("678574dd4a274d3cbfac10666b7613e0").hex,
+        username="test-not-owner",
+        avatar="/test.jpg",
+    )
+
+    async def get_info(request: UserId) -> UserInfo:
+        if request.id == user_info.id:
+            return user_info
+        elif request.id == owner2_info.id:
+            return owner2_info
+        elif request.id == not_owner_info.id:
+            return not_owner_info
+        else:
+            return UserInfo(
+                id=request.id, username="unknown", avatar="/test.jpg"
+            )
+
+    mock = mocker.AsyncMock(side_effect=get_info)
+
+    mocker.patch(
+        "project.services.ProjectService.user_service.stub.GetUserInfo",
+        new=mock,
+    )
+
+    return mock
+
+
+@pytest.fixture
+def wrong_user_id():
+    return UUID("678574dd4a274d3cbfac10666b7613ee")
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def clear_db(db):
     yield
-    from user.models import User
+    from project.models import Project, UserProject
 
-    await User.objects.all().adelete()
-    assert await User.objects.all().acount() == 0
+    await Project.objects.all().adelete()
+    assert await Project.objects.all().acount() == 0
 
-
-@pytest_asyncio.fixture
-async def user(db, user_id, username, phone, password):
-    from django.contrib.auth.hashers import make_password
-    from user.models import User
-
-    await User.objects.filter(id=user_id).adelete()
-
-    user = User(
-        id=user_id,
-        username=username,
-        phone=phone,
-        password=make_password(password),
-        last_login=timezone.now(),
-    )
-
-    await user.asave()
-
-    return user
+    await UserProject.objects.all().adelete()
+    assert await UserProject.objects.all().acount() == 0
 
 
 @pytest.fixture
-def code(mocker, phone):
-    _code = "123456"
+def project_id():
+    return UUID("678574dd4a274d3cbfac10666b761300")
 
-    import oauth.utils as utils
 
-    utils.random_code = mocker.Mock(return_value=_code)
+@pytest.fixture
+def invite_code(mocker):
+    code = "NC0coBae4OJGKwT1InbwqBr0hvWlD1JH"
 
-    return _code
+    mocker.patch("project.utils.get_random_invite_code", return_value=code)
+
+    return code
+
+
+@pytest_asyncio.fixture
+async def project(db, project_id, invite_code, user_id, not_owner_id):
+    from project.models import Project
+
+    project = await Project.objects.acreate(
+        id=project_id,
+        name="test",
+        description="test",
+        invite_code=invite_code,
+    )
+
+    await project.users.acreate(
+        user_id=user_id,
+        is_owner=True,
+    )
+
+    await project.users.acreate(
+        user_id=not_owner_id,
+        is_owner=False,
+    )
+
+    return project
+
+
+@pytest_asyncio.fixture
+async def projects(
+    db, user_id, not_owner_id, invite_code, project_id, owner2_id
+):
+    from project.models import Project
+
+    projects = [
+        Project(
+            name=f"test{i}",
+            description="test",
+            invite_code="".join(
+                random.choices(string.ascii_letters + string.digits, k=32)
+            ),
+        )
+        for i in range(10)
+    ]
+
+    projects[0].id = project_id
+    projects[0].invite_code = invite_code
+
+    await Project.objects.abulk_create(projects)
+
+    for i, project in enumerate(projects):
+        if i < 5:
+            await project.users.acreate(
+                user_id=user_id,
+                is_owner=True,
+            )
+
+            await project.users.acreate(
+                user_id=not_owner_id,
+                is_owner=False,
+            )
+        else:
+            await project.users.acreate(
+                user_id=owner2_id,
+                is_owner=True,
+            )
+
+            await project.users.acreate(
+                user_id=user_id,
+                is_owner=False,
+            )
+
+    return projects
