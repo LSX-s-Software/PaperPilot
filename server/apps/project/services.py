@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.auth.models import User
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.protobuf.project.project_pb2 import (
     ListProjectResponse,
@@ -51,18 +52,25 @@ class ProjectService:
             invite_code=project.invite_code,
         )
 
+    # return await project_service.update_project(self.project.id, request)
     async def update_project(
-        self, project: Project | uuid.UUID | str
+        self, project: Project | uuid.UUID | str, request
     ) -> ProjectInfo:
         """
         更新项目信息
 
         :param project: 项目对象或项目ID
+        :param request: 更新请求
         :return: 项目信息
         """
         project = await self._get_project(project)
 
         self.logger.debug(f"update project info: {project}")
+        await project.update(
+            name=request.name,
+            description=request.description,
+            invite_code=request.invite_code,
+        )
         return ProjectInfo(
             id=project.id.hex,
             name=project.name,
@@ -116,6 +124,60 @@ class ProjectService:
             description=project.description,
             invite_code=project.invite_code,
         )
+
+    async def delete_project(self, project: Project | uuid.UUID | str):
+        """
+        删除项目
+
+        :param project: 项目对象或项目ID
+        """
+        project = await self._get_project(project)
+
+        self.logger.debug(f"delete project: {project}")
+        await project.adelete()
+
+    # urls.py的调用：return await project_service.join_project(request.invite_code)
+    async def join_project(self, invite_code: str):
+        """
+        加入项目
+
+        :param invite_code: 邀请码
+        """
+        project = await Project.objects.filter(invite_code=invite_code).afirst()
+        if project is None:
+            raise ApiException(
+                ResponseType.ResourceNotFound, msg="项目不存在", record=True
+            )
+
+        self.logger.debug(f"join project: {project}")
+        await self.user.projects.add(project)
+
+    # project_service.quit_project(request.id)
+    async def quit_project(self, project: Project | uuid.UUID | str):
+        """
+        退出项目
+
+        :param project: 项目对象或项目ID
+        """
+        project = await self._get_project(project)
+
+        self.logger.debug(f"quit project: {project}")
+        await self.user.projects.remove(project)
+
+    async def check_user_joined_project(
+        self, user: User | uuid.UUID | str, project: Project | uuid.UUID | str
+    ):
+        """
+        检查用户是否加入项目
+
+        :param user: 用户对象或用户ID
+        :param project: 项目对象或项目ID
+        """
+        user = await self._get_user(user)
+        project = await self._get_project(project)
+
+        self.logger.debug(f"check user joined project: {project}")
+        return await user.projects.filter(id=project.id).exists()
 
 
 project_service: ProjectService = ProjectService()

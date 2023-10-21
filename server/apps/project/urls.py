@@ -42,8 +42,7 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ListProjectResponse
         ],
     ]:
-        return await project_service.list_user_joined_projects(self.request.id)
-        # pass
+        return await project_service.list_user_joined_projects(self.user.id)
 
     async def GetProjectInfo(
         self,
@@ -56,7 +55,6 @@ class ProjectPublicController(
         ],
     ]:
         return await project_service.get_project_info(request.id)
-        # pass
 
     async def CreateProject(
         self,
@@ -71,7 +69,6 @@ class ProjectPublicController(
         return await project_service.create_project(
             request.name, request.description, request.invite_code
         )
-        # pass
 
     async def UpdateProjectInfo(
         self,
@@ -83,8 +80,7 @@ class ProjectPublicController(
             paperpilot_common.protobuf.project.project_pb2.ProjectInfo
         ],
     ]:
-        return await project_service.update_project(request.id)
-        # pass
+        return await project_service.update_project(self.project.id, request)
 
     async def DeleteProject(
         self,
@@ -94,8 +90,7 @@ class ProjectPublicController(
         google.protobuf.empty_pb2.Empty,
         collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
     ]:
-        return await project_service.delete_project(self.project.id)
-        pass
+        return await project_service.delete_project(request.id)
 
     async def JoinProject(
         self,
@@ -108,7 +103,6 @@ class ProjectPublicController(
         ],
     ]:
         return await project_service.join_project(request.invite_code)
-        pass
 
     async def QuitProject(
         self,
@@ -118,8 +112,7 @@ class ProjectPublicController(
         google.protobuf.empty_pb2.Empty,
         collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
     ]:
-        return await project_service.quit_project(self.project.id)
-        pass
+        return await project_service.quit_project(request.id)
 
 
 class ProjectController(project_pb2_grpc.ProjectServiceServicer):
@@ -134,4 +127,3 @@ class ProjectController(project_pb2_grpc.ProjectServiceServicer):
         return await project_service.check_user_joined_project(
             request.user_id, request.project_id
         )
-        pass
