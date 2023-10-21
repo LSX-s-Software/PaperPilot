@@ -95,6 +95,11 @@ class ProjectService:
         :param request: 更新请求
         :return: 项目信息
         """
+        if request.name == "":
+            raise ApiException(
+                ResponseType.ParamEmpty, msg="项目名称不能为空", record=True
+            )
+
         await self._check_user(user_id, request.id)
 
         project = await self._get_project(request.id)
@@ -107,12 +112,7 @@ class ProjectService:
 
         await project.asave()
 
-        return ProjectInfo(
-            id=project.id.hex,
-            name=project.name,
-            description=project.description,
-            invite_code=project.invite_code,
-        )
+        return await self._get_project_info(project)
 
     async def list_user_joined_projects(
         self, user_id: uuid.UUID, page: int, page_size: int, order_by: str
@@ -128,11 +128,7 @@ class ProjectService:
         """
         self.logger.debug(f"list user joined projects: {user_id}")
 
-        # 获取所有与用户关联的UserProject对象
-        user_projects = UserProject.objects.filter(user_id=user_id)
-
-        # 获取所有与UserProject对象关联的项目
-        queryset = Project.objects.filter(user_projects__in=user_projects)
+        queryset = Project.objects.filter(users__user_id=user_id)
 
         total = await queryset.acount()
 
@@ -153,7 +149,7 @@ class ProjectService:
         queryset = queryset[(page - 1) * page_size : page * page_size]
 
         projects = []
-        async for project in queryset:
+        async for project in queryset.all():
             projects.append(await self._get_project_info(project))
 
         return ListProjectResponse(
@@ -173,6 +169,11 @@ class ProjectService:
         :param description: 项目描述
         :return: 项目信息
         """
+        if name == "":
+            raise ApiException(
+                ResponseType.ParamEmpty, msg="项目名称不能为空", record=True
+            )
+
         project = await Project.objects.acreate(
             name=name,
             description=description,
@@ -220,7 +221,7 @@ class ProjectService:
 
         if await UserProject.objects.filter(
             user_id=user_id, project=project
-        ).exists():
+        ).aexists():
             return
 
         await UserProject.objects.acreate(
@@ -268,7 +269,7 @@ class ProjectService:
 
         if not await UserProject.objects.filter(
             user_id=user_id, project_id=project_id
-        ).exists():
+        ).aexists():
             raise ApiException(
                 ResponseType.PermissionDenied, msg="用户未加入项目", record=True
             )
@@ -290,7 +291,7 @@ class ProjectService:
 
         if not await UserProject.objects.filter(
             user_id=user_id, project_id=project_id, is_owner=True
-        ).exists():
+        ).aexists():
             raise ApiException(
                 ResponseType.PermissionDenied, msg="用户不是项目所有者", record=True
             )
@@ -307,7 +308,7 @@ class ProjectService:
         self.logger.debug(f"check user {user_id} joined project: {project_id}")
         return await UserProject.objects.filter(
             user_id=user_id, project_id=project_id
-        ).exists()
+        ).aexists()
 
 
 project_service: ProjectService = ProjectService()

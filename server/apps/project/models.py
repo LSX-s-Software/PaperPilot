@@ -48,6 +48,7 @@ class UserProject(models.Model):
         on_delete=models.CASCADE,
         verbose_name="项目",
         db_index=True,
+        related_name="users",
     )
     is_owner = models.BooleanField(default=False, verbose_name="是否为所有者")
 
@@ -58,13 +59,6 @@ class UserProject(models.Model):
         verbose_name = "用户项目"
         verbose_name_plural = verbose_name
         ordering = ["-create_time"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user_id", "project"],
-                condition=models.Q(is_active=True),
-                name="user_and_project_uniq",
-            )
-        ]
 
     def __repr__(self):
         return f"<UserProject {self.user_id}-{self.project}>"

@@ -103,9 +103,10 @@ class ProjectPublicController(
         google.protobuf.empty_pb2.Empty,
         collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
     ]:
-        return await project_service.delete_project(
+        await project_service.delete_project(
             user_id=self.user.id, project_id=UUID(request.id)
         )
+        return google.protobuf.empty_pb2.Empty()
 
     async def JoinProject(
         self,
