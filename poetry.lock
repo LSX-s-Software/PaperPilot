@@ -1766,6 +1766,7 @@ files = [
 
 [package.dependencies]
 certifi = "*"
+starlette = {version = ">=0.19.1", optional = true, markers = "extra == \"starlette\""}
 urllib3 = {version = ">=1.26.11", markers = "python_version >= \"3.6\""}
 
 [package.extras]
@@ -2194,4 +2195,4 @@ reference = "aliyun"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "778691c5d0c74e1bc6a84c96607bb7f4c34db5c623ee320e9ed36d86857d969a"
+content-hash = "bcea40deabc12de6fd4611fbba2a04318fa118b1d1d04a69e03d1721b798bd9b"
