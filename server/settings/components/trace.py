@@ -1,5 +1,6 @@
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.starlette import StarletteIntegration
 
 from server.settings.util import config
 
@@ -13,6 +14,7 @@ if SENTRY_ENABLE:
         dsn=SENTRY_DSN,
         integrations=[
             DjangoIntegration(),
+            StarletteIntegration(),
         ],
         # Set traces_sample_rate to 1.0 to capture 100%
         # of transactions for performance monitoring.
