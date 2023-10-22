@@ -110,7 +110,6 @@ class ProjectService:
 
         project.name = request.name
         project.description = request.description
-        project.invite_code = request.invite_code
 
         await project.asave()
 
