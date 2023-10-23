@@ -8,6 +8,7 @@ def init_trace(service_name: str):
     import socket
 
     import MySQLdb
+    from opentelemetry import trace
     from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
         OTLPSpanExporter,
     )
@@ -30,7 +31,6 @@ def init_trace(service_name: str):
         print("TRACE_AUTH is required when enable trace")
         return
 
-    DjangoInstrumentor().instrument()
     DjangoInstrumentor().instrument(is_sql_commentor_enabled=True)
     RedisInstrumentor().instrument()
     AioHttpClientInstrumentor().instrument()
