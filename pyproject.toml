@@ -31,6 +31,14 @@ django_async_redis = "^0.2.0"
 pytz = "^2023.3.post1"
 starlette = "^0.31.1"
 uvicorn = "^0.23.2"
+opentelemetry-sdk = "^1.20.0"
+opentelemetry-instrumentation-django = "^0.41b0"
+opentelemetry-exporter-otlp = "^1.20.0"
+opentelemetry-instrumentation-aiohttp-client = "^0.41b0"
+opentelemetry-instrumentation-dbapi = "^0.41b0"
+opentelemetry-instrumentation-grpc = "^0.41b0"
+opentelemetry-instrumentation-redis = "^0.41b0"
+opentelemetry-instrumentation-starlette = "^0.41b0"
 
 
 [tool.poetry.group.test.dependencies]
