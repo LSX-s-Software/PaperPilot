@@ -24,26 +24,3 @@ if SENTRY_ENABLE:
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=False,
     )
-
-# from opentelemetry.instrumentation.dbapi import trace_integration
-# from opentelemetry.instrumentation.django import DjangoInstrumentor
-# from opentelemetry.instrumentation.grpc import (
-#     GrpcAioInstrumentorClient,
-#     GrpcAioInstrumentorServer,
-# )
-# from opentelemetry.instrumentation.redis import RedisInstrumentor
-#
-# JAEGER_HOST = config("JAEGER_HOST", None)
-#
-# # register_to_jaeger("paperpilot-backend-test", JAEGER_HOST)
-#
-# DjangoInstrumentor().instrument(is_sql_commentor_enabled=True)
-# RedisInstrumentor().instrument()
-#
-# trace_integration(MySQLdb, "connect", "mysql")
-#
-# grpc_server_instrumentor = GrpcAioInstrumentorServer()
-# grpc_server_instrumentor.instrument()
-#
-# grpc_client_instrumentor = GrpcAioInstrumentorClient()
-# grpc_client_instrumentor.instrument()
