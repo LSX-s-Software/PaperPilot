@@ -11,9 +11,6 @@ def init_trace(service_name: str):
     from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
         OTLPSpanExporter,
     )
-    from opentelemetry.instrumentation.aiohttp_client import (
-        AioHttpClientInstrumentor,
-    )
     from opentelemetry.instrumentation.django import DjangoInstrumentor
     from opentelemetry.instrumentation.grpc import (
         GrpcAioInstrumentorClient,
@@ -31,7 +28,6 @@ def init_trace(service_name: str):
 
     DjangoInstrumentor().instrument(is_sql_commentor_enabled=True)
     RedisInstrumentor().instrument()
-    AioHttpClientInstrumentor().instrument()
 
     grpc_server_instrumentor = GrpcAioInstrumentorServer()
     grpc_server_instrumentor.instrument()
