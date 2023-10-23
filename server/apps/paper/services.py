@@ -107,7 +107,7 @@ class PaperService:
         info = PaperInfo(
             id=paper.id.hex,
             title=paper.title,
-            publication_year=paper.publication_date.year,
+            publication_year=paper.publication_year,
             publication=paper.publication,
             create_time=datetime_to_timestamp(paper.create_time),
         )
@@ -129,13 +129,7 @@ class PaperService:
             project_id=paper.project_id.hex,
             title=paper.title,
             abstract=paper.abstract,
-            publication_date=Date(
-                year=paper.publication_date.year,
-                month=paper.publication_date.month,
-                day=paper.publication_date.day,
-            )
-            if paper.publication_date is not None
-            else Date(),
+            publication_year=paper.publication_year,
             publication=paper.publication,
             volume=paper.volume,
             issue=paper.issue,
@@ -328,7 +322,7 @@ class PaperService:
         if "author" in metadata:
             paper.authors = metadata["author"]
         if "year" in metadata:
-            paper.publication_date = datetime.date(metadata["year"], 1, 1)
+            paper.publication_year = int(metadata["year"])
         if "title" in metadata:
             paper.title = metadata["title"]
         if "publication" in metadata:
