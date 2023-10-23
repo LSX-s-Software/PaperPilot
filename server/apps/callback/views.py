@@ -172,10 +172,8 @@ class CallbackPaperFileView(BaseCallbackView):
             result["authors"] = list(paper_detail.authors)
         if len(list(paper_detail.tags)) != 0:
             result["tags"] = list(paper_detail.tags)
-        if paper_detail.publication_date.ByteSize() != 0:
-            result[
-                "publication_date"
-            ] = f"{paper_detail.publication_date.year}-{paper_detail.publication_date.month}-{paper_detail.publication_date.day}"
+        if paper_detail.publication_year != 0:
+            result["publication_year"] = paper_detail.publication_year
         if paper_detail.publication != "":
             result["publication"] = paper_detail.publication
         if paper_detail.issue != "":
