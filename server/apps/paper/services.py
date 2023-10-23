@@ -1,4 +1,3 @@
-import datetime
 import uuid
 
 from asgiref.sync import sync_to_async
@@ -7,7 +6,6 @@ from paper.models import Paper
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.helper.field import datetime_to_timestamp
 from paperpilot_common.oss.utils import get_random_name
-from paperpilot_common.protobuf.common.util_pb2 import Date
 from paperpilot_common.protobuf.paper.paper_pb2 import PaperDetail, PaperInfo
 from paperpilot_common.protobuf.project.project_pb2 import (
     CheckUserJoinedProjectRequest,
