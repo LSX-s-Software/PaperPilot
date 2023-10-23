@@ -48,8 +48,8 @@ def init_trace(service_name: str):
             HOST_NAME: socket.getfqdn(),
         }
     )
-    init_trace.set_tracer_provider(TracerProvider(resource=resource))
-    init_trace.get_tracer_provider().add_span_processor(
+    trace.set_tracer_provider(TracerProvider(resource=resource))
+    trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(
             OTLPSpanExporter(
                 endpoint="http://tracing-analysis-dc-hz.aliyuncs.com:8090",
