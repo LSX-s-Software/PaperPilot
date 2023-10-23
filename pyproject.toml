@@ -21,6 +21,11 @@ starlette = "^0.31.1"
 aiohttp = "^3.8.6"
 uvicorn = "^0.23.2"
 sentry-sdk = {extras = ["starlette"], version = "^1.32.0"}
+opentelemetry-sdk = "^1.20.0"
+opentelemetry-exporter-otlp = "^1.20.0"
+opentelemetry-instrumentation-aiohttp-client = "^0.41b0"
+opentelemetry-instrumentation-grpc = "^0.41b0"
+opentelemetry-instrumentation-starlette = "^0.41b0"
 
 
 [tool.poetry.group.test.dependencies]
