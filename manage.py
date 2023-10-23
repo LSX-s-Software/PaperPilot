@@ -53,6 +53,7 @@ def init_trace(service_name: str):
 def main():
     os.environ.setdefault("DJANGO_ENV", "development")
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
+    init_trace("paperpilot-backend-translation")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
