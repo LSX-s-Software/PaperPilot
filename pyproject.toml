@@ -31,6 +31,13 @@ pyjwt = "^2.8.0"
 alibabacloud-dysmsapi20170525 = "^2.0.24"
 django_async_redis = "^0.2.0"
 pytz = "^2023.3.post1"
+opentelemetry-sdk = "^1.20.0"
+opentelemetry-instrumentation-django = "^0.41b0"
+opentelemetry-exporter-otlp = "^1.20.0"
+opentelemetry-instrumentation-aiohttp-client = "^0.41b0"
+opentelemetry-instrumentation-dbapi = "^0.41b0"
+opentelemetry-instrumentation-grpc = "^0.41b0"
+opentelemetry-instrumentation-redis = "^0.41b0"
 
 
 [tool.poetry.group.test.dependencies]
