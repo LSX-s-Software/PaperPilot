@@ -57,7 +57,7 @@ class ScihubFetch(PdfFetch):
         soup = BeautifulSoup(html, "html.parser")
         pdf_url = soup.find("embed", {"id": "pdf"}).attrs["src"]
         self.logger.debug(f"pdf_url: {pdf_url}")
-        # pdf_file.file = await self._download(f"{self.base_url}/{pdf_url}")
+        pdf_file.file = await self._download(f"{self.base_url}/{pdf_url}")
         pdf_file.success = True
 
         try:
