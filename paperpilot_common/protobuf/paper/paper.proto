@@ -46,8 +46,8 @@ message PaperDetail {
     // tag列表
     repeated string tags = 7;
 
-    // 出版日期
-    util.Date publication_date = 8;
+    // 出版年份
+    int32 publication_year = 8;
     // 出版方
     string publication = 9;
     // 卷号

@@ -105,7 +105,7 @@ class PaperDetail(google.protobuf.message.Message):
     KEYWORDS_FIELD_NUMBER: builtins.int
     AUTHORS_FIELD_NUMBER: builtins.int
     TAGS_FIELD_NUMBER: builtins.int
-    PUBLICATION_DATE_FIELD_NUMBER: builtins.int
+    PUBLICATION_YEAR_FIELD_NUMBER: builtins.int
     PUBLICATION_FIELD_NUMBER: builtins.int
     VOLUME_FIELD_NUMBER: builtins.int
     ISSUE_FIELD_NUMBER: builtins.int
@@ -132,9 +132,8 @@ class PaperDetail(google.protobuf.message.Message):
     @property
     def tags(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
         """tag列表"""
-    @property
-    def publication_date(self) -> paperpilot_common.protobuf.common.util_pb2.Date:
-        """出版日期"""
+    publication_year: builtins.int
+    """出版年份"""
     publication: builtins.str
     """出版方"""
     volume: builtins.str
@@ -161,7 +160,7 @@ class PaperDetail(google.protobuf.message.Message):
         keywords: collections.abc.Iterable[builtins.str] | None = ...,
         authors: collections.abc.Iterable[builtins.str] | None = ...,
         tags: collections.abc.Iterable[builtins.str] | None = ...,
-        publication_date: paperpilot_common.protobuf.common.util_pb2.Date | None = ...,
+        publication_year: builtins.int = ...,
         publication: builtins.str = ...,
         volume: builtins.str = ...,
         issue: builtins.str = ...,
@@ -173,10 +172,7 @@ class PaperDetail(google.protobuf.message.Message):
         update_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
     ) -> None: ...
     def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "create_time", b"create_time", "publication_date", b"publication_date", "update_time", b"update_time"
-        ],
+        self, field_name: typing_extensions.Literal["create_time", b"create_time", "update_time", b"update_time"]
     ) -> builtins.bool: ...
     def ClearField(
         self,
@@ -203,8 +199,8 @@ class PaperDetail(google.protobuf.message.Message):
             b"project_id",
             "publication",
             b"publication",
-            "publication_date",
-            b"publication_date",
+            "publication_year",
+            b"publication_year",
             "tags",
             b"tags",
             "title",
