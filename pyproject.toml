@@ -39,6 +39,7 @@ opentelemetry-instrumentation-dbapi = "^0.41b0"
 opentelemetry-instrumentation-grpc = "^0.41b0"
 opentelemetry-instrumentation-redis = "^0.41b0"
 opentelemetry-instrumentation-starlette = "^0.41b0"
+aiohttp = "^3.8.6"
 
 
 [tool.poetry.group.test.dependencies]
