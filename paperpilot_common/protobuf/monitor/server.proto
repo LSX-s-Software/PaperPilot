@@ -5,6 +5,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 message ServerStatus {
+    int32 host_count = 1;
     repeated ProjectStatus projects = 2;
     google.protobuf.Timestamp time = 3;
 }
@@ -13,8 +14,8 @@ message ProjectStatus {
     string id = 1;
     string name = 2;
     string description = 3;
-    int32 healthy = 4;
-    int32 total = 5;
+    int32 healthy_count = 4;
+    int32 total_count = 5;
 }
 
 service MonitorPublicService {

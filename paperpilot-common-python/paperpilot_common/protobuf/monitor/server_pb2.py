@@ -16,7 +16,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n/paperpilot_common/protobuf/monitor/server.proto\x12\x07monitor\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto"b\n\x0cServerStatus\x12(\n\x08projects\x18\x02 \x03(\x0b\x32\x16.monitor.ProjectStatus\x12(\n\x04time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp"^\n\rProjectStatus\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07healthy\x18\x04 \x01(\x05\x12\r\n\x05total\x18\x05 \x01(\x05\x32R\n\x14MonitorPublicService\x12:\n\tGetStatus\x12\x16.google.protobuf.Empty\x1a\x15.monitor.ServerStatusb\x06proto3'
+    b'\n/paperpilot_common/protobuf/monitor/server.proto\x12\x07monitor\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto"v\n\x0cServerStatus\x12\x12\n\nhost_count\x18\x01 \x01(\x05\x12(\n\x08projects\x18\x02 \x03(\x0b\x32\x16.monitor.ProjectStatus\x12(\n\x04time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp"j\n\rProjectStatus\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x15\n\rhealthy_count\x18\x04 \x01(\x05\x12\x13\n\x0btotal_count\x18\x05 \x01(\x05\x32R\n\x14MonitorPublicService\x12:\n\tGetStatus\x12\x16.google.protobuf.Empty\x1a\x15.monitor.ServerStatusb\x06proto3'
 )
 
 _globals = globals()
@@ -25,9 +25,9 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "paperpilot_common.protobuf.
 if _descriptor._USE_C_DESCRIPTORS == False:
     DESCRIPTOR._options = None
     _globals["_SERVERSTATUS"]._serialized_start = 122
-    _globals["_SERVERSTATUS"]._serialized_end = 220
-    _globals["_PROJECTSTATUS"]._serialized_start = 222
-    _globals["_PROJECTSTATUS"]._serialized_end = 316
-    _globals["_MONITORPUBLICSERVICE"]._serialized_start = 318
-    _globals["_MONITORPUBLICSERVICE"]._serialized_end = 400
+    _globals["_SERVERSTATUS"]._serialized_end = 240
+    _globals["_PROJECTSTATUS"]._serialized_start = 242
+    _globals["_PROJECTSTATUS"]._serialized_end = 348
+    _globals["_MONITORPUBLICSERVICE"]._serialized_start = 350
+    _globals["_MONITORPUBLICSERVICE"]._serialized_end = 432
 # @@protoc_insertion_point(module_scope)

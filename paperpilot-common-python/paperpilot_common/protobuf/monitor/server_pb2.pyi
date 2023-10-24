@@ -21,8 +21,10 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 class ServerStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    HOST_COUNT_FIELD_NUMBER: builtins.int
     PROJECTS_FIELD_NUMBER: builtins.int
     TIME_FIELD_NUMBER: builtins.int
+    host_count: builtins.int
     @property
     def projects(
         self,
@@ -32,11 +34,15 @@ class ServerStatus(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        host_count: builtins.int = ...,
         projects: collections.abc.Iterable[global___ProjectStatus] | None = ...,
         time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["time", b"time"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["projects", b"projects", "time", b"time"]) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal["host_count", b"host_count", "projects", b"projects", "time", b"time"],
+    ) -> None: ...
 
 global___ServerStatus = ServerStatus
 
@@ -47,26 +53,35 @@ class ProjectStatus(google.protobuf.message.Message):
     ID_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     DESCRIPTION_FIELD_NUMBER: builtins.int
-    HEALTHY_FIELD_NUMBER: builtins.int
-    TOTAL_FIELD_NUMBER: builtins.int
+    HEALTHY_COUNT_FIELD_NUMBER: builtins.int
+    TOTAL_COUNT_FIELD_NUMBER: builtins.int
     id: builtins.str
     name: builtins.str
     description: builtins.str
-    healthy: builtins.int
-    total: builtins.int
+    healthy_count: builtins.int
+    total_count: builtins.int
     def __init__(
         self,
         *,
         id: builtins.str = ...,
         name: builtins.str = ...,
         description: builtins.str = ...,
-        healthy: builtins.int = ...,
-        total: builtins.int = ...,
+        healthy_count: builtins.int = ...,
+        total_count: builtins.int = ...,
     ) -> None: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
-            "description", b"description", "healthy", b"healthy", "id", b"id", "name", b"name", "total", b"total"
+            "description",
+            b"description",
+            "healthy_count",
+            b"healthy_count",
+            "id",
+            b"id",
+            "name",
+            b"name",
+            "total_count",
+            b"total_count",
         ],
     ) -> None: ...
 
