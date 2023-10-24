@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Paper Pilot 项目邀请</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Paper Pilot 项目邀请">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 66%;
+            min-height: 240px;
+            margin: 0 auto;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        #error {
+            font-size: 24px;
+            color: #333;
+        }
+
+        #project-description {
+            margin: 20px 16px;
+        }
+
+        #owner-avatar {
+            max-width: 100px;
+            border-radius: 50%;
+            margin: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            display: inline;
+            margin: 5px;
+        }
+
+        img {
+            max-width: 50px;
+            border-radius: 50%;
+        }
+
+        #join-project {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 10%;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #join-project:hover {
+            background-color: #0056b3;
+        }
+
+        /* 响应式布局 */
+        @media (max-width: 600px) {
+            .container {
+                max-width: 90%;
+                padding: 10px;
+            }
+
+            #owner-avatar {
+                max-width: 80px;
+            }
+
+            img {
+                max-width: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="invitation-title">邀请你在 Paper Pilot 加入项目</h1>
+
+    <div class="container">
+        <h2 id="error">{{error}}</h2>
+    </div>
+
+</body>
+
+</html>

@@ -110,7 +110,6 @@ class ProjectService:
 
         project.name = request.name
         project.description = request.description
-        project.invite_code = request.invite_code
 
         await project.asave()
 
@@ -226,7 +225,12 @@ class ProjectService:
         if await UserProject.objects.filter(
             user_id=user_id, project=project
         ).aexists():
-            return await self._get_project_info(project)
+            raise ApiException(
+                ResponseType.ParamValidationFailed,
+                msg="用户已加入项目",
+                detail="您已加入该项目",
+                record=False,
+            )
 
         await UserProject.objects.acreate(
             user_id=user_id,
