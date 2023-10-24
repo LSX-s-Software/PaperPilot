@@ -10,10 +10,11 @@ message ServerStatus {
 }
 
 message ProjectStatus {
-    string project_name = 1;
-    string project_description = 2;
-    int32 total = 3;
+    string id = 1;
+    string name = 2;
+    string description = 3;
     int32 healthy = 4;
+    int32 total = 5;
 }
 
 service MonitorPublicService {

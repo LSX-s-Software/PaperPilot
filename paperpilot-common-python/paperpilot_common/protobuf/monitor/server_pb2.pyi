@@ -44,33 +44,29 @@ global___ServerStatus = ServerStatus
 class ProjectStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    PROJECT_NAME_FIELD_NUMBER: builtins.int
-    PROJECT_DESCRIPTION_FIELD_NUMBER: builtins.int
-    TOTAL_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
     HEALTHY_FIELD_NUMBER: builtins.int
-    project_name: builtins.str
-    project_description: builtins.str
-    total: builtins.int
+    TOTAL_FIELD_NUMBER: builtins.int
+    id: builtins.str
+    name: builtins.str
+    description: builtins.str
     healthy: builtins.int
+    total: builtins.int
     def __init__(
         self,
         *,
-        project_name: builtins.str = ...,
-        project_description: builtins.str = ...,
-        total: builtins.int = ...,
+        id: builtins.str = ...,
+        name: builtins.str = ...,
+        description: builtins.str = ...,
         healthy: builtins.int = ...,
+        total: builtins.int = ...,
     ) -> None: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
-            "healthy",
-            b"healthy",
-            "project_description",
-            b"project_description",
-            "project_name",
-            b"project_name",
-            "total",
-            b"total",
+            "description", b"description", "healthy", b"healthy", "id", b"id", "name", b"name", "total", b"total"
         ],
     ) -> None: ...
 
