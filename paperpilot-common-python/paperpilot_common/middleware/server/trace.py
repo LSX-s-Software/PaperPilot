@@ -31,7 +31,6 @@ class TraceMiddleware(AsyncServerMiddleware):
         if trace_id:
             trace_id_context.set(UUID(trace_id))
         else:
-            self.logger.warning("trace_id not found")
             trace_id_context.set(uuid.uuid4())
 
             close_old_connections()
@@ -46,6 +45,8 @@ class TraceMiddleware(AsyncServerMiddleware):
             await context.abort_with_status(rpc_status.to_status(status))
         finally:
             method_info = parse_method_name(method_name)
-            self.logger.info(
+            if method_info.method in ["ServerReflectionInfo", "Check", "Watch"]:
+                return
+            self.logger.debug(
                 f"Got Request {get_trace_id()}. method:{method_info.method}, code:{context.code()}, detail:{context.details()}, duration:{time.time() - start_time}"
             )

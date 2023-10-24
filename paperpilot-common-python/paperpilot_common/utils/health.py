@@ -9,7 +9,6 @@ class HealthView(HTTPEndpoint):
     logger = get_logger("health.view")
 
     async def get(self, request):
-        self.logger.debug("check health")
         return JSONResponse({})
 
 
