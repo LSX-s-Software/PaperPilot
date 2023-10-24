@@ -26,11 +26,19 @@ dj-database-url = "^2.1.0"
 hiredis = "^2.2.3"
 django-cleanup = "^8.0.0"
 django-cacheops = "^7.0.1"
-sentry-sdk = "^1.31.0"
+oss2 = ">=2.18.2"
+sentry-sdk = {extras = ["django"], version = ">=1.31.0"}
 pyjwt = "^2.8.0"
 alibabacloud-dysmsapi20170525 = "^2.0.24"
 django_async_redis = "^0.2.0"
 pytz = "^2023.3.post1"
+opentelemetry-sdk = "^1.20.0"
+opentelemetry-instrumentation-django = "^0.41b0"
+opentelemetry-exporter-otlp = "^1.20.0"
+opentelemetry-instrumentation-aiohttp-client = "^0.41b0"
+opentelemetry-instrumentation-dbapi = "^0.41b0"
+opentelemetry-instrumentation-grpc = "^0.41b0"
+opentelemetry-instrumentation-redis = "^0.41b0"
 
 
 [tool.poetry.group.test.dependencies]
