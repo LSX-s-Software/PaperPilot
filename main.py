@@ -1,13 +1,14 @@
 from os import environ
 
-from starlette.applications import Starlette
 from opentelemetry.instrumentation.starlette import StarletteInstrumentor
+from starlette.applications import Starlette
 
 from server import settings
 from server.urls import routes
 from server.utils.logging_handler import init_logging
 
 environ.setdefault("DJANGO_ENV", "development")
+
 
 def init_trace(service_name: str):
     import socket
@@ -19,9 +20,7 @@ def init_trace(service_name: str):
     from opentelemetry.instrumentation.aiohttp_client import (
         AioHttpClientInstrumentor,
     )
-    from opentelemetry.instrumentation.grpc import (
-        GrpcAioInstrumentorClient,
-    )
+    from opentelemetry.instrumentation.grpc import GrpcAioInstrumentorClient
     from opentelemetry.sdk.resources import HOST_NAME, SERVICE_NAME, Resource
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor

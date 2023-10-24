@@ -1,8 +1,8 @@
-from starlette.routing import Mount
-from paperpilot_common.utils import health
-
 import test.urls
+
 import callback.urls
+from paperpilot_common.utils import health
+from starlette.routing import Mount
 
 routes = [
     Mount("/health/", routes=health.routes),
