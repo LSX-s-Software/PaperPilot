@@ -1,7 +1,7 @@
 """Base class for server-side interceptors."""
 
 import abc
-from asyncio import iscoroutine, iscoroutinefunction
+from asyncio import iscoroutine
 from typing import Any, Callable, Tuple
 
 import grpc
@@ -176,10 +176,10 @@ class AsyncServerMiddleware(grpc_aio.ServerInterceptor, metaclass=abc.ABCMeta):
 
     async def call(self, method, request, context):
         """Call method in an async way"""
-        if not iscoroutinefunction(method):
-            return method(request, context)
-        else:
+        try:
             return await method(request, context)
+        except Exception:
+            return method(request, context)
 
 
 def _get_factory_and_method(
