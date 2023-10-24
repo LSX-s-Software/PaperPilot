@@ -1,0 +1,36 @@
+syntax = "proto3";
+package monitor;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+enum Status {
+    RUNNING = 0;
+    STOPPED = 1;
+    STARTING = 2;
+    HEALTHY = 3;
+    UNHEALTHY = 4;
+    UNKNOWN = 5;
+}
+
+message ClientStatus {
+    string host = 1;
+    repeated ClientProjectStatus projects = 2;
+    google.protobuf.Timestamp time = 3;
+}
+
+message ClientProjectStatus {
+    string project_name = 1;
+    repeated ClientContainerStatus containers = 2;
+}
+
+message ClientContainerStatus {
+    string id = 1;
+    string name = 2;
+    string host = 3;
+    Status status = 4;
+}
+
+service MonitorClientService {
+    rpc GetStatus (google.protobuf.Empty) returns (ClientStatus);
+}

@@ -1,0 +1,21 @@
+syntax = "proto3";
+package monitor;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message ServerStatus {
+    repeated ProjectStatus projects = 2;
+    google.protobuf.Timestamp time = 3;
+}
+
+message ProjectStatus {
+    string project_name = 1;
+    string project_description = 2;
+    int32 total = 3;
+    int32 healthy = 4;
+}
+
+service MonitorPublicService {
+    rpc GetStatus (google.protobuf.Empty) returns (ServerStatus);
+}
