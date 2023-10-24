@@ -25,7 +25,7 @@ class Paper(models.Model):
 
     tags = models.JSONField(default=list, verbose_name="标签列表")
 
-    publication_date = models.DateField(null=True, verbose_name="发表日期")
+    publication_year = models.IntegerField(default=0, verbose_name="出版年份")
     publication = models.CharField(max_length=255, verbose_name="出版方")
     volume = models.CharField(max_length=255, verbose_name="卷")
     issue = models.CharField(max_length=255, verbose_name="期")

@@ -1,4 +1,3 @@
-import datetime
 from uuid import UUID
 
 from paper.models import Paper
@@ -13,7 +12,7 @@ class PaperPublicUpdater(Updater):
         "keywords",
         "authors",
         "tags",
-        "publication_date",
+        "publication_year",
         "publication",
         "volume",
         "issue",
@@ -31,36 +30,6 @@ class PaperPublicUpdater(Updater):
 
     async def update_tags(self, obj: Paper, vo: PaperDetail) -> None:
         obj.tags = list(vo.tags)
-
-    async def diff_publication_date(self, obj: Paper, vo: PaperDetail) -> bool:
-        if (
-            obj.publication_date is not None
-            and vo.publication_date.ByteSize() > 0
-        ):  # 均存在有效值
-            return (
-                obj.publication_date.year != vo.publication_date.year
-                or obj.publication_date.month != vo.publication_date.month
-                or obj.publication_date.day != vo.publication_date.day
-            )
-
-        if (
-            obj.publication_date and vo.publication_date.ByteSize() == 0
-        ):  # 均不存在有效值
-            return False
-
-        return True
-
-    async def update_publication_date(
-        self, obj: Paper, vo: PaperDetail
-    ) -> None:
-        if vo.publication_date.ByteSize() == 0:
-            obj.publication_date = None
-        else:
-            obj.publication_date = datetime.date(
-                year=vo.publication_date.year,
-                month=vo.publication_date.month,
-                day=vo.publication_date.day,
-            )
 
 
 class PaperUpdater(PaperPublicUpdater):

@@ -147,9 +147,7 @@ class TestPaperPublic:
         assert response.keywords == paper.keywords
         assert response.authors == paper.authors
         assert response.tags == paper.tags
-        assert response.publication_date.year == paper.publication_date.year
-        assert response.publication_date.month == paper.publication_date.month
-        assert response.publication_date.day == paper.publication_date.day
+        assert response.publication_year == paper.publication_year
         assert response.publication == paper.publication
         assert response.volume == paper.volume
         assert response.issue == paper.issue
@@ -220,7 +218,7 @@ class TestPaperPublic:
         assert response.keywords == request.paper.keywords
         assert response.authors == request.paper.authors
         assert response.tags == request.paper.tags
-        assert response.publication_date == request.paper.publication_date
+        assert response.publication_year == request.paper.publication_year
         assert response.publication == request.paper.publication
         assert response.volume == request.paper.volume
         assert response.issue == request.paper.issue
@@ -261,7 +259,7 @@ class TestPaperPublic:
         assert response.keywords == []
         assert response.authors == []
         assert response.tags == []
-        assert response.publication_date.ByteSize() == 0
+        assert response.publication_year == 0
         assert response.publication == ""
         assert response.volume == ""
         assert response.issue == ""
@@ -319,7 +317,7 @@ class TestPaperPublic:
         assert response.keywords == paper_detail.keywords
         assert response.authors == paper_detail.authors
         assert response.tags == paper_detail.tags
-        assert response.publication_date == paper_detail.publication_date
+        assert response.publication_year == paper_detail.publication_year
         assert response.publication == paper_detail.publication
         assert response.volume == paper_detail.volume
         assert response.issue == paper_detail.issue
@@ -424,7 +422,7 @@ class TestPaperController:
         assert response.keywords == paper_detail.keywords
         assert response.authors == paper_detail.authors
         assert response.tags == paper_detail.tags
-        assert response.publication_date == paper_detail.publication_date
+        assert response.publication_year == paper_detail.publication_year
         assert response.publication == paper_detail.publication
         assert response.volume == paper_detail.volume
         assert response.issue == paper_detail.issue
@@ -457,7 +455,7 @@ class TestPaperController:
         assert response.keywords == []
         assert response.authors == []
         assert response.tags == []
-        assert response.publication_date.ByteSize() == 0
+        assert response.publication_year == 0
         assert response.publication == ""
         assert response.volume == ""
         assert response.issue == ""
@@ -491,7 +489,7 @@ class TestPaperController:
         assert response.keywords == paper_detail.keywords
         assert response.authors == paper_detail.authors
         assert response.tags == paper_detail.tags
-        assert response.publication_date == paper_detail.publication_date
+        assert response.publication_year == paper_detail.publication_year
         assert response.publication == paper_detail.publication
         assert response.volume == paper_detail.volume
         assert response.issue == paper_detail.issue
