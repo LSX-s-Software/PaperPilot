@@ -1,14 +1,13 @@
 # define an alias for the specfic python version used in this file.
-FROM python:3.11-alpine as python
+FROM python:3.11-slim-bullseye as python
 
 # Python build stage
 FROM python as python-build-stage
 
-## Install apk packages
-RUN apk update && apk add \
-#  # dependencies for building Python packages
-#  build-essential \
-#  pkg-config \
+# Install apt packages
+RUN apt-get update && apt-get install --no-install-recommends -y \
+  # dependencies for building Python packages
+  build-essential \
   git
 
 WORKDIR /tmp
@@ -26,11 +25,18 @@ ARG APP_HOME=/app
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
-RUN apk update && apk add \
+# Install required system dependencies
+RUN apt-get update && apt-get install --no-install-recommends -y \
+  vim \
+  curl \
   wget \
-  && apk cache clean --purge
+  # cleaning up unused files
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+# change mirror
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
+    && sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
 # Install grpcurl
 RUN mkdir grpcurl && cd grpcurl \
@@ -38,6 +44,7 @@ RUN mkdir grpcurl && cd grpcurl \
   && tar -xvf grpcurl_1.8.8_linux_x86_64.tar.gz \
   && mv grpcurl /usr/local/bin \
   && cd .. && rm -rf grpcurl
+
 
 WORKDIR ${APP_HOME}
 
