@@ -3,12 +3,15 @@ import logging
 import sys
 
 import grpc.aio
+import grpc_health.v1.health as health
 from grpc_reflection.v1alpha import reflection
+from grpc_health.v1 import health_pb2_grpc
 from paperpilot_common.protobuf.user import user_pb2, auth_pb2
 from paperpilot_common.protobuf.test import test_pb2
 from paperpilot_common.protobuf.project import project_pb2
 from paperpilot_common.protobuf.paper import paper_pb2
 from paperpilot_common.protobuf.translation import translation_pb2
+from paperpilot_common.protobuf.monitor import server_pb2 as monitor_server_pb2
 
 
 logger = logging.getLogger(__name__)
@@ -30,9 +33,15 @@ async def serve(addr: str | None = None) -> None:
         reflection.SERVICE_NAME,
         paper_pb2.DESCRIPTOR.services_by_name["PaperPublicService"].full_name,
         translation_pb2.DESCRIPTOR.services_by_name["TranslationPublicService"].full_name,
+        monitor_server_pb2.DESCRIPTOR.services_by_name["MonitorPublicService"].full_name,
         reflection.SERVICE_NAME,
     )
     reflection.enable_server_reflection(service_names, server)
+
+    # add health check
+    health_servicer = health.aio.HealthServicer()
+    health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
+
     server.add_insecure_port(addr)
     logger.info("gRPC server listening on %s", addr)
     await server.start()
