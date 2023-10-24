@@ -67,6 +67,7 @@ def create_server(address):
     service_names = add_servicers(server, servicers_list)
 
     if server_reflection:
+        service_names.append(reflection.SERVICE_NAME)
         reflection_servicer = reflection.aio.ReflectionServicer(service_names)
         reflection_pb2_grpc.add_ServerReflectionServicer_to_server(reflection_servicer, server)
         logger.info("gRPC server reflection enabled")
