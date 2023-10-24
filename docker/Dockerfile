@@ -85,4 +85,4 @@ EXPOSE 8001
 HEALTHCHECK --interval=10s --timeout=5s \
   CMD grpcurl -d '{}' -plaintext -v 127.0.0.1:8001 grpc.health.v1.Health.Check || exit 1
 
-ENTRYPOINT ["python", "-m", "run.py", "0.0.0.0:8001"]
+ENTRYPOINT ["python", "run.py", "0.0.0.0:8001"]
