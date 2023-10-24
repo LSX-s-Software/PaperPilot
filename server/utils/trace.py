@@ -13,7 +13,7 @@ def init_trace(service_name: str):
     )
     from opentelemetry.instrumentation.grpc import (
         GrpcAioInstrumentorServer,
-        GrpcInstrumentorClient
+        GrpcInstrumentorClient,
     )
     from opentelemetry.sdk.resources import HOST_NAME, SERVICE_NAME, Resource
     from opentelemetry.sdk.trace import TracerProvider

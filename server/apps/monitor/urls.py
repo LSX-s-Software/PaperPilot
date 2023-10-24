@@ -21,8 +21,14 @@ def grpc_hook(server):
 
 
 class MonitorPublicController(server_pb2_grpc.MonitorPublicServiceServicer):
-    async def GetStatus(self, request: google.protobuf.empty_pb2.Empty, context: _ServicerContext) -> typing.Union[
+    async def GetStatus(
+        self,
+        request: google.protobuf.empty_pb2.Empty,
+        context: _ServicerContext,
+    ) -> typing.Union[
         paperpilot_common.protobuf.monitor.server_pb2.ServerStatus,
-        collections.abc.Awaitable[paperpilot_common.protobuf.monitor.server_pb2.ServerStatus],
+        collections.abc.Awaitable[
+            paperpilot_common.protobuf.monitor.server_pb2.ServerStatus
+        ],
     ]:
         return await monitor_service.get_status()

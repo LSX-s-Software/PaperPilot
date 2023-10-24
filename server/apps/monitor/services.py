@@ -2,8 +2,15 @@ from datetime import datetime
 
 import google.protobuf.empty_pb2
 from paperpilot_common.helper.field import datetime_to_timestamp
-from paperpilot_common.protobuf.monitor.client_pb2 import ClientStatus, ClientContainerStatus, Status
-from paperpilot_common.protobuf.monitor.server_pb2 import ServerStatus, ProjectStatus
+from paperpilot_common.protobuf.monitor.client_pb2 import (
+    ClientContainerStatus,
+    ClientStatus,
+    Status,
+)
+from paperpilot_common.protobuf.monitor.server_pb2 import (
+    ProjectStatus,
+    ServerStatus,
+)
 from paperpilot_common.utils.log import get_logger
 
 from server.business.grpc.monitor_client import monitor_clients
@@ -14,16 +21,15 @@ class MonitorPublicService:
     logger = get_logger("monitor.server.service")
 
     def __init__(self):
-        self.projects = {
-            _["id"]: _
-            for _ in data["projects"]
-        }
+        self.projects = {_["id"]: _ for _ in data["projects"]}
 
     async def get_client_status(self) -> list[ClientStatus]:
         result = []
         for client in monitor_clients:
             try:
-                result.append(await client.stub.GetStatus(google.protobuf.empty_pb2.Empty))
+                result.append(
+                    await client.stub.GetStatus(google.protobuf.empty_pb2.Empty)
+                )
             except Exception as e:
                 self.logger.error(f"get client status error: {e}")
 
@@ -53,13 +59,17 @@ class MonitorPublicService:
                     "description": "",
                 }
 
-            projects.append(ProjectStatus(
-                id=project["id"],
-                name=project["name"],
-                description=project["description"],
-                healthy_count=len([_ for _ in containers if _.status == Status.HEALTHY]),
-                total_count=len(containers),
-            ))
+            projects.append(
+                ProjectStatus(
+                    id=project["id"],
+                    name=project["name"],
+                    description=project["description"],
+                    healthy_count=len(
+                        [_ for _ in containers if _.status == Status.HEALTHY]
+                    ),
+                    total_count=len(containers),
+                )
+            )
 
         return ServerStatus(
             host_count=len(client_status),

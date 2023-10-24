@@ -25,7 +25,9 @@ async def serve(addr: str | None = None) -> None:
     # add health check
     health_servicer = health.aio.HealthServicer()
     health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
-    service_names.append(health_pb2.DESCRIPTOR.services_by_name["Health"].full_name)
+    service_names.append(
+        health_pb2.DESCRIPTOR.services_by_name["Health"].full_name
+    )
 
     # add reflection
     service_names.append(reflection.SERVICE_NAME)
