@@ -5,8 +5,10 @@ from pathlib import Path
 
 import grpc
 import grpc.aio
+import grpc_health.v1.health as health
 from django.conf import settings
 from django.utils.module_loading import import_string
+from grpc_health.v1 import health_pb2, health_pb2_grpc
 from grpc_reflection.v1alpha import reflection
 
 from paperpilot_common.grpc.signals.wrapper import SignalWrapper
@@ -62,6 +64,7 @@ def create_server(address):
         )
 
     service_names = add_servicers(server, servicers_list)
+
     if server_reflection:
         reflection.enable_server_reflection(service_names, server)
         logger.info("gRPC server reflection enabled")
@@ -120,6 +123,11 @@ def add_servicers(server, servicers_list):
         services_names.extend(service_name)
 
     services_names.append(reflection.SERVICE_NAME)
+
+    # add health check
+    health_servicer = health.aio.HealthServicer()
+    health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
+    services_names.append(health_pb2.DESCRIPTOR.services_by_name["Health"].full_name)
 
     return services_names
 

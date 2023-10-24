@@ -24,6 +24,7 @@ oss2 = ">=2.18.2"
 isodate = ">=0.6.1"
 grpcio-reflection = ">=1.59.0"
 sentry-sdk = {extras = ["django"], version = ">=1.31.0"}
+grpcio-health-checking = "^1.59.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
