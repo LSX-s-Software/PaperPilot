@@ -79,4 +79,7 @@ COPY ./server/ server/
 
 EXPOSE 8000
 
+HEALTHCHECK --interval=10s --timeout=5s \
+  CMD curl -f http://localhost:8000/health/ || exit 1
+
 ENTRYPOINT ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
