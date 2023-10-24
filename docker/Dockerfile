@@ -58,6 +58,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   gettext \
   vim \
   curl \
+  wget \
   default-libmysqlclient-dev \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
@@ -66,6 +67,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 # change mirror
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
     && sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+
+# Install grpcurl
+RUN mkdir grpcurl && cd grpcurl \
+  && wget https://github.com/fullstorydev/grpcurl/releases/download/v1.8.8/grpcurl_1.8.8_linux_x86_64.tar.gz \
+  && tar -xvf grpcurl_1.8.8_linux_x86_64.tar.gz \
+  && mv grpcurl /usr/local/bin \
+  && cd .. && rm -rf grpcurl
 
 # All absolute dir copies ignore workdir instruction. All relative dir copies are wrt to the workdir instruction
 # copy python dependency wheels from python-build-stage
@@ -80,5 +88,8 @@ COPY  ./manage.py manage.py
 COPY ./server/ server/
 
 EXPOSE 8001
+
+HEALTHCHECK --interval=10s --timeout=5s \
+  CMD grpcurl -d '{}' -plaintext -v 127.0.0.1:8001 grpc.health.v1.Health.Check || exit 1
 
 ENTRYPOINT ["python", "manage.py", "grpcserver", "0.0.0.0:8001", "--noreload"]
