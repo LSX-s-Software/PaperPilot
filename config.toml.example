@@ -1,0 +1,10 @@
+monitor_clients = [
+  "monitor.1.example.com",
+  "monitor.2.example.com"
+]
+
+[[projects]]
+id = "file"
+name = "文件服务"
+description = ""
+
