@@ -35,7 +35,7 @@ class MonitorClientService:
 
         for i, target_name in enumerate(self.target_names):
             if name.startswith(target_name):
-                if name not in result:
+                if self.project_names[i] not in result:
                     result[self.project_names[i]] = []
                 result[self.project_names[i]].append(container_info)
 
