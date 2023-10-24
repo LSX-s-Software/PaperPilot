@@ -18,6 +18,7 @@ from paperpilot_common.response import ResponseType
 from user.models import User
 from user.services import user_service
 from user.urls import UserController, UserPublicController
+from user.utils import generate_avatar
 
 
 class TestUserPublic:
@@ -31,7 +32,7 @@ class TestUserPublic:
 
         assert response.id == user.id.hex
         assert response.username == user.username
-        assert response.avatar == user.avatar.url
+        assert response.avatar == generate_avatar(user.username)
 
     @pytest.mark.asyncio
     async def test_get_current_user__success(self, api, context, user: User):
@@ -40,7 +41,7 @@ class TestUserPublic:
 
         assert response.id == user.id.hex
         assert response.username == user.username
-        assert response.avatar == user.avatar.url
+        assert response.avatar == generate_avatar(user.username)
         assert response.phone == user.phone
         assert response.create_time == datetime_to_timestamp(user.create_time)
         assert response.update_time == datetime_to_timestamp(user.update_time)
@@ -231,7 +232,7 @@ class TestUser:
 
         assert response.id == user.id.hex
         assert response.username == user.username
-        assert response.avatar == user.avatar.url
+        assert response.avatar == generate_avatar(user.username)
 
     @pytest.mark.asyncio
     async def test_get_user_info__not_found(self, api, context):
@@ -246,7 +247,7 @@ class TestUser:
 
         assert response.id == user.id.hex
         assert response.username == user.username
-        assert response.avatar == user.avatar.url
+        assert response.avatar == generate_avatar(user.username)
         assert response.phone == user.phone
         assert response.create_time == datetime_to_timestamp(user.create_time)
         assert response.update_time == datetime_to_timestamp(user.update_time)

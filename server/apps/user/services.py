@@ -12,6 +12,7 @@ from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 from user.models import User
 from user.updaters import UserUpdater
+from user.utils import generate_avatar
 
 
 class UserService:
@@ -37,6 +38,17 @@ class UserService:
 
         return user
 
+    def _get_user_avatar(self, user: User) -> str:
+        """
+        获取用户头像
+
+        :param user: 用户对象
+        :return: 用户头像地址
+        """
+        if user.avatar.name == f"{User.AVATAR_PATH}/default.jpg":
+            return generate_avatar(user.username)
+        return user.avatar.url
+
     async def get_user_info(self, user: User | uuid.UUID | str) -> UserInfo:
         """
         获取用户信息
@@ -50,7 +62,7 @@ class UserService:
         return UserInfo(
             id=user.id.hex,
             username=user.username,
-            avatar=user.avatar.url,
+            avatar=self._get_user_avatar(user),
         )
 
     async def get_user_detail(self, user: User | uuid.UUID | str) -> UserDetail:
@@ -67,7 +79,7 @@ class UserService:
             id=user.id.hex,
             username=user.username,
             phone=user.phone,
-            avatar=user.avatar.url,
+            avatar=self._get_user_avatar(user),
             create_time=datetime_to_timestamp(user.create_time),
             update_time=datetime_to_timestamp(user.update_time),
         )
@@ -113,7 +125,7 @@ class UserService:
                 UserInfo(
                     id=user.id.hex,
                     username=user.username,
-                    avatar=user.avatar.url,
+                    avatar=self._get_user_avatar(user),
                 )
             )
 
