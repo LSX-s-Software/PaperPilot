@@ -1,5 +1,5 @@
 # 定义一个存储子仓库的列表
-$subtrees = @("coordinator", "file", "paper", "project", "reflection", "test", "translation", "user")
+$subtrees = @("coordinator", "file", "paper", "project", "reflection", "test", "translation", "user", "monitor", "monitor-client")
 
 $command = "git pull"
 Write-Host "run: $command"
