@@ -121,6 +121,8 @@ class ApiExceptionHandler(metaclass=Singleton):
 
     def grpc_handle(self, exc: Exception) -> status_pb2.Status:
         exc = self._convert(exc)
+        if hasattr(exc, "inner"):
+            self.logger.exception(exc.inner)
         response_data = exc.response_data
 
         if exc.record:  # 如果需要记录

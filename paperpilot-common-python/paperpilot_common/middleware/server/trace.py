@@ -42,8 +42,6 @@ class TraceMiddleware(AsyncServerMiddleware):
             context.set_trailing_metadata((("x-trace-id", trace_id_context.get().hex),))
             return response
         except Exception as e:
-            if hasattr(e, "inner"):
-                self.logger.error(e.inner)
             status = self.handler.grpc_handle(e)
             await context.abort_with_status(rpc_status.to_status(status))
         finally:
