@@ -1903,6 +1903,7 @@ files = [
 
 [package.dependencies]
 certifi = "*"
+django = {version = ">=1.8", optional = true, markers = "extra == \"django\""}
 urllib3 = {version = ">=1.26.11", markers = "python_version >= \"3.6\""}
 
 [package.extras]
@@ -2265,4 +2266,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "1e343cdf056328f0bbe5133367ee8ad876df3cead357396d32ed38947c61cb65"
+content-hash = "e3e87442c62ee6b9cbadbc6c4febe632375d90798f9efa7806ec8700e91cdb54"

@@ -23,9 +23,7 @@ django-extensions = "^3.2.3"
 django-cache-url = "^3.4.4"
 dj-database-url = "^2.1.0"
 hiredis = "^2.2.3"
-sentry-sdk = "^1.31.0"
-# paperpilot-common = "^0.0.11"
-# paperpilot-common = {git = "http://github.com/Nagico/paperpilot-common.git", subdirectory = "paperpilot-common-python"}
+sentry-sdk = {extras = ["django"], version = ">=1.31.0"}
 django_async_redis = "^0.2.0"
 pytz = "^2023.3.post1"
 opentelemetry-sdk = "^1.20.0"
