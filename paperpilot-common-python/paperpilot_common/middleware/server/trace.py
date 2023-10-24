@@ -45,8 +45,7 @@ class TraceMiddleware(AsyncServerMiddleware):
             await context.abort_with_status(rpc_status.to_status(status))
         finally:
             method_info = parse_method_name(method_name)
-            if method_info.method in ["ServerReflectionInfo", "Check", "Watch"]:
-                return
-            self.logger.debug(
-                f"Got Request {get_trace_id()}. method:{method_info.method}, code:{context.code()}, detail:{context.details()}, duration:{time.time() - start_time}"
-            )
+            if method_info.method not in ["ServerReflectionInfo", "Check", "Watch"]:
+                self.logger.debug(
+                    f"Got Request {get_trace_id()}. method:{method_info.method}, code:{context.code()}, detail:{context.details()}, duration:{time.time() - start_time}"
+                )
