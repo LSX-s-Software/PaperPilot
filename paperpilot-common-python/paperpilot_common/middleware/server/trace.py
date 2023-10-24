@@ -37,7 +37,7 @@ class TraceMiddleware(AsyncServerMiddleware):
             close_old_connections()
         try:
             # run grpc handler
-            response = await method(request_or_iterator, context)
+            response = await self.call(method, request_or_iterator, context)
             # add trace_id to metadata
             context.set_trailing_metadata((("x-trace-id", trace_id_context.get().hex),))
             return response

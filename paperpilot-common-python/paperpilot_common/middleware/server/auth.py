@@ -67,7 +67,7 @@ class AuthMiddleware(AsyncServerMiddleware):
             user_id = metadata.get(self.auth_metadata_key, None)
             user_context.set(UserContext(user_id))
 
-            return await method(request_or_iterator, context)
+            return await self.call(method, request_or_iterator, context)
         except Exception as e:
             self.logger.exception(e)
             raise e
