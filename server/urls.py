@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group, User
 from django.urls import include, path
 from django.views.generic import RedirectView
+from paperpilot_common.utils.health import routes as health_routes
 from starlette.routing import Mount
 
 
@@ -66,4 +67,5 @@ if settings.DEBUG:  # pragma: no cover
 
 routes = [
     Mount("/project/", routes=project.urls.routes),
+    Mount("/health", routes=health_routes),
 ]
