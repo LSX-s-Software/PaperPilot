@@ -176,10 +176,11 @@ class AsyncServerMiddleware(grpc_aio.ServerInterceptor, metaclass=abc.ABCMeta):
 
     async def call(self, method, request, context):
         """Call method in an async way"""
-        try:
-            return await method(request, context)
-        except Exception:
-            return method(request, context)
+        response = method(request, context)
+        if hasattr(response, "__aiter__"):
+            return response
+        else:
+            return await response
 
 
 def _get_factory_and_method(
