@@ -4,15 +4,14 @@ import sys
 
 import grpc.aio
 import grpc_health.v1.health as health
-from grpc_reflection.v1alpha import reflection
 from grpc_health.v1 import health_pb2, health_pb2_grpc
-from paperpilot_common.protobuf.user import user_pb2, auth_pb2
-from paperpilot_common.protobuf.test import test_pb2
-from paperpilot_common.protobuf.project import project_pb2
-from paperpilot_common.protobuf.paper import paper_pb2
-from paperpilot_common.protobuf.translation import translation_pb2
+from grpc_reflection.v1alpha import reflection
 from paperpilot_common.protobuf.monitor import server_pb2 as monitor_server_pb2
-
+from paperpilot_common.protobuf.paper import paper_pb2
+from paperpilot_common.protobuf.project import project_pb2
+from paperpilot_common.protobuf.test import test_pb2
+from paperpilot_common.protobuf.translation import translation_pb2
+from paperpilot_common.protobuf.user import auth_pb2, user_pb2
 
 logger = logging.getLogger(__name__)
 
@@ -29,10 +28,13 @@ async def serve(addr: str | None = None) -> None:
         project_pb2.DESCRIPTOR.services_by_name[
             "ProjectPublicService"
         ].full_name,
-        project_pb2.DESCRIPTOR.services_by_name["ProjectPublicService"].full_name,
         paper_pb2.DESCRIPTOR.services_by_name["PaperPublicService"].full_name,
-        translation_pb2.DESCRIPTOR.services_by_name["TranslationPublicService"].full_name,
-        monitor_server_pb2.DESCRIPTOR.services_by_name["MonitorPublicService"].full_name,
+        translation_pb2.DESCRIPTOR.services_by_name[
+            "TranslationPublicService"
+        ].full_name,
+        monitor_server_pb2.DESCRIPTOR.services_by_name[
+            "MonitorPublicService"
+        ].full_name,
         health_pb2.DESCRIPTOR.services_by_name["Health"].full_name,
         reflection.SERVICE_NAME,
     )
