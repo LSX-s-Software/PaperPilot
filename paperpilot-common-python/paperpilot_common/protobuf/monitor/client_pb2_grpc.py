@@ -7,7 +7,7 @@ from paperpilot_common.protobuf.monitor import client_pb2 as paperpilot__common_
 
 
 class MonitorClientServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """采集端服务"""
 
     def __init__(self, channel):
         """Constructor.
@@ -23,10 +23,10 @@ class MonitorClientServiceStub(object):
 
 
 class MonitorClientServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """采集端服务"""
 
     def GetStatus(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """获取采集端状态"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
@@ -46,7 +46,7 @@ def add_MonitorClientServiceServicer_to_server(servicer, server):
 
 # This class is part of an EXPERIMENTAL API.
 class MonitorClientService(object):
-    """Missing associated documentation comment in .proto file."""
+    """采集端服务"""
 
     @staticmethod
     def GetStatus(

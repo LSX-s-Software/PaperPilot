@@ -28,36 +28,54 @@ class _StatusEnumTypeWrapper(
 ):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     RUNNING: _Status.ValueType  # 0
+    """运行-无健康信息"""
     STOPPED: _Status.ValueType  # 1
+    """停止"""
     STARTING: _Status.ValueType  # 2
+    """启动中"""
     HEALTHY: _Status.ValueType  # 3
+    """运行-健康"""
     UNHEALTHY: _Status.ValueType  # 4
+    """运行-不健康"""
     UNKNOWN: _Status.ValueType  # 5
+    """未知"""
 
-class Status(_Status, metaclass=_StatusEnumTypeWrapper): ...
+class Status(_Status, metaclass=_StatusEnumTypeWrapper):
+    """容器状态"""
 
 RUNNING: Status.ValueType  # 0
+"""运行-无健康信息"""
 STOPPED: Status.ValueType  # 1
+"""停止"""
 STARTING: Status.ValueType  # 2
+"""启动中"""
 HEALTHY: Status.ValueType  # 3
+"""运行-健康"""
 UNHEALTHY: Status.ValueType  # 4
+"""运行-不健康"""
 UNKNOWN: Status.ValueType  # 5
+"""未知"""
 global___Status = Status
 
 @typing_extensions.final
 class ClientStatus(google.protobuf.message.Message):
+    """采集端状态"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     HOST_FIELD_NUMBER: builtins.int
     PROJECTS_FIELD_NUMBER: builtins.int
     TIME_FIELD_NUMBER: builtins.int
     host: builtins.str
+    """采集端主机名"""
     @property
     def projects(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ClientProjectStatus]: ...
+    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ClientProjectStatus]:
+        """采集端项目状态"""
     @property
-    def time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
+    def time(self) -> google.protobuf.timestamp_pb2.Timestamp:
+        """采集时间"""
     def __init__(
         self,
         *,
@@ -74,15 +92,19 @@ global___ClientStatus = ClientStatus
 
 @typing_extensions.final
 class ClientProjectStatus(google.protobuf.message.Message):
+    """采集端项目状态"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     PROJECT_NAME_FIELD_NUMBER: builtins.int
     CONTAINERS_FIELD_NUMBER: builtins.int
     project_name: builtins.str
+    """项目名"""
     @property
     def containers(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ClientContainerStatus]: ...
+    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ClientContainerStatus]:
+        """采集端容器状态"""
     def __init__(
         self,
         *,
@@ -97,6 +119,8 @@ global___ClientProjectStatus = ClientProjectStatus
 
 @typing_extensions.final
 class ClientContainerStatus(google.protobuf.message.Message):
+    """采集端容器状态"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ID_FIELD_NUMBER: builtins.int
@@ -104,9 +128,13 @@ class ClientContainerStatus(google.protobuf.message.Message):
     HOST_FIELD_NUMBER: builtins.int
     STATUS_FIELD_NUMBER: builtins.int
     id: builtins.str
+    """容器ID"""
     name: builtins.str
+    """容器名"""
     host: builtins.str
+    """容器主机名"""
     status: global___Status.ValueType
+    """容器状态"""
     def __init__(
         self,
         *,

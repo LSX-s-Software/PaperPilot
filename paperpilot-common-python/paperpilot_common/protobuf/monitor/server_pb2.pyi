@@ -19,18 +19,21 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
 class ServerStatus(google.protobuf.message.Message):
+    """后端状态"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     HOST_COUNT_FIELD_NUMBER: builtins.int
     PROJECTS_FIELD_NUMBER: builtins.int
     TIME_FIELD_NUMBER: builtins.int
     host_count: builtins.int
+    """后端主机数量"""
     @property
-    def projects(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ProjectStatus]: ...
+    def projects(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ProjectStatus]:
+        """项目状态"""
     @property
-    def time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
+    def time(self) -> google.protobuf.timestamp_pb2.Timestamp:
+        """当前时间"""
     def __init__(
         self,
         *,
@@ -48,6 +51,8 @@ global___ServerStatus = ServerStatus
 
 @typing_extensions.final
 class ProjectStatus(google.protobuf.message.Message):
+    """项目状态"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ID_FIELD_NUMBER: builtins.int
@@ -56,10 +61,15 @@ class ProjectStatus(google.protobuf.message.Message):
     HEALTHY_COUNT_FIELD_NUMBER: builtins.int
     TOTAL_COUNT_FIELD_NUMBER: builtins.int
     id: builtins.str
+    """项目ID(英文)"""
     name: builtins.str
+    """项目名(中文)"""
     description: builtins.str
+    """项目描述"""
     healthy_count: builtins.int
+    """健康实例数量"""
     total_count: builtins.int
+    """总实例数量"""
     def __init__(
         self,
         *,

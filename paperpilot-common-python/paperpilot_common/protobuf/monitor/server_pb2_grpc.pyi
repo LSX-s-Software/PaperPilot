@@ -18,19 +18,27 @@ class _ServicerContext(grpc.ServicerContext, grpc.aio.ServicerContext):  # type:
     ...
 
 class MonitorPublicServiceStub:
+    """监控公开服务"""
+
     def __init__(self, channel: typing.Union[grpc.Channel, grpc.aio.Channel]) -> None: ...
     GetStatus: grpc.UnaryUnaryMultiCallable[
         google.protobuf.empty_pb2.Empty,
         paperpilot_common.protobuf.monitor.server_pb2.ServerStatus,
     ]
+    """获取后端状态"""
 
 class MonitorPublicServiceAsyncStub:
+    """监控公开服务"""
+
     GetStatus: grpc.aio.UnaryUnaryMultiCallable[
         google.protobuf.empty_pb2.Empty,
         paperpilot_common.protobuf.monitor.server_pb2.ServerStatus,
     ]
+    """获取后端状态"""
 
 class MonitorPublicServiceServicer(metaclass=abc.ABCMeta):
+    """监控公开服务"""
+
     @abc.abstractmethod
     def GetStatus(
         self,
@@ -39,7 +47,8 @@ class MonitorPublicServiceServicer(metaclass=abc.ABCMeta):
     ) -> typing.Union[
         paperpilot_common.protobuf.monitor.server_pb2.ServerStatus,
         collections.abc.Awaitable[paperpilot_common.protobuf.monitor.server_pb2.ServerStatus],
-    ]: ...
+    ]:
+        """获取后端状态"""
 
 def add_MonitorPublicServiceServicer_to_server(
     servicer: MonitorPublicServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
