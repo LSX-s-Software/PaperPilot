@@ -33,7 +33,7 @@ class TraceMiddleware(AsyncServerMiddleware):
         else:
             trace_id_context.set(uuid.uuid4())
 
-            close_old_connections()
+        close_old_connections()
         try:
             # run grpc handler
             response = await self.call(method, request_or_iterator, context)
