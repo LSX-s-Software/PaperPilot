@@ -12,6 +12,7 @@ from paperpilot_common.protobuf.project import project_pb2
 from paperpilot_common.protobuf.test import test_pb2
 from paperpilot_common.protobuf.translation import translation_pb2
 from paperpilot_common.protobuf.user import auth_pb2, user_pb2
+from paperpilot_common.protobuf.im import im_pb2
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ async def serve(addr: str | None = None) -> None:
             "MonitorPublicService"
         ].full_name,
         health_pb2.DESCRIPTOR.services_by_name["Health"].full_name,
+        im_pb2.DESCRIPTOR.services_by_name["IMPublicService"].full_name,
         reflection.SERVICE_NAME,
     )
     reflection.enable_server_reflection(service_names, server)
