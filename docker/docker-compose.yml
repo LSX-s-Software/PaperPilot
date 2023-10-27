@@ -3,7 +3,7 @@ name: paperpilot-im
 
 services:
   ### server container ##########################################
-  file:
+  im:
     image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:im
     env_file: ./.env
     volumes:
