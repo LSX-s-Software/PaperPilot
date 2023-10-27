@@ -229,3 +229,10 @@ async def projects(
             )
 
     return projects
+
+
+@pytest.fixture(autouse=True, scope="function")
+def mock_im_client(mocker):
+    mock = mocker.AsyncMock()
+
+    mocker.patch("server.business.grpc.im.IMClient.stub", new=mock)

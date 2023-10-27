@@ -1,6 +1,13 @@
 import uuid
 
 from paperpilot_common.exceptions import ApiException
+from paperpilot_common.protobuf.im.im_pb2 import (
+    CreateWorkGroupRequest,
+    DeleteWorkGroupRequest,
+    InviteUserToGroupRequest,
+    RemoveUserFromGroupRequest,
+    UpdateWorkGroupRequest,
+)
 from paperpilot_common.protobuf.project.project_pb2 import (
     ListProjectResponse,
     ProjectInfo,
@@ -12,6 +19,7 @@ from project.models import Project, UserProject
 from project.utils import get_random_invite_code
 
 from server.business.grpc import user_client
+from server.business.grpc.im import im_client
 
 
 class ProjectService:
@@ -108,7 +116,17 @@ class ProjectService:
 
         self.logger.debug(f"update project info: {project}")
 
-        project.name = request.name
+        if project.name != request.name:
+            project.name = request.name
+
+            # 更新im信息
+            await im_client.stub.UpdateWorkGroup(
+                UpdateWorkGroupRequest(
+                    id=project.id.hex,
+                    name=project.name,
+                )
+            )
+
         project.description = request.description
 
         await project.asave()
@@ -187,6 +205,15 @@ class ProjectService:
             is_owner=True,
         )
 
+        # 创建im信息
+        await im_client.stub.CreateWorkGroup(
+            CreateWorkGroupRequest(
+                id=project.id.hex,
+                name=project.name,
+                owner=user_id.hex,
+            )
+        )
+
         self.logger.debug(f"create project: {project}")
         return await self._get_project_info(project)
 
@@ -200,6 +227,14 @@ class ProjectService:
         await self._check_owner(user_id, project_id)
 
         self.logger.debug(f"delete project: {project_id}")
+
+        # 删除im信息
+        await im_client.stub.DeleteWorkGroup(
+            DeleteWorkGroupRequest(
+                id=project_id.hex,
+            )
+        )
+
         await Project.objects.filter(id=project_id).adelete()
 
     # urls.py的调用：return await project_service.join_project(request.invite_code)
@@ -238,6 +273,13 @@ class ProjectService:
             is_owner=False,
         )
 
+        # 创建im信息
+        await im_client.stub.InviteUserToGroup(
+            InviteUserToGroupRequest(
+                group_id=project.id.hex, user_id=user_id.hex
+            )
+        )
+
         return await self._get_project_info(project)
 
     # project_service.quit_project(request.id)
@@ -260,6 +302,13 @@ class ProjectService:
             raise ApiException(
                 ResponseType.PermissionDenied, msg="项目所有者不能退出项目", record=True
             )
+
+        # 删除im信息
+        await im_client.stub.RemoveUserFromGroup(
+            RemoveUserFromGroupRequest(
+                group_id=project_id.hex, user_id=user_id.hex
+            )
+        )
 
         await up.adelete()
 
