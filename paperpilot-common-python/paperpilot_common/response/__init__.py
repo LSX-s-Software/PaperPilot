@@ -3,7 +3,6 @@ from enum import Enum, unique
 from typing import TYPE_CHECKING, Optional
 
 import grpc
-from django.http import JsonResponse
 
 if TYPE_CHECKING:
     from paperpilot_common.exceptions import ApiException
@@ -152,5 +151,7 @@ class ApiResponse:
             "data": self.data,
         }
 
-    def to_json_response(self) -> JsonResponse:
+    def to_json_response(self):
+        from django.http import JsonResponse
+
         return JsonResponse(self.__dict__(), status=self.status_code)

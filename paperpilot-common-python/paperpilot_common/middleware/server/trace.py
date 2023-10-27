@@ -9,7 +9,6 @@ from grpc_status import rpc_status
 from paperpilot_common.exceptions.handler import ApiExceptionHandler
 from paperpilot_common.middleware.server.base import AsyncServerMiddleware, parse_method_name
 from paperpilot_common.middleware.server.context import get_trace_id, trace_id_context
-from paperpilot_common.utils.db import close_old_connections
 from paperpilot_common.utils.log import get_logger
 
 
@@ -33,7 +32,6 @@ class TraceMiddleware(AsyncServerMiddleware):
         else:
             trace_id_context.set(uuid.uuid4())
 
-        close_old_connections()
         try:
             # run grpc handler
             response = await self.call(method, request_or_iterator, context)

@@ -2,7 +2,6 @@ from google.protobuf import any_pb2
 from google.rpc import status_pb2
 
 from paperpilot_common.exceptions import ApiException
-from paperpilot_common.exceptions.configs import zq_exception_settings
 from paperpilot_common.helper.field import datetime_to_timestamp
 from paperpilot_common.middleware.server.auth import get_user
 from paperpilot_common.protobuf.common import exce_pb2
@@ -11,8 +10,18 @@ from paperpilot_common.response.types import ResponseData
 from paperpilot_common.utils.log import get_logger
 from paperpilot_common.utils.singleton import Singleton
 
-if zq_exception_settings.SENTRY_ENABLE:  # pragma: no cover
-    import sentry_sdk
+try:
+    from paperpilot_common.exceptions.configs import zq_exception_settings
+
+    SENTRY_ENABLE = zq_exception_settings.SENTRY_ENABLE
+except ImportError:
+    SENTRY_ENABLE = True
+
+if SENTRY_ENABLE:  # pragma: no cover
+    try:
+        import sentry_sdk
+    except ImportError:
+        SENTRY_ENABLE = False
 
 
 def map_exception_to_response_type(exception):
@@ -126,7 +135,7 @@ class ApiExceptionHandler(metaclass=Singleton):
         response_data = exc.response_data
 
         if exc.record:  # 如果需要记录
-            if zq_exception_settings.SENTRY_ENABLE:
+            if SENTRY_ENABLE:
                 sentry_id = self.notify_sentry(response_data, exc)
                 response_data["data"]["sentry_id"] = sentry_id
 
