@@ -4,7 +4,10 @@ import oss2
 from django.db import IntegrityError
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.helper.field import datetime_to_timestamp
-from paperpilot_common.oss.backends import OssFile
+from paperpilot_common.oss.backends import OssStorage
+from paperpilot_common.protobuf.im.im_pb2 import (
+    UpdateUserRequest as IMUpdateUserRequest,
+)
 from paperpilot_common.protobuf.user.user_pb2 import (
     UpdateUserRequest,
     UserDetail,
@@ -15,6 +18,8 @@ from paperpilot_common.utils.log import get_logger
 from user.models import User
 from user.updaters import UserUpdater
 from user.utils import generate_avatar
+
+from server.business.grpc.im import im_client
 
 
 class UserService:
@@ -49,7 +54,7 @@ class UserService:
         """
         if user.avatar.name == f"{User.AVATAR_PATH}/default.jpg":
             return generate_avatar(user.username)
-        if isinstance(user.avatar.file, OssFile):
+        if isinstance(user.avatar.storage, OssStorage):
             return user.avatar.file.url(sign=False)
         return user.avatar.url
 
@@ -110,6 +115,16 @@ class UserService:
             )
 
         self.logger.debug(f"update user: {user}")
+
+        # 更新im信息
+        await im_client.stub.UpdateUser(
+            IMUpdateUserRequest(
+                id=user.id.hex,
+                username=user.username,
+                avatar=self._get_user_avatar(user),
+            )
+        )
+
         return await self.get_user_detail(user)
 
     async def get_user_info_list(
@@ -148,7 +163,7 @@ class UserService:
         user = await self._get_user(user_id)
         user.avatar.name = avatar_url
 
-        if isinstance(user.avatar.file, OssFile):  # 切换公共读权限
+        if isinstance(user.avatar.storage, OssStorage):  # 切换公共读权限
             user.avatar.file.set_acl(oss2.BUCKET_ACL_PUBLIC_READ)
 
         await user.asave()
