@@ -1,0 +1,17 @@
+host = "zqaliserver7"
+
+[[containers]]
+name = "paperpilot-coordinator-coordinator"
+project = "coordinator"
+
+[[containers]]
+name = "traefik-traefik"
+project = "traefik"
+
+[[containers]]
+name = "redis"
+project = "database"
+
+[[containers]]
+name = "mongodb"
+project = "database"
