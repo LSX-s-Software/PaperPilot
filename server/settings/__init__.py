@@ -1,6 +1,4 @@
 import os
-import sys
-from pathlib import Path
 
 from server.settings.components import *  # noqa
 from server.settings.util import _ENV
