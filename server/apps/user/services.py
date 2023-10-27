@@ -1,8 +1,10 @@
 import uuid
 
+import oss2
 from django.db import IntegrityError
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.helper.field import datetime_to_timestamp
+from paperpilot_common.oss.backends import OssFile
 from paperpilot_common.protobuf.user.user_pb2 import (
     UpdateUserRequest,
     UserDetail,
@@ -47,6 +49,8 @@ class UserService:
         """
         if user.avatar.name == f"{User.AVATAR_PATH}/default.jpg":
             return generate_avatar(user.username)
+        if isinstance(user.avatar.file, OssFile):
+            return user.avatar.file.url(sign=False)
         return user.avatar.url
 
     async def get_user_info(self, user: User | uuid.UUID | str) -> UserInfo:
@@ -143,6 +147,10 @@ class UserService:
         """
         user = await self._get_user(user_id)
         user.avatar.name = avatar_url
+
+        if isinstance(user.avatar.file, OssFile):  # 切换公共读权限
+            user.avatar.file.set_acl(oss2.BUCKET_ACL_PUBLIC_READ)
+
         await user.asave()
         await user.arefresh_from_db()
 
