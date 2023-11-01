@@ -17,7 +17,7 @@ def init_trace(service_name: str):
     from opentelemetry.instrumentation.grpc import (
         GrpcAioInstrumentorServer,
     )
-    # from opentelemetry.instrumentation.redis import RedisInstrumentor
+    from opentelemetry.instrumentation.redis import RedisInstrumentor
     from opentelemetry.sdk.resources import HOST_NAME, SERVICE_NAME, Resource
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -27,7 +27,7 @@ def init_trace(service_name: str):
         print("TRACE_AUTH is required when enable trace")
         return
 
-    # RedisInstrumentor().instrument()
+    RedisInstrumentor().instrument()
     AioHttpClientInstrumentor().instrument()
 
     grpc_server_instrumentor = GrpcAioInstrumentorServer()
