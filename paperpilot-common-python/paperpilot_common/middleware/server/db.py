@@ -18,4 +18,7 @@ class DBMiddleware(AsyncServerMiddleware):
         method_name: str,
     ) -> Any:
         close_old_connections()
-        return await self.call(method, request_or_iterator, context)
+        result = await self.call(method, request_or_iterator, context)
+        close_old_connections()
+        return result
+        
