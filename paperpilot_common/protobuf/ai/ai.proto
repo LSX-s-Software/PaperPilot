@@ -1,0 +1,38 @@
+syntax = "proto3";
+package ai;
+
+// OpenAI FinishReason
+enum FinishReason {
+    // 未结束
+    NULL = 0;
+    // 生成结束
+    STOP = 1;
+    // 生成长度达到最大值
+    LENGTH = 2;
+    // 需要调用函数
+    FUNCTION_CALL = 3;
+    // 生成内容被过滤
+    CONTENT_FILTER = 4;
+}
+
+// GPT 响应
+message GptResult {
+    // 生成内容
+    string content = 1;
+    // 结束原因
+    optional FinishReason finish_reason = 2;
+}
+
+// GPT 请求
+message GptRequest {
+    // 所选文本
+    string text = 1;
+    // 操作
+    string action = 2;
+}
+
+// GPT 服务
+service GptService {
+    // 询问 GPT
+    rpc Ask(GptRequest) returns (stream GptResult);
+}
