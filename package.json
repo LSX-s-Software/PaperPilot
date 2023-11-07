@@ -20,11 +20,11 @@
   "homepage": "https://github.com/Nagico/paperpilot-backend-coordination#readme",
   "dependencies": {
     "ot-json1": "^1.0.2",
-    "redis": "^4.6.10",
-    "sharedb": "^4.1.1",
-    "sharedb-mongo": "^4.1.0",
-    "sharedb-redis-pubsub": "^4.0.0",
+    "sharedb": "^3.0.0",
+    "redis": "^2.6.0 || ^3.0.0",
+    "sharedb-mongo": "^2.0.0",
+    "sharedb-redis-pubsub": "^3.0.0",
     "websocket-push-stream": "^0.1.1",
-    "ws": "^8.14.2"
+    "ws": "^8.8.0"
   }
 }
