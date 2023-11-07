@@ -168,7 +168,7 @@ class ProjectService:
         queryset = queryset[(page - 1) * page_size : page * page_size]
 
         projects = []
-        async for project in queryset.all():
+        async for project in queryset:
             projects.append(await self._get_project_info(project))
 
         return ListProjectResponse(
