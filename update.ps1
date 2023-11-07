@@ -1,4 +1,4 @@
-$projects = @("coordinator", "file", "paper", "project", "reflection", "test", "translation", "user", "monitor", "monitor-client", "ai")
+$projects = @("coordinator", "file", "paper", "project", "reflection", "test", "translation", "user", "monitor", "monitor-client", "ai", "im")
 
 $command = "git pull"
 Write-Host "run: $command"
