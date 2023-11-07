@@ -66,7 +66,7 @@ _✨ Author: [Nagico](https://github.com/Nagico/) ✨_
 | [Traefik](https://traefik.io/) | 独立部署 | 域名及证书管理 |
 | [可观测链路 OpenTelemetry 版](https://www.aliyun.com/product/developerservices/xtrace) | 云服务 | 微服务链路监控 |
 
-### 服务部署
+## 部署
 
 服务部署采用 Docker 容器化部署，使用 Docker Compose 管理容器。目前有 2 台服务器，基于 Github Actions 实现自动化部署。
 
@@ -75,3 +75,4 @@ _✨ Author: [Nagico](https://github.com/Nagico/) ✨_
 服务结构图：
 
 ![PaperPilot 服务结构图](./images/structure.png)
+
