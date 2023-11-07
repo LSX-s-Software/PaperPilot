@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "paperpilot-backend-reflection"
+version = "0.1.0"
+description = "paperpilot-backend"
+authors = ["Nagico <coyangjr@whu.edu.cn>"]
+readme = "README.md"
+
+[[tool.poetry.source]]
+name = "aliyun"
+priority = "default"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+skip = ["migrations"]
+include_trailing_comma = true
+use_parentheses = true
+multi_line_output = 3
+line_length = 80
+
+[tool.flake8]
+ignore = ['E203', 'E266', 'E501', 'W503']
+max-line-length = 80
+max-complexity = 18
+select = ['B', 'C', 'E', 'F', 'W', 'T4']
