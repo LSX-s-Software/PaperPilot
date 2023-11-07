@@ -1,0 +1,83 @@
+[tool.poetry]
+name = "paperpilot-backend-im"
+version = "0.1.0"
+description = "paperpilot-backend"
+authors = ["Nagico <coyangjr@whu.edu.cn>"]
+readme = "README.md"
+
+[[tool.poetry.source]]
+name = "aliyun"
+priority = "default"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+loguru = "^0.7.2"
+pytz = "^2023.3.post1"
+sentry-sdk = "^1.32.0"
+opentelemetry-sdk = "^1.20.0"
+opentelemetry-exporter-otlp = "^1.20.0"
+opentelemetry-instrumentation-aiohttp-client = "^0.41b0"
+opentelemetry-instrumentation-grpc = "^0.41b0"
+aiohttp = "^3.8.6"
+jieba = "^0.42.1"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+pytest-xdist = "^3.3.1"
+black = "^23.9.1"
+isort = "^5.12.0"
+flake8-pyproject = "^1.2.3"
+pytest-asyncio = "^0.21.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.4.0"
+ipython = "^8.16.0"
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+pytest-xdist = "^3.3.1"
+black = "^23.9.1"
+isort = "^5.12.0"
+flake8-pyproject = "^1.2.3"
+watchfiles = "^0.20.0"
+pytest-asyncio = "^0.21.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+skip = ["migrations"]
+include_trailing_comma = true
+use_parentheses = true
+multi_line_output = 3
+line_length = 80
+
+[tool.flake8]
+ignore = ['E203', 'E266', 'E501', 'W503']
+max-line-length = 80
+max-complexity = 18
+select = ['B', 'C', 'E', 'F', 'W', 'T4']

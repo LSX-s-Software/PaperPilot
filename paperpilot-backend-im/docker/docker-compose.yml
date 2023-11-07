@@ -1,0 +1,17 @@
+version: "3.8"
+name: paperpilot-im
+
+services:
+  ### server container ##########################################
+  im:
+    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:im
+    env_file: ./.env
+    volumes:
+      - ./config.toml:/app/config.toml
+    networks:
+      - kong_kong-net
+
+### Add Network Bridge info #########################################
+networks:
+  kong_kong-net:
+    external: true
