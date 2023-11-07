@@ -7,6 +7,7 @@ GRPC_SERVER = {
     ],
     "interceptors": [
         "paperpilot_common.middleware.server.trace.TraceMiddleware",
+        "paperpilot_common.middleware.server.db.DBMiddleware",
         "paperpilot_common.middleware.server.auth.AuthMiddleware",
     ],
     "maximum_concurrent_rpcs": None,
