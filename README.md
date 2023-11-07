@@ -70,4 +70,8 @@ _✨ Author: [Nagico](https://github.com/Nagico/) ✨_
 
 服务部署采用 Docker 容器化部署，使用 Docker Compose 管理容器。目前有 2 台服务器，基于 Github Actions 实现自动化部署。
 
+![PaperPilot 服务状态](https://paperpilot.jryang.com/status/)
+
+服务结构图：
+
 ![PaperPilot 服务结构图](./images/structure.png)
