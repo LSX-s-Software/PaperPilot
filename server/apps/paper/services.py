@@ -186,7 +186,7 @@ class PaperService:
         papers = []
 
         async for paper in queryset.all():
-            papers.append(await self._get_paper_info(paper))
+            papers.append(await self._get_paper_detail(paper))
 
         return papers, total, next_page
 
