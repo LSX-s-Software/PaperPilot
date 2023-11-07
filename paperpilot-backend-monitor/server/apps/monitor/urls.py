@@ -5,8 +5,14 @@ import google.protobuf.empty_pb2
 import paperpilot_common.protobuf
 from paperpilot_common.protobuf.monitor import server_pb2, server_pb2_grpc
 from paperpilot_common.utils.types import _ServicerContext
+from starlette.routing import Route
 
 from .services import monitor_service
+from .views import StatusSvgView
+
+routes = [
+    Route("/", StatusSvgView),
+]
 
 
 def grpc_hook(server):
