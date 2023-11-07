@@ -14,7 +14,7 @@ from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 
 from server.business.grpc.project import project_client
-from server.business.research import ScihubFetch
+from server.business.research import CrossRefMetaFetch, ScihubFetch
 
 from .cache import project_cache
 from .updaters import PaperPublicUpdater, PaperUpdater
@@ -28,6 +28,7 @@ class PaperService:
     paper_public_updater = PaperPublicUpdater()
 
     pdf_fetch = ScihubFetch()
+    meta_fetch = CrossRefMetaFetch()
 
     async def _check_user_project(
         self, user_id: uuid.UUID, project_id: uuid.UUID
@@ -329,6 +330,17 @@ class PaperService:
             paper.doi = metadata["doi"]
 
         paper.project_id = project_id
+
+        metadata = await self.meta_fetch.fetch(paper.doi)
+
+        if metadata.title:
+            paper.title = metadata.title
+        if metadata.authors:
+            paper.authors = metadata.authors
+        if metadata.publication:
+            paper.publication = metadata.publication
+        if metadata.publication_year:
+            paper.publication_year = metadata.publication_year
 
         await self._upload_file(paper, pdf_file.file)
 

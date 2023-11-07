@@ -32,7 +32,6 @@ django_async_redis = "^0.2.0"
 pytz = "^2023.3.post1"
 aiohttp = "^3.8.6"
 beautifulsoup4 = "^4.12.2"
-urllib3 = "^2.0.7"
 opentelemetry-sdk = "^1.20.0"
 opentelemetry-instrumentation-django = "^0.41b0"
 opentelemetry-exporter-otlp = "^1.20.0"
@@ -41,6 +40,7 @@ opentelemetry-instrumentation-dbapi = "^0.41b0"
 opentelemetry-instrumentation-grpc = "^0.41b0"
 opentelemetry-instrumentation-redis = "^0.41b0"
 opentelemetry-instrumentation-starlette = "^0.41b0"
+crossrefapi = "^1.6.0"
 
 
 [tool.poetry.group.test.dependencies]
