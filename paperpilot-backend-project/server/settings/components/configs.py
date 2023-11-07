@@ -15,7 +15,8 @@ class DatabaseConfig:
     DATABASES = {  # {数据库名: 额外配置}
         "default": {
             "OPTIONS": {"charset": "utf8mb4"},
-            "CONN_MAX_AGE": 60 * 60 * 24,
+            "CONN_MAX_AGE": 60 * 60,
+            "CONN_HEALTH_CHECKS": True,
         }
     }
 
