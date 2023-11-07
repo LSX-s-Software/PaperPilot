@@ -261,7 +261,7 @@ class ListPaperResponse(google.protobuf.message.Message):
     TOTAL_FIELD_NUMBER: builtins.int
     NEXT_PAGE_FIELD_NUMBER: builtins.int
     @property
-    def papers(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___PaperInfo]:
+    def papers(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___PaperDetail]:
         """论文列表"""
     total: builtins.int
     """总数"""
@@ -270,7 +270,7 @@ class ListPaperResponse(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        papers: collections.abc.Iterable[global___PaperInfo] | None = ...,
+        papers: collections.abc.Iterable[global___PaperDetail] | None = ...,
         total: builtins.int = ...,
         next_page: builtins.int = ...,
     ) -> None: ...

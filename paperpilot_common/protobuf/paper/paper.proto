@@ -83,7 +83,7 @@ message ListPaperRequest {
 // 获取论文列表响应
 message ListPaperResponse {
     // 论文列表
-    repeated PaperInfo papers = 1;
+    repeated PaperDetail papers = 1;
     // 总数
     int32 total = 2;
     // 下一页
