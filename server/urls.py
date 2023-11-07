@@ -1,11 +1,9 @@
-import test.urls
-
-import callback.urls
 from paperpilot_common.utils import health
 from starlette.routing import Mount
 
+import server.apps.monitor.urls as monitor
+
 routes = [
     Mount("/health/", routes=health.routes),
-    Mount("/file/test/", routes=test.urls.routes),
-    Mount("/callback/", routes=callback.urls.routes),
+    Mount("/status/", routes=monitor.routes),
 ]

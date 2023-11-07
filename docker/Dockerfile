@@ -78,6 +78,7 @@ RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
 
 # copy application code to WORKDIR
 COPY  ./run.py run.py
+COPY  ./main.py main.py
 COPY ./server/ server/
 
 EXPOSE 8001
