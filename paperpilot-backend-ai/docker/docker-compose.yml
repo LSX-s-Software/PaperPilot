@@ -1,0 +1,20 @@
+version: "3.8"
+name: paperpilot-ai
+
+services:
+  ### server container ##########################################
+  file:
+    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:ai
+    env_file: ./.env
+    volumes:
+      - ./config.toml:/app/config.toml
+    networks:
+      - paperpilot
+      - kong_kong-net
+
+### Add Network Bridge info #########################################
+networks:
+  paperpilot:
+    external: true
+  kong_kong-net:
+    external: true
