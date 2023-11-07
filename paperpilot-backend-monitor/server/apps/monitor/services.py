@@ -28,7 +28,9 @@ class MonitorPublicService:
         for client in monitor_clients:
             try:
                 result.append(
-                    await client.stub.GetStatus(google.protobuf.empty_pb2.Empty)
+                    await client.stub.GetStatus(
+                        google.protobuf.empty_pb2.Empty, timeout=0.8
+                    )
                 )
             except Exception as e:
                 self.logger.error(f"get client status error: {e}")
