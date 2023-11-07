@@ -1,16 +1,21 @@
-$subtrees = @("coordinator", "file", "paper", "project", "reflection", "test", "translation", "user", "monitor", "monitor-client")
+$projects = @("coordinator", "file", "paper", "project", "reflection", "test", "translation", "user", "monitor", "monitor-client", "ai")
 
 $command = "git pull"
 Write-Host "run: $command"
 Invoke-Expression $command
 
-foreach ($subtree in $subtrees) {
-    $prefix = "paperpilot-backend-$subtree"
+foreach ($project in $projects) {
+    $prefix = "paperpilot-backend-$project"
     $branch = "main"
+    $subtree = "https://github.com/Nagico/$prefix.git"
     
-    $command = "git subtree pull --prefix=$prefix $subtree $branch"
-    
-    Write-Host "run: $command"
-    
-    Invoke-Expression $command
+    if (-not (Test-Path -Path $prefix -PathType Container)) {
+        $command = "git subtree add --prefix=$prefix $subtree $branch"
+        Write-Host "run: $command"
+        Invoke-Expression $command
+    } else {
+        $command = "git subtree pull --prefix=$prefix $subtree $branch"
+        Write-Host "run: $command"
+        Invoke-Expression $command
+    }
 }
