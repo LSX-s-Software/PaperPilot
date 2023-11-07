@@ -48,7 +48,7 @@ class TestUserPublic:
 
     @pytest.mark.asyncio
     async def test_get_current_user__not_login(self, api, context):
-        with pytest.raises(AttributeError) as e:
+        with pytest.raises(AttributeError):
             await api.GetCurrentUser(Empty(), context)
 
     @pytest.mark.asyncio
@@ -197,7 +197,7 @@ class TestUserPublic:
         )
         await auth_cache.add_code("13012341234", code)
 
-        with pytest.raises(AttributeError) as e:
+        with pytest.raises(AttributeError):
             await api.UpdateUser(request, context)
 
     @pytest.mark.asyncio
@@ -217,7 +217,7 @@ class TestUserPublic:
     async def test_upload_avatar__not_login(self, api, context):
         request = Empty()
 
-        with pytest.raises(AttributeError) as e:
+        with pytest.raises(AttributeError):
             await api.UploadUserAvatar(request, context)
 
 

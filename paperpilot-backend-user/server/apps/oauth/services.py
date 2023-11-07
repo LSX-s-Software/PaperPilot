@@ -1,12 +1,14 @@
 import oauth.utils as utils
 from django.db.models import Q
 from paperpilot_common.exceptions import ApiException
+from paperpilot_common.protobuf.im.im_pb2 import CreateUserRequest
 from paperpilot_common.protobuf.user.auth_pb2 import LoginResponse, Token
 from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 from user.models import User
 from user.services import user_service
 
+from server.business.grpc.im import im_client
 from server.business.jwt import jwt_business
 from server.business.sms import sms_business
 
@@ -167,6 +169,14 @@ class AuthService:
         )
         self.logger.info(
             f"register success, phone: {phone}, username: {username}"
+        )
+
+        # 添加im用户
+        await im_client.stub.CreateUser(
+            CreateUserRequest(
+                id=user.id.hex,
+                username=username,
+            )
         )
 
         # 返回token

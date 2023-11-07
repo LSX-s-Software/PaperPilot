@@ -1,3 +1,5 @@
+from server.settings.util import config
+
 GRPC_SERVER = {
     "servicers": [
         "user.urls.grpc_hook",
@@ -13,4 +15,12 @@ GRPC_SERVER = {
     # https://grpc.github.io/grpc/core/group__grpc__arg__keys.html
     "options": [("grpc.max_receive_message_length", 1024 * 1024 * 100)],
     "async": True,
+}
+
+GRPC_CLIENT = {
+    "clients": {
+        "im": {
+            "server_host": config("IM_GRPC_HOST", "im:8001"),
+        },
+    }
 }

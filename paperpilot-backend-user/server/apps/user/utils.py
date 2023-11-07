@@ -1,4 +1,5 @@
 import hashlib
+import urllib.parse
 
 
 def generate_color(username: str) -> (str, str):
@@ -30,7 +31,12 @@ def generate_avatar(username: str) -> str:
     根据用户名生成头像
 
     :param username: 用户名
-    :return: 头像地址
+    :return: 头像地
     """
     background_color, text_color = generate_color(username)
-    return f"https://ui-avatars.com/api/?background={background_color}&color={text_color}&name={username}"
+    return (
+        f"https://ui-avatars.com/api/?"
+        f"background={background_color}&"
+        f"color={text_color}&"
+        f"name={urllib.parse.quote(username)}"
+    )

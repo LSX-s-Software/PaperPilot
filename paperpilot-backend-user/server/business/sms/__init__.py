@@ -98,6 +98,8 @@ class SmsBusiness:
             )
         except Exception as e:
             self.logger.error(f"send sms failed, phone: {phone_numbers}")
+            if isinstance(e, ApiException):
+                raise e
             raise ApiException(
                 ResponseType.ThirdServiceError, inner=e, detail="发送短信失败"
             )

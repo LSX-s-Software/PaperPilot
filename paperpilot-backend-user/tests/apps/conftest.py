@@ -128,3 +128,10 @@ def code(mocker, phone):
     utils.random_code = mocker.Mock(return_value=_code)
 
     return _code
+
+
+@pytest.fixture(autouse=True, scope="function")
+def mock_im_client(mocker):
+    mock = mocker.AsyncMock()
+
+    mocker.patch("server.business.grpc.im.IMClient.stub", new=mock)
