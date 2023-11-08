@@ -81,7 +81,10 @@ subprocess.run(["git", "tag", f"v{new_version}"])
 with open("CHANGELOG.md", "r", encoding="utf-8") as changelog_file:
     changelog_content = changelog_file.read()
 
-subprocess.run(["conventional-changelog", "-p", "angular", "-i", "CHANGELOG.md", "-s"])
+subprocess.run(
+    ["conventional-changelog", "-p", "angular", "-i", "CHANGELOG.md", "-s"],
+    shell=True,
+)
 
 with open("CHANGELOG.md", "r", encoding="utf-8") as changelog_file:
     new_changelog_content = changelog_file.read()
@@ -99,24 +102,26 @@ if return_code != 0:  # try again due to commit hook
 
 update_changelog = new_changelog_content.replace(changelog_content, "")
 
-# # Push commit and tag
-# subprocess.run(["git", "push"])
-# subprocess.run(["git", "push", "--tags"])
-#
-#
-# # Create Github release
-# subprocess.run(
-#     [
-#         "gh",
-#         "release",
-#         "create",
-#         f"v{new_version}",
-#         "--title",
-#         f"v{new_version}",
-#         "--notes",
-#         update_changelog,
-#     ]
-# )
+# Push commit and tag
+subprocess.run(["git", "push"])
+subprocess.run(["git", "push", "--tags"])
 
+
+# Create Github release
+subprocess.run(
+    [
+        "gh",
+        "release",
+        "create",
+        f"v{new_version}",
+        "--title",
+        f"v{new_version}",
+        "--notes",
+        update_changelog,
+    ]
+)
+
+# Publish to PyPI
+subprocess.run(["poetry", "publish"])
 
 print(f"Successfully bumped version to {new_version}")
