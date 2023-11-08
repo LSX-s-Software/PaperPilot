@@ -1,3 +1,7 @@
+# [](https://github.com/Nagico/paperpilot-common/compare/v0.2.4...v) (2023-11-08)
+
+
+
 ## [0.2.3](https://github.com/Nagico/paperpilot-common/compare/v0.2.2...v0.2.3) (2023-11-08)
 
 
