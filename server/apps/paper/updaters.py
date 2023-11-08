@@ -14,6 +14,7 @@ class PaperPublicUpdater(Updater):
         "tags",
         "publication_year",
         "publication",
+        "event",
         "volume",
         "issue",
         "pages",

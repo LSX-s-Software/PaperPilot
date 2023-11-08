@@ -6,7 +6,7 @@ from paper.models import Paper
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.helper.field import datetime_to_timestamp
 from paperpilot_common.oss.utils import get_random_name
-from paperpilot_common.protobuf.paper.paper_pb2 import PaperDetail, PaperInfo
+from paperpilot_common.protobuf.paper.paper_pb2 import PaperDetail
 from paperpilot_common.protobuf.project.project_pb2 import (
     CheckUserJoinedProjectRequest,
 )
@@ -96,25 +96,6 @@ class PaperService:
 
         return paper
 
-    async def _get_paper_info(self, paper: Paper) -> PaperInfo:
-        """
-        获取论文信息
-
-        :param paper: 论文对象
-        :return: 论文信息
-        """
-        info = PaperInfo(
-            id=paper.id.hex,
-            title=paper.title,
-            publication_year=paper.publication_year,
-            publication=paper.publication,
-            create_time=datetime_to_timestamp(paper.create_time),
-        )
-
-        info.authors.extend(paper.authors)
-
-        return info
-
     async def _get_paper_detail(self, paper: Paper) -> PaperDetail:
         """
         获取论文详情
@@ -130,6 +111,7 @@ class PaperService:
             abstract=paper.abstract,
             publication_year=paper.publication_year,
             publication=paper.publication,
+            event=paper.event,
             volume=paper.volume,
             issue=paper.issue,
             pages=paper.pages,
@@ -153,7 +135,7 @@ class PaperService:
         page: int,
         page_size: int,
         order_by: str,
-    ) -> (list[PaperInfo], int, int):
+    ) -> (list[PaperDetail], int, int):
         """
         获取论文列表
 
