@@ -77,4 +77,46 @@ if return_code != 0:  # try again due to commit hook
     subprocess.run(["git", "commit", "-m", commit_message])
 subprocess.run(["git", "tag", f"v{new_version}"])
 
+# Update CHANGELOG.md
+with open("CHANGELOG.md", "r", encoding="utf-8") as changelog_file:
+    changelog_content = changelog_file.read()
+
+subprocess.run(["conventional-changelog", "-p", "angular", "-i", "CHANGELOG.md", "-s"])
+
+with open("CHANGELOG.md", "r", encoding="utf-8") as changelog_file:
+    new_changelog_content = changelog_file.read()
+
+subprocess.run(["git", "add", "CHANGELOG.md"])
+return_code = subprocess.run(
+    ["git", "commit", "-m", f"docs: update CHANGELOG.md for version {new_version}"]
+).returncode
+
+if return_code != 0:  # try again due to commit hook
+    subprocess.run(["git", "add", "CHANGELOG.md"])
+    subprocess.run(
+        ["git", "commit", "-m", f"docs: update CHANGELOG.md for version {new_version}"]
+    )
+
+update_changelog = new_changelog_content.replace(changelog_content, "")
+
+# # Push commit and tag
+# subprocess.run(["git", "push"])
+# subprocess.run(["git", "push", "--tags"])
+#
+#
+# # Create Github release
+# subprocess.run(
+#     [
+#         "gh",
+#         "release",
+#         "create",
+#         f"v{new_version}",
+#         "--title",
+#         f"v{new_version}",
+#         "--notes",
+#         update_changelog,
+#     ]
+# )
+
+
 print(f"Successfully bumped version to {new_version}")
