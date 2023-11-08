@@ -9,6 +9,7 @@ class PaperMeta:
     publication: str | None
     publication_year: int | None
     url: str | None
+    event: str | None
 
     def __init__(
         self,
@@ -17,12 +18,14 @@ class PaperMeta:
         publication: str | None = None,
         publication_year: int | None = None,
         url: str | None = None,
+        event: str | None = None,
     ):
         self.title = title
         self.authors = authors
         self.publication = publication
         self.publication_year = publication_year
         self.url = url
+        self.event = event
 
 
 class PaperMetaFetch:

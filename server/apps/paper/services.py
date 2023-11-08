@@ -323,6 +323,8 @@ class PaperService:
             paper.publication = metadata.publication
         if metadata.publication_year:
             paper.publication_year = metadata.publication_year
+        if metadata.event:
+            paper.event = metadata.event
 
         await self._upload_file(paper, pdf_file.file)
 
