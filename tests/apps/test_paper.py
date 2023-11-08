@@ -162,6 +162,7 @@ class TestPaperPublic:
             response.update_time.ToDatetime(tzinfo=pytz.utc)
             == paper.update_time
         )
+        assert response.event == paper.event
 
     @pytest.mark.asyncio
     async def test_get_paper__wrong_user(
@@ -231,6 +232,7 @@ class TestPaperPublic:
         assert (
             response.update_time.ToDatetime(tzinfo=pytz.utc) <= timezone.now()
         )
+        assert response.event == request.paper.event
 
         assert response.project_id == project_id.hex
 
@@ -272,6 +274,7 @@ class TestPaperPublic:
         assert (
             response.update_time.ToDatetime(tzinfo=pytz.utc) <= timezone.now()
         )
+        assert response.event == ""
 
         assert response.project_id == project_id.hex
 
@@ -332,6 +335,7 @@ class TestPaperPublic:
             response.update_time.ToDatetime(tzinfo=pytz.utc)
             != paper.update_time
         )
+        assert response.event == paper_detail.event
 
         assert response.project_id == project_id.hex
 
@@ -435,6 +439,7 @@ class TestPaperController:
         assert (
             response.update_time.ToDatetime(tzinfo=pytz.utc) <= timezone.now()
         )
+        assert response.event == paper_detail.event
 
         assert response.project_id == project_id.hex
         assert response.file == "/test.pdf"
@@ -468,6 +473,7 @@ class TestPaperController:
         assert (
             response.update_time.ToDatetime(tzinfo=pytz.utc) <= timezone.now()
         )
+        assert response.event == ""
 
         assert response.project_id == project_id.hex
         assert response.file == ""
@@ -504,6 +510,7 @@ class TestPaperController:
             response.update_time.ToDatetime(tzinfo=pytz.utc)
             >= paper.update_time
         )
+        assert response.event == paper_detail.event
 
         assert response.project_id == uuid.UUID(int=0).hex
         assert response.file == "/test.pdf"
