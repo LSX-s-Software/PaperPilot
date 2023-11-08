@@ -24,15 +24,9 @@ jobs:
       run: |
         pip install poetry
         poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-      env:
-        POETRY_HOME: ${{ runner.workspace }}/.poetry
-        POETRY_VIRTUALENVS_IN_PROJECT: true
 
     - name: Build and publish
       run: |
         cd paperpilot-common-python
         poetry build
         poetry publish --build
-      env:
-        POETRY_HOME: ${{ runner.workspace }}/.poetry
-        POETRY_VIRTUALENVS_IN_PROJECT: true
