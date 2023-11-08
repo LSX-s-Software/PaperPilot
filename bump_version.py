@@ -122,6 +122,6 @@ subprocess.run(
 )
 
 # Publish to PyPI
-subprocess.run(["poetry", "publish --build"], cwd="paperpilot-common-python/")
+subprocess.run(["poetry", "publish", "--build"], cwd="paperpilot-common-python/")
 
 print(f"Successfully bumped version to {new_version}")
