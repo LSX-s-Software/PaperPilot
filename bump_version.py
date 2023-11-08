@@ -91,7 +91,7 @@ with open("CHANGELOG.md", "r", encoding="utf-8") as changelog_file:
 
 subprocess.run(["git", "add", "CHANGELOG.md"])
 return_code = subprocess.run(
-    ["git", "commit", "-m", f"docs: update CHANGELOG.md for version {new_version}"]
+    ["git", "commit", "-m", f"docs: update CHANGELOG.md for version v{new_version}"]
 ).returncode
 
 if return_code != 0:  # try again due to commit hook
@@ -122,6 +122,6 @@ subprocess.run(
 )
 
 # Publish to PyPI
-subprocess.run(["poetry", "publish"], cwd="paperpilot-common-python/")
+subprocess.run(["poetry", "publish --build"], cwd="paperpilot-common-python/")
 
 print(f"Successfully bumped version to {new_version}")
