@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "paperpilot-common"
-version = "0.2.4"
+version = "0.2.5"
 description = "PaperPilot 公共包及接口定义"
 authors = ["Nagico <coyangjr@whu.edu.cn>"]
 repository = "https://github.com/Nagico/paperpilot-common"
