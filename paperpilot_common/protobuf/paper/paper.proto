@@ -12,22 +12,6 @@ message PaperId {
     string id = 1;
 }
 
-// 论文简要信息
-message PaperInfo {
-    // 论文 ID
-    string id = 1;
-    // 标题
-    string title = 2;
-    // 作者列表
-    repeated string authors = 3;
-    // 年份
-    int32 publication_year = 4;
-    // 出版方
-    string publication = 5;
-    // 创建时间
-    google.protobuf.Timestamp create_time = 6;
-}
-
 // 论文详细信息
 message PaperDetail {
     // 论文 ID
@@ -65,6 +49,9 @@ message PaperDetail {
 
     google.protobuf.Timestamp create_time = 16;
     google.protobuf.Timestamp update_time = 17;
+
+    // 活动
+    string event = 18;
 }
 
 // 获取论文列表请求

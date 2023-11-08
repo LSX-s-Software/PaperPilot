@@ -36,63 +36,6 @@ class PaperId(google.protobuf.message.Message):
 global___PaperId = PaperId
 
 @typing_extensions.final
-class PaperInfo(google.protobuf.message.Message):
-    """论文简要信息"""
-
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    TITLE_FIELD_NUMBER: builtins.int
-    AUTHORS_FIELD_NUMBER: builtins.int
-    PUBLICATION_YEAR_FIELD_NUMBER: builtins.int
-    PUBLICATION_FIELD_NUMBER: builtins.int
-    CREATE_TIME_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    """论文 ID"""
-    title: builtins.str
-    """标题"""
-    @property
-    def authors(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
-        """作者列表"""
-    publication_year: builtins.int
-    """年份"""
-    publication: builtins.str
-    """出版方"""
-    @property
-    def create_time(self) -> google.protobuf.timestamp_pb2.Timestamp:
-        """创建时间"""
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        title: builtins.str = ...,
-        authors: collections.abc.Iterable[builtins.str] | None = ...,
-        publication_year: builtins.int = ...,
-        publication: builtins.str = ...,
-        create_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["create_time", b"create_time"]) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "authors",
-            b"authors",
-            "create_time",
-            b"create_time",
-            "id",
-            b"id",
-            "publication",
-            b"publication",
-            "publication_year",
-            b"publication_year",
-            "title",
-            b"title",
-        ],
-    ) -> None: ...
-
-global___PaperInfo = PaperInfo
-
-@typing_extensions.final
 class PaperDetail(google.protobuf.message.Message):
     """论文详细信息"""
 
@@ -115,6 +58,7 @@ class PaperDetail(google.protobuf.message.Message):
     FILE_FIELD_NUMBER: builtins.int
     CREATE_TIME_FIELD_NUMBER: builtins.int
     UPDATE_TIME_FIELD_NUMBER: builtins.int
+    EVENT_FIELD_NUMBER: builtins.int
     id: builtins.str
     """论文 ID"""
     project_id: builtins.str
@@ -150,6 +94,8 @@ class PaperDetail(google.protobuf.message.Message):
     def create_time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
     @property
     def update_time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
+    event: builtins.str
+    """活动"""
     def __init__(
         self,
         *,
@@ -170,6 +116,7 @@ class PaperDetail(google.protobuf.message.Message):
         file: builtins.str = ...,
         create_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
         update_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
+        event: builtins.str = ...,
     ) -> None: ...
     def HasField(
         self, field_name: typing_extensions.Literal["create_time", b"create_time", "update_time", b"update_time"]
@@ -185,6 +132,8 @@ class PaperDetail(google.protobuf.message.Message):
             b"create_time",
             "doi",
             b"doi",
+            "event",
+            b"event",
             "file",
             b"file",
             "id",
