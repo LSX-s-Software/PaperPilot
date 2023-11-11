@@ -1,10 +1,6 @@
 syntax = "proto3";
 package util;
 
-
-import "google/protobuf/timestamp.proto";
-
-
 message Date {
     int32 year = 1;
     int32 month = 2;
