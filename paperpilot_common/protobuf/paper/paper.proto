@@ -3,7 +3,6 @@ package paper;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
 
 import "paperpilot_common/protobuf/common/util.proto";
 
