@@ -25,10 +25,10 @@ class UserServiceStub(object):
             request_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserId.SerializeToString,
             response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserDetail.FromString,
         )
-        self.ListUserInfo = channel.unary_unary(
-            "/user.UserService/ListUserInfo",
+        self.GetUserInfos = channel.unary_unary(
+            "/user.UserService/GetUserInfos",
             request_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserIdList.SerializeToString,
-            response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserInfoList.FromString,
+            response_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserInfoMap.FromString,
         )
         self.UpdateUserAvatar = channel.unary_unary(
             "/user.UserService/UpdateUserAvatar",
@@ -52,7 +52,7 @@ class UserServiceServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
-    def ListUserInfo(self, request, context):
+    def GetUserInfos(self, request, context):
         """批量获取用户简要信息"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
@@ -77,10 +77,10 @@ def add_UserServiceServicer_to_server(servicer, server):
             request_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserId.FromString,
             response_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserDetail.SerializeToString,
         ),
-        "ListUserInfo": grpc.unary_unary_rpc_method_handler(
-            servicer.ListUserInfo,
+        "GetUserInfos": grpc.unary_unary_rpc_method_handler(
+            servicer.GetUserInfos,
             request_deserializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserIdList.FromString,
-            response_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserInfoList.SerializeToString,
+            response_serializer=paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserInfoMap.SerializeToString,
         ),
         "UpdateUserAvatar": grpc.unary_unary_rpc_method_handler(
             servicer.UpdateUserAvatar,
@@ -155,7 +155,7 @@ class UserService(object):
         )
 
     @staticmethod
-    def ListUserInfo(
+    def GetUserInfos(
         request,
         target,
         options=(),
@@ -170,9 +170,9 @@ class UserService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/user.UserService/ListUserInfo",
+            "/user.UserService/GetUserInfos",
             paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserIdList.SerializeToString,
-            paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserInfoList.FromString,
+            paperpilot__common_dot_protobuf_dot_user_dot_user__pb2.UserInfoMap.FromString,
             options,
             channel_credentials,
             insecure,

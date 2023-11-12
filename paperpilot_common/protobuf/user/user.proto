@@ -79,9 +79,9 @@ message UserIdList {
     repeated string ids = 1;
 }
 
-// 用户简要信息列表
-message UserInfoList {
-    repeated UserInfo users = 1;
+// 用户简要信息Map
+message UserInfoMap {
+    map<string, UserInfo> infos = 1;
 }
 
 // 上传头像响应
@@ -97,7 +97,7 @@ service UserService {
     // 获取指定ID用户详细信息
     rpc GetUserDetail (UserId) returns (UserDetail);
     // 批量获取用户简要信息
-    rpc ListUserInfo (UserIdList) returns (UserInfoList);
+    rpc GetUserInfos (UserIdList) returns (UserInfoMap);
 
     // 更新用户头像
     rpc UpdateUserAvatar (UpdateUserAvatarRequest) returns (UserDetail);

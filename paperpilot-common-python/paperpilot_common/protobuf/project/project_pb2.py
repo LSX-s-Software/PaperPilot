@@ -13,13 +13,12 @@ _sym_db = _symbol_database.Default()
 
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 from google.protobuf import wrappers_pb2 as google_dot_protobuf_dot_wrappers__pb2
 
 from paperpilot_common.protobuf.user import user_pb2 as paperpilot__common_dot_protobuf_dot_user_dot_user__pb2
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n0paperpilot_common/protobuf/project/project.proto\x12\x07project\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a*paperpilot_common/protobuf/user/user.proto"\x17\n\tProjectId\x12\n\n\x02id\x18\x01 \x01(\t"(\n\x11ProjectInviteCode\x12\x13\n\x0binvite_code\x18\x01 \x01(\t"\x84\x01\n\x0bProjectInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x13\n\x0binvite_code\x18\x04 \x01(\t\x12\x10\n\x08owner_id\x18\x05 \x01(\t\x12\x1f\n\x07members\x18\x06 \x03(\x0b\x32\x0e.user.UserInfo"G\n\x12ListProjectRequest\x12\x0c\n\x04page\x18\x01 \x01(\x05\x12\x11\n\tpage_size\x18\x02 \x01(\x05\x12\x10\n\x08order_by\x18\x03 \x01(\t"_\n\x13ListProjectResponse\x12&\n\x08projects\x18\x01 \x03(\x0b\x32\x14.project.ProjectInfo\x12\r\n\x05total\x18\x02 \x01(\x05\x12\x11\n\tnext_page\x18\x03 \x01(\x05"9\n\x14\x43reateProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t"E\n\x14UpdateProjectRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t"D\n\x1d\x43heckUserJoinedProjectRequest\x12\x12\n\nproject_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t2n\n\x0eProjectService\x12\\\n\x16\x43heckUserJoinedProject\x12&.project.CheckUserJoinedProjectRequest\x1a\x1a.google.protobuf.BoolValue2\xf0\x03\n\x14ProjectPublicService\x12S\n\x16ListUserJoinedProjects\x12\x1b.project.ListProjectRequest\x1a\x1c.project.ListProjectResponse\x12:\n\x0eGetProjectInfo\x12\x12.project.ProjectId\x1a\x14.project.ProjectInfo\x12\x44\n\rCreateProject\x12\x1d.project.CreateProjectRequest\x1a\x14.project.ProjectInfo\x12H\n\x11UpdateProjectInfo\x12\x1d.project.UpdateProjectRequest\x1a\x14.project.ProjectInfo\x12;\n\rDeleteProject\x12\x12.project.ProjectId\x1a\x16.google.protobuf.Empty\x12?\n\x0bJoinProject\x12\x1a.project.ProjectInviteCode\x1a\x14.project.ProjectInfo\x12\x39\n\x0bQuitProject\x12\x12.project.ProjectId\x1a\x16.google.protobuf.Emptyb\x06proto3'
+    b'\n0paperpilot_common/protobuf/project/project.proto\x12\x07project\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a*paperpilot_common/protobuf/user/user.proto"\x17\n\tProjectId\x12\n\n\x02id\x18\x01 \x01(\t"(\n\x11ProjectInviteCode\x12\x13\n\x0binvite_code\x18\x01 \x01(\t"\x84\x01\n\x0bProjectInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x13\n\x0binvite_code\x18\x04 \x01(\t\x12\x10\n\x08owner_id\x18\x05 \x01(\t\x12\x1f\n\x07members\x18\x06 \x03(\x0b\x32\x0e.user.UserInfo"G\n\x12ListProjectRequest\x12\x0c\n\x04page\x18\x01 \x01(\x05\x12\x11\n\tpage_size\x18\x02 \x01(\x05\x12\x10\n\x08order_by\x18\x03 \x01(\t"_\n\x13ListProjectResponse\x12&\n\x08projects\x18\x01 \x03(\x0b\x32\x14.project.ProjectInfo\x12\r\n\x05total\x18\x02 \x01(\x05\x12\x11\n\tnext_page\x18\x03 \x01(\x05"9\n\x14\x43reateProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t"E\n\x14UpdateProjectRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t"D\n\x1d\x43heckUserJoinedProjectRequest\x12\x12\n\nproject_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t2n\n\x0eProjectService\x12\\\n\x16\x43heckUserJoinedProject\x12&.project.CheckUserJoinedProjectRequest\x1a\x1a.google.protobuf.BoolValue2\xf0\x03\n\x14ProjectPublicService\x12S\n\x16ListUserJoinedProjects\x12\x1b.project.ListProjectRequest\x1a\x1c.project.ListProjectResponse\x12:\n\x0eGetProjectInfo\x12\x12.project.ProjectId\x1a\x14.project.ProjectInfo\x12\x44\n\rCreateProject\x12\x1d.project.CreateProjectRequest\x1a\x14.project.ProjectInfo\x12H\n\x11UpdateProjectInfo\x12\x1d.project.UpdateProjectRequest\x1a\x14.project.ProjectInfo\x12;\n\rDeleteProject\x12\x12.project.ProjectId\x1a\x16.google.protobuf.Empty\x12?\n\x0bJoinProject\x12\x1a.project.ProjectInviteCode\x1a\x14.project.ProjectInfo\x12\x39\n\x0bQuitProject\x12\x12.project.ProjectId\x1a\x16.google.protobuf.Emptyb\x06proto3'
 )
 
 _globals = globals()
@@ -27,24 +26,24 @@ _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "paperpilot_common.protobuf.project.project_pb2", _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
     DESCRIPTOR._options = None
-    _globals["_PROJECTID"]._serialized_start = 199
-    _globals["_PROJECTID"]._serialized_end = 222
-    _globals["_PROJECTINVITECODE"]._serialized_start = 224
-    _globals["_PROJECTINVITECODE"]._serialized_end = 264
-    _globals["_PROJECTINFO"]._serialized_start = 267
-    _globals["_PROJECTINFO"]._serialized_end = 399
-    _globals["_LISTPROJECTREQUEST"]._serialized_start = 401
-    _globals["_LISTPROJECTREQUEST"]._serialized_end = 472
-    _globals["_LISTPROJECTRESPONSE"]._serialized_start = 474
-    _globals["_LISTPROJECTRESPONSE"]._serialized_end = 569
-    _globals["_CREATEPROJECTREQUEST"]._serialized_start = 571
-    _globals["_CREATEPROJECTREQUEST"]._serialized_end = 628
-    _globals["_UPDATEPROJECTREQUEST"]._serialized_start = 630
-    _globals["_UPDATEPROJECTREQUEST"]._serialized_end = 699
-    _globals["_CHECKUSERJOINEDPROJECTREQUEST"]._serialized_start = 701
-    _globals["_CHECKUSERJOINEDPROJECTREQUEST"]._serialized_end = 769
-    _globals["_PROJECTSERVICE"]._serialized_start = 771
-    _globals["_PROJECTSERVICE"]._serialized_end = 881
-    _globals["_PROJECTPUBLICSERVICE"]._serialized_start = 884
-    _globals["_PROJECTPUBLICSERVICE"]._serialized_end = 1380
+    _globals["_PROJECTID"]._serialized_start = 166
+    _globals["_PROJECTID"]._serialized_end = 189
+    _globals["_PROJECTINVITECODE"]._serialized_start = 191
+    _globals["_PROJECTINVITECODE"]._serialized_end = 231
+    _globals["_PROJECTINFO"]._serialized_start = 234
+    _globals["_PROJECTINFO"]._serialized_end = 366
+    _globals["_LISTPROJECTREQUEST"]._serialized_start = 368
+    _globals["_LISTPROJECTREQUEST"]._serialized_end = 439
+    _globals["_LISTPROJECTRESPONSE"]._serialized_start = 441
+    _globals["_LISTPROJECTRESPONSE"]._serialized_end = 536
+    _globals["_CREATEPROJECTREQUEST"]._serialized_start = 538
+    _globals["_CREATEPROJECTREQUEST"]._serialized_end = 595
+    _globals["_UPDATEPROJECTREQUEST"]._serialized_start = 597
+    _globals["_UPDATEPROJECTREQUEST"]._serialized_end = 666
+    _globals["_CHECKUSERJOINEDPROJECTREQUEST"]._serialized_start = 668
+    _globals["_CHECKUSERJOINEDPROJECTREQUEST"]._serialized_end = 736
+    _globals["_PROJECTSERVICE"]._serialized_start = 738
+    _globals["_PROJECTSERVICE"]._serialized_end = 848
+    _globals["_PROJECTPUBLICSERVICE"]._serialized_start = 851
+    _globals["_PROJECTPUBLICSERVICE"]._serialized_end = 1347
 # @@protoc_insertion_point(module_scope)
