@@ -12,11 +12,7 @@ from paperpilot_common.protobuf.project.project_pb2 import (
     ListProjectResponse,
     ProjectInfo,
 )
-from paperpilot_common.protobuf.user.user_pb2 import (
-    UserId,
-    UserIdList,
-    UserInfo,
-)
+from paperpilot_common.protobuf.user.user_pb2 import UserIdList
 from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 from project.models import Project, UserProject
