@@ -117,21 +117,22 @@ class UserController(user_pb2_grpc.UserServiceServicer):
     ]:
         return await user_service.get_user_detail(request.id)
 
-    async def ListUserInfo(
+    async def GetUserInfos(
         self,
         request: paperpilot_common.protobuf.user.user_pb2.UserIdList,
         context: _ServicerContext,
     ) -> typing.Union[
-        paperpilot_common.protobuf.user.user_pb2.UserInfoList,
+        paperpilot_common.protobuf.user.user_pb2.UserInfoMap,
         collections.abc.Awaitable[
-            paperpilot_common.protobuf.user.user_pb2.UserInfoList
+            paperpilot_common.protobuf.user.user_pb2.UserInfoMap
         ],
     ]:
-        infos = await user_service.get_user_info_list(
+        infos = await user_service.get_user_infos(
             [uuid.UUID(_) for _ in request.ids]
         )
-        response = paperpilot_common.protobuf.user.user_pb2.UserInfoList()
-        response.users.extend(infos)
+        response = paperpilot_common.protobuf.user.user_pb2.UserInfoMap(
+            infos=infos,
+        )
         return response
 
     async def UpdateUserAvatar(
