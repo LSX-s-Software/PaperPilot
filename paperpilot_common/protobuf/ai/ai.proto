@@ -13,6 +13,10 @@ enum FinishReason {
     FUNCTION_CALL = 3;
     // 生成内容被过滤
     CONTENT_FILTER = 4;
+    // Chat 次数用完
+    MESSAGE_NUM_LIMIT = 5;
+    // Message 过长
+    MESSAGE_TOO_LONG = 6;
 }
 
 // GPT 响应
@@ -21,14 +25,22 @@ message GptResult {
     string content = 1;
     // 结束原因
     optional FinishReason finish_reason = 2;
+    // 聊天 ID
+    optional string chat_id = 3;
+    // 总可用聊天次数
+    optional int32 total_chat_times = 4;
+    // 剩余可用聊天次数
+    optional int32 remain_chat_times = 5;
 }
 
 // GPT 请求
 message GptRequest {
     // 所选文本
-    string text = 1;
+    optional string text = 1;
     // 操作
     string action = 2;
+    // 对话 ID（为空则开启新对话）
+    optional string chat_id = 3;
 }
 
 // GPT 服务

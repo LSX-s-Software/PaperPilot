@@ -34,6 +34,10 @@ class _FinishReasonEnumTypeWrapper(
     """需要调用函数"""
     CONTENT_FILTER: _FinishReason.ValueType  # 4
     """生成内容被过滤"""
+    MESSAGE_NUM_LIMIT: _FinishReason.ValueType  # 5
+    """Chat 次数用完"""
+    MESSAGE_TOO_LONG: _FinishReason.ValueType  # 6
+    """Message 过长"""
 
 class FinishReason(_FinishReason, metaclass=_FinishReasonEnumTypeWrapper):
     """OpenAI FinishReason"""
@@ -48,6 +52,10 @@ FUNCTION_CALL: FinishReason.ValueType  # 3
 """需要调用函数"""
 CONTENT_FILTER: FinishReason.ValueType  # 4
 """生成内容被过滤"""
+MESSAGE_NUM_LIMIT: FinishReason.ValueType  # 5
+"""Chat 次数用完"""
+MESSAGE_TOO_LONG: FinishReason.ValueType  # 6
+"""Message 过长"""
 global___FinishReason = FinishReason
 
 @typing_extensions.final
@@ -58,29 +66,88 @@ class GptResult(google.protobuf.message.Message):
 
     CONTENT_FIELD_NUMBER: builtins.int
     FINISH_REASON_FIELD_NUMBER: builtins.int
+    CHAT_ID_FIELD_NUMBER: builtins.int
+    TOTAL_CHAT_TIMES_FIELD_NUMBER: builtins.int
+    REMAIN_CHAT_TIMES_FIELD_NUMBER: builtins.int
     content: builtins.str
     """生成内容"""
     finish_reason: global___FinishReason.ValueType
     """结束原因"""
+    chat_id: builtins.str
+    """聊天 ID"""
+    total_chat_times: builtins.int
+    """总可用聊天次数"""
+    remain_chat_times: builtins.int
+    """剩余可用聊天次数"""
     def __init__(
         self,
         *,
         content: builtins.str = ...,
         finish_reason: global___FinishReason.ValueType | None = ...,
+        chat_id: builtins.str | None = ...,
+        total_chat_times: builtins.int | None = ...,
+        remain_chat_times: builtins.int | None = ...,
     ) -> None: ...
     def HasField(
         self,
-        field_name: typing_extensions.Literal["_finish_reason", b"_finish_reason", "finish_reason", b"finish_reason"],
+        field_name: typing_extensions.Literal[
+            "_chat_id",
+            b"_chat_id",
+            "_finish_reason",
+            b"_finish_reason",
+            "_remain_chat_times",
+            b"_remain_chat_times",
+            "_total_chat_times",
+            b"_total_chat_times",
+            "chat_id",
+            b"chat_id",
+            "finish_reason",
+            b"finish_reason",
+            "remain_chat_times",
+            b"remain_chat_times",
+            "total_chat_times",
+            b"total_chat_times",
+        ],
     ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
-            "_finish_reason", b"_finish_reason", "content", b"content", "finish_reason", b"finish_reason"
+            "_chat_id",
+            b"_chat_id",
+            "_finish_reason",
+            b"_finish_reason",
+            "_remain_chat_times",
+            b"_remain_chat_times",
+            "_total_chat_times",
+            b"_total_chat_times",
+            "chat_id",
+            b"chat_id",
+            "content",
+            b"content",
+            "finish_reason",
+            b"finish_reason",
+            "remain_chat_times",
+            b"remain_chat_times",
+            "total_chat_times",
+            b"total_chat_times",
         ],
     ) -> None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_chat_id", b"_chat_id"]
+    ) -> typing_extensions.Literal["chat_id"] | None: ...
+    @typing.overload
     def WhichOneof(
         self, oneof_group: typing_extensions.Literal["_finish_reason", b"_finish_reason"]
     ) -> typing_extensions.Literal["finish_reason"] | None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_remain_chat_times", b"_remain_chat_times"]
+    ) -> typing_extensions.Literal["remain_chat_times"] | None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_total_chat_times", b"_total_chat_times"]
+    ) -> typing_extensions.Literal["total_chat_times"] | None: ...
 
 global___GptResult = GptResult
 
@@ -92,16 +159,39 @@ class GptRequest(google.protobuf.message.Message):
 
     TEXT_FIELD_NUMBER: builtins.int
     ACTION_FIELD_NUMBER: builtins.int
+    CHAT_ID_FIELD_NUMBER: builtins.int
     text: builtins.str
     """所选文本"""
     action: builtins.str
     """操作"""
+    chat_id: builtins.str
+    """对话 ID（为空则开启新对话）"""
     def __init__(
         self,
         *,
-        text: builtins.str = ...,
+        text: builtins.str | None = ...,
         action: builtins.str = ...,
+        chat_id: builtins.str | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["action", b"action", "text", b"text"]) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_chat_id", b"_chat_id", "_text", b"_text", "chat_id", b"chat_id", "text", b"text"
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_chat_id", b"_chat_id", "_text", b"_text", "action", b"action", "chat_id", b"chat_id", "text", b"text"
+        ],
+    ) -> None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_chat_id", b"_chat_id"]
+    ) -> typing_extensions.Literal["chat_id"] | None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_text", b"_text"]
+    ) -> typing_extensions.Literal["text"] | None: ...
 
 global___GptRequest = GptRequest
