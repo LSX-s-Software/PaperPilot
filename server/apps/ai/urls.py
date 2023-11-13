@@ -34,5 +34,7 @@ class AiController(ai_pb2_grpc.GptServiceServicer):
             chat_id = UUID(request.chat_id)
         else:
             chat_id = None
-        async for result in ai_service.ask(chat_id, request.text, request.action):
+        async for result in ai_service.ask(
+            chat_id, request.text, request.action
+        ):
             yield result

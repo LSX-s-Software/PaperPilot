@@ -1,16 +1,14 @@
 from typing import Iterable
 from uuid import UUID, uuid4
 
-from paperpilot_common.exceptions import ApiException
-from paperpilot_common.protobuf.ai.ai_pb2 import GptResult, FinishReason
+from paperpilot_common.protobuf.ai.ai_pb2 import FinishReason, GptResult
 from paperpilot_common.protobuf.ai.cache_pb2 import Chat, Message, Role
-from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 
 from server.apps.ai.caches import ai_cache
+from server.apps.ai.config import MAX_MESSAGE_LENGTH, MAX_MESSAGES
 from server.apps.ai.utils import get_finish_reason_enum
 from server.business.gpt.service import GptBusiness
-from server.apps.ai.config import MAX_MESSAGES, MAX_MESSAGE_LENGTH
 
 
 class AiService:
@@ -25,7 +23,9 @@ class AiService:
         "explain": "请解释以上内容",
     }
 
-    async def generate_content(self, chat_id: UUID | None, text: str, action: str) -> (Chat, FinishReason):
+    async def generate_content(
+        self, chat_id: UUID | None, text: str, action: str
+    ) -> (Chat, FinishReason):
         if text != "":  # 传入论文文本
             action_text = self.prompt.get(action, action)
             content = f"以下是一篇论文的部分内容：\n{text}\n\n{action_text}"
@@ -43,15 +43,19 @@ class AiService:
             return None, FinishReason.MESSAGE_NUM_LIMIT
 
         chat.messages.extend(
-            [Message(
-                role=Role.USER,
-                content=content,
-            )],
+            [
+                Message(
+                    role=Role.USER,
+                    content=content,
+                )
+            ],
         )
 
         return chat, None
 
-    async def ask(self, chat_id: UUID | None, text: str, action: str) -> Iterable[GptResult]:
+    async def ask(
+        self, chat_id: UUID | None, text: str, action: str
+    ) -> Iterable[GptResult]:
         chat, stop = await self.generate_content(chat_id, text, action)
 
         if stop:
@@ -61,10 +65,13 @@ class AiService:
             )
             return
 
-        content = [{
-            "role": "user" if message.role == Role.USER else "assistant",
-            "content": message.content,
-        } for message in chat.messages]
+        content = [
+            {
+                "role": "user" if message.role == Role.USER else "assistant",
+                "content": message.content,
+            }
+            for message in chat.messages
+        ]
 
         meta = GptResult(
             total_chat_times=MAX_MESSAGES,
@@ -92,10 +99,12 @@ class AiService:
                 )
 
         chat.messages.extend(
-            [Message(
-                role=Role.ASSISTANT,
-                content="".join(answer_list),
-            )]
+            [
+                Message(
+                    role=Role.ASSISTANT,
+                    content="".join(answer_list),
+                )
+            ]
         )
 
         await self.cache.set_chat(chat_id, chat)
