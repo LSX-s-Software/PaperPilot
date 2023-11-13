@@ -26,10 +26,10 @@ class GptBusiness:
             self.session = aiohttp.ClientSession()
 
     @staticmethod
-    def generate_payload(content: str) -> str:
+    def generate_payload(content: list[dict[str, str]]) -> str:
         return json.dumps(
             {
-                "messages": [{"role": "user", "content": content}],
+                "messages": content,
                 "model": "gpt-3.5-turbo",
                 "temperature": 1,
                 "presence_penalty": 0,
@@ -40,7 +40,7 @@ class GptBusiness:
             ensure_ascii=False,
         )
 
-    async def ask(self, content: str) -> (str, str | None):
+    async def ask(self, content: list[dict[str, str]]) -> (str, str | None):
         """
         ask question to gpt
 
