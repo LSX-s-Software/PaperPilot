@@ -1,5 +1,6 @@
 import collections.abc
 import typing
+from uuid import UUID
 
 import paperpilot_common.protobuf
 from paperpilot_common.protobuf.ai import ai_pb2, ai_pb2_grpc
@@ -29,5 +30,11 @@ class AiController(ai_pb2_grpc.GptServiceServicer):
             paperpilot_common.protobuf.ai.ai_pb2.GptResult
         ],
     ]:
-        async for result in ai_service.ask(request.text, request.action):
+        if request.HasField("chat_id"):
+            chat_id = UUID(request.chat_id)
+        else:
+            chat_id = None
+        async for result in ai_service.ask(
+            chat_id, request.text, request.action
+        ):
             yield result
