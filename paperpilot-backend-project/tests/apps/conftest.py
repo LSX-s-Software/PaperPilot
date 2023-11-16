@@ -5,7 +5,12 @@ from uuid import UUID
 
 import pytest
 import pytest_asyncio
-from paperpilot_common.protobuf.user.user_pb2 import UserId, UserInfo
+from paperpilot_common.protobuf.user.user_pb2 import (
+    UserId,
+    UserIdList,
+    UserInfo,
+    UserInfoMap,
+)
 
 
 class FakeServicerContext:
@@ -119,14 +124,28 @@ def user_mock(mocker):
                 id=request.id, username="unknown", avatar="/test.jpg"
             )
 
-    mock = mocker.AsyncMock(side_effect=get_info)
+    async def get_infos(request: UserIdList) -> UserInfoMap:
+        infos = {}
+        for id in request.ids:
+            if id == user_info.id:
+                infos[id] = user_info
+            elif id == owner2_info.id:
+                infos[id] = owner2_info
+            elif id == not_owner_info.id:
+                infos[id] = not_owner_info
 
+        return UserInfoMap(infos=infos)
+
+    get_user_info_mock = mocker.AsyncMock(side_effect=get_info)
+    get_user_infos_mock = mocker.AsyncMock(side_effect=get_infos)
     mocker.patch(
         "project.services.ProjectService.user_service.stub.GetUserInfo",
-        new=mock,
+        new=get_user_info_mock,
     )
-
-    return mock
+    mocker.patch(
+        "project.services.ProjectService.user_service.stub.GetUserInfos",
+        new=get_user_infos_mock,
+    )
 
 
 @pytest.fixture

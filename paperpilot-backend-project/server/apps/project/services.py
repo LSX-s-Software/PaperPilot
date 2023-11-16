@@ -12,7 +12,7 @@ from paperpilot_common.protobuf.project.project_pb2 import (
     ListProjectResponse,
     ProjectInfo,
 )
-from paperpilot_common.protobuf.user.user_pb2 import UserId, UserInfo
+from paperpilot_common.protobuf.user.user_pb2 import UserIdList
 from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 from project.models import Project, UserProject
@@ -55,20 +55,17 @@ class ProjectService:
         """
         project = await self._get_project(project)
 
-        ups = UserProject.objects.filter(project=project)
-
-        members = []
+        members_id = []
         owner_id = None
 
-        # user_service = UserClient()
-
-        async for up in ups:
+        async for up in project.users.all():
             if up.is_owner:
                 owner_id = up.user_id.hex
-            member_info: UserInfo = await self.user_service.stub.GetUserInfo(
-                UserId(id=up.user_id.hex)
-            )
-            members.append(member_info)
+            members_id.append(up.user_id.hex)
+
+        member_infos = await self.user_service.stub.GetUserInfos(
+            UserIdList(ids=members_id)
+        )
 
         return ProjectInfo(
             id=project.id.hex,
@@ -76,7 +73,7 @@ class ProjectService:
             description=project.description,
             invite_code=project.invite_code,
             owner_id=owner_id,
-            members=members,
+            members=member_infos.infos.values(),
         )
 
     async def get_project_info(
@@ -167,12 +164,38 @@ class ProjectService:
         # 分页
         queryset = queryset[(page - 1) * page_size : page * page_size]
 
-        projects = []
-        async for project in queryset:
-            projects.append(await self._get_project_info(project))
+        project_users = []
+        project_infos = []
+        user_ids = set()
+        async for project in queryset.prefetch_related("users"):
+            project_infos.append(
+                ProjectInfo(
+                    id=project.id.hex,
+                    name=project.name,
+                    description=project.description,
+                    invite_code=project.invite_code,
+                )
+            )
+            project_users.append(project.users.all())
+            user_ids.update([up.user_id.hex for up in project.users.all()])
+
+        user_infos = await self.user_service.stub.GetUserInfos(
+            UserIdList(ids=user_ids)
+        )
+
+        for i in range(len(project_infos)):
+            project_info = project_infos[i]
+            members = []
+
+            for up in project_users[i]:
+                if up.is_owner:
+                    project_info.owner_id = up.user_id.hex
+                members.append(user_infos.infos[up.user_id.hex])
+
+            project_info.members.extend(members)
 
         return ListProjectResponse(
-            projects=projects,
+            projects=project_infos,
             total=total,
             next_page=next_page,
         )
