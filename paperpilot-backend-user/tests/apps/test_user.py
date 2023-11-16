@@ -284,11 +284,11 @@ class TestUser:
         request = UserIdList()
         request.ids.extend([_.hex for _ in uuids])
 
-        response = await api.ListUserInfo(request, context)
+        response = await api.GetUserInfos(request, context)
 
-        assert len(response.users) == count
+        assert len(response.infos) == count
 
-        for user in response.users:
+        for user in response.infos.values():
             assert uuid.UUID(user.id) in uuids
 
     @pytest.mark.asyncio
@@ -296,18 +296,18 @@ class TestUser:
         request = UserIdList()
         request.ids.extend([])
 
-        response = await api.ListUserInfo(request, context)
+        response = await api.GetUserInfos(request, context)
 
-        assert len(response.users) == 0
+        assert len(response.infos) == 0
 
     @pytest.mark.asyncio
     async def test_list_user_info__not_found(self, api, context):
         request = UserIdList()
         request.ids.extend([uuid.uuid4().hex])
 
-        response = await api.ListUserInfo(request, context)
+        response = await api.GetUserInfos(request, context)
 
-        assert len(response.users) == 0
+        assert len(response.infos) == 0
 
     @pytest.mark.asyncio
     async def test_update_user_avatar(self, api, context, user: User):

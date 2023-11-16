@@ -127,25 +127,23 @@ class UserService:
 
         return await self.get_user_detail(user)
 
-    async def get_user_info_list(
+    async def get_user_infos(
         self, user_ids: list[uuid.UUID]
-    ) -> list[UserInfo]:
+    ) -> dict[str, UserInfo]:
         """
-        获取用户信息列表
+        获取多个用户信息
 
         :param user_ids: 用户ID列表
         :return: 用户信息列表
         """
-        infos = []
+        infos = {}
         self.logger.debug(f"get user info list: {user_ids}")
 
         async for user in User.objects.filter(id__in=user_ids):
-            infos.append(
-                UserInfo(
-                    id=user.id.hex,
-                    username=user.username,
-                    avatar=self._get_user_avatar(user),
-                )
+            infos[user.id.hex] = UserInfo(
+                id=user.id.hex,
+                username=user.username,
+                avatar=self._get_user_avatar(user),
             )
 
         return infos
