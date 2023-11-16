@@ -6,7 +6,7 @@ from paper.models import Paper
 from paperpilot_common.exceptions import ApiException
 from paperpilot_common.helper.field import datetime_to_timestamp
 from paperpilot_common.oss.utils import get_random_name
-from paperpilot_common.protobuf.paper.paper_pb2 import PaperDetail, PaperInfo
+from paperpilot_common.protobuf.paper.paper_pb2 import PaperDetail
 from paperpilot_common.protobuf.project.project_pb2 import (
     CheckUserJoinedProjectRequest,
 )
@@ -14,7 +14,7 @@ from paperpilot_common.response import ResponseType
 from paperpilot_common.utils.log import get_logger
 
 from server.business.grpc.project import project_client
-from server.business.research import ScihubFetch
+from server.business.research import CrossRefMetaFetch, ScihubFetch
 
 from .cache import project_cache
 from .updaters import PaperPublicUpdater, PaperUpdater
@@ -28,6 +28,7 @@ class PaperService:
     paper_public_updater = PaperPublicUpdater()
 
     pdf_fetch = ScihubFetch()
+    meta_fetch = CrossRefMetaFetch()
 
     async def _check_user_project(
         self, user_id: uuid.UUID, project_id: uuid.UUID
@@ -95,25 +96,6 @@ class PaperService:
 
         return paper
 
-    async def _get_paper_info(self, paper: Paper) -> PaperInfo:
-        """
-        获取论文信息
-
-        :param paper: 论文对象
-        :return: 论文信息
-        """
-        info = PaperInfo(
-            id=paper.id.hex,
-            title=paper.title,
-            publication_year=paper.publication_year,
-            publication=paper.publication,
-            create_time=datetime_to_timestamp(paper.create_time),
-        )
-
-        info.authors.extend(paper.authors)
-
-        return info
-
     async def _get_paper_detail(self, paper: Paper) -> PaperDetail:
         """
         获取论文详情
@@ -129,6 +111,7 @@ class PaperService:
             abstract=paper.abstract,
             publication_year=paper.publication_year,
             publication=paper.publication,
+            event=paper.event,
             volume=paper.volume,
             issue=paper.issue,
             pages=paper.pages,
@@ -152,7 +135,7 @@ class PaperService:
         page: int,
         page_size: int,
         order_by: str,
-    ) -> (list[PaperInfo], int, int):
+    ) -> (list[PaperDetail], int, int):
         """
         获取论文列表
 
@@ -185,7 +168,7 @@ class PaperService:
         papers = []
 
         async for paper in queryset.all():
-            papers.append(await self._get_paper_info(paper))
+            papers.append(await self._get_paper_detail(paper))
 
         return papers, total, next_page
 
@@ -329,6 +312,19 @@ class PaperService:
             paper.doi = metadata["doi"]
 
         paper.project_id = project_id
+
+        metadata = await self.meta_fetch.fetch(paper.doi)
+
+        if metadata.title:
+            paper.title = metadata.title
+        if metadata.authors:
+            paper.authors = metadata.authors
+        if metadata.publication:
+            paper.publication = metadata.publication
+        if metadata.publication_year:
+            paper.publication_year = metadata.publication_year
+        if metadata.event:
+            paper.event = metadata.event
 
         await self._upload_file(paper, pdf_file.file)
 

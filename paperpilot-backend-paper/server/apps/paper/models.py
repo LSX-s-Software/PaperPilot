@@ -27,6 +27,7 @@ class Paper(models.Model):
 
     publication_year = models.IntegerField(default=0, verbose_name="出版年份")
     publication = models.CharField(max_length=255, verbose_name="出版方")
+    event = models.CharField(max_length=255, verbose_name="会议/期刊")
     volume = models.CharField(max_length=255, verbose_name="卷")
     issue = models.CharField(max_length=255, verbose_name="期")
     pages = models.CharField(max_length=255, verbose_name="页码")

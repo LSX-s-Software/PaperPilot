@@ -140,7 +140,6 @@ async def papers(db, project_id) -> list[UUID]:
 
 @pytest.fixture
 def paper_detail():
-    from paperpilot_common.protobuf.common.util_pb2 import Date
     from paperpilot_common.protobuf.paper.paper_pb2 import PaperDetail
 
     return PaperDetail(
@@ -151,6 +150,7 @@ def paper_detail():
         tags=["test"],
         publication_year=2023,
         publication="test",
+        event="test",
         volume="test",
         issue="test",
         pages="test",
