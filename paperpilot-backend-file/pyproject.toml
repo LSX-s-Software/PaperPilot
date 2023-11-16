@@ -26,6 +26,7 @@ opentelemetry-exporter-otlp = "^1.20.0"
 opentelemetry-instrumentation-aiohttp-client = "^0.41b0"
 opentelemetry-instrumentation-grpc = "^0.41b0"
 opentelemetry-instrumentation-starlette = "^0.41b0"
+pycryptodome = "^3.19.0"
 
 
 [tool.poetry.group.test.dependencies]
