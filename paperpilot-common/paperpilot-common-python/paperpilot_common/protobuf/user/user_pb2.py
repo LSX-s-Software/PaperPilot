@@ -18,7 +18,7 @@ from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__
 from paperpilot_common.protobuf.common import util_pb2 as paperpilot__common_dot_protobuf_dot_common_dot_util__pb2
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n*paperpilot_common/protobuf/user/user.proto\x12\x04user\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a,paperpilot_common/protobuf/common/util.proto"\x14\n\x06UserId\x12\n\n\x02id\x18\x01 \x01(\t"8\n\x08UserInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x03 \x01(\t"\xab\x01\n\nUserDetail\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\r\n\x05phone\x18\x03 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x04 \x01(\t\x12/\n\x0b\x63reate_time\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12/\n\x0bupdate_time\x18\x06 \x01(\x0b\x32\x1a.google.protobuf.Timestamp"T\n\x11\x43reateUserRequest\x12\r\n\x05phone\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x10\n\x08username\x18\x03 \x01(\t\x12\x10\n\x08password\x18\x04 \x01(\t"5\n\x17UpdateUserAvatarRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x02 \x01(\t"z\n\x11UpdateUserRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x14\n\x0cold_password\x18\x03 \x01(\t\x12\x14\n\x0cnew_password\x18\x04 \x01(\t\x12\r\n\x05phone\x18\x05 \x01(\t\x12\x0c\n\x04\x63ode\x18\x06 \x01(\t"\x19\n\nUserIdList\x12\x0b\n\x03ids\x18\x01 \x03(\t"-\n\x0cUserInfoList\x12\x1d\n\x05users\x18\x01 \x03(\x0b\x32\x0e.user.UserInfo"9\n\x18UploadUserAvatarResponse\x12\x1d\n\x05token\x18\x01 \x01(\x0b\x32\x0e.util.OssToken2\xe6\x01\n\x0bUserService\x12+\n\x0bGetUserInfo\x12\x0c.user.UserId\x1a\x0e.user.UserInfo\x12/\n\rGetUserDetail\x12\x0c.user.UserId\x1a\x10.user.UserDetail\x12\x34\n\x0cListUserInfo\x12\x10.user.UserIdList\x1a\x12.user.UserInfoList\x12\x43\n\x10UpdateUserAvatar\x12\x1d.user.UpdateUserAvatarRequest\x1a\x10.user.UserDetail2\x81\x02\n\x11UserPublicService\x12+\n\x0bGetUserInfo\x12\x0c.user.UserId\x1a\x0e.user.UserInfo\x12:\n\x0eGetCurrentUser\x12\x16.google.protobuf.Empty\x1a\x10.user.UserDetail\x12\x37\n\nUpdateUser\x12\x17.user.UpdateUserRequest\x1a\x10.user.UserDetail\x12J\n\x10UploadUserAvatar\x12\x16.google.protobuf.Empty\x1a\x1e.user.UploadUserAvatarResponseb\x06proto3'
+    b'\n*paperpilot_common/protobuf/user/user.proto\x12\x04user\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a,paperpilot_common/protobuf/common/util.proto"\x14\n\x06UserId\x12\n\n\x02id\x18\x01 \x01(\t"8\n\x08UserInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x03 \x01(\t"\xab\x01\n\nUserDetail\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\r\n\x05phone\x18\x03 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x04 \x01(\t\x12/\n\x0b\x63reate_time\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12/\n\x0bupdate_time\x18\x06 \x01(\x0b\x32\x1a.google.protobuf.Timestamp"T\n\x11\x43reateUserRequest\x12\r\n\x05phone\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x10\n\x08username\x18\x03 \x01(\t\x12\x10\n\x08password\x18\x04 \x01(\t"5\n\x17UpdateUserAvatarRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x02 \x01(\t"z\n\x11UpdateUserRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x14\n\x0cold_password\x18\x03 \x01(\t\x12\x14\n\x0cnew_password\x18\x04 \x01(\t\x12\r\n\x05phone\x18\x05 \x01(\t\x12\x0c\n\x04\x63ode\x18\x06 \x01(\t"\x19\n\nUserIdList\x12\x0b\n\x03ids\x18\x01 \x03(\t"x\n\x0bUserInfoMap\x12+\n\x05infos\x18\x01 \x03(\x0b\x32\x1c.user.UserInfoMap.InfosEntry\x1a<\n\nInfosEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x1d\n\x05value\x18\x02 \x01(\x0b\x32\x0e.user.UserInfo:\x02\x38\x01"9\n\x18UploadUserAvatarResponse\x12\x1d\n\x05token\x18\x01 \x01(\x0b\x32\x0e.util.OssToken2\xe5\x01\n\x0bUserService\x12+\n\x0bGetUserInfo\x12\x0c.user.UserId\x1a\x0e.user.UserInfo\x12/\n\rGetUserDetail\x12\x0c.user.UserId\x1a\x10.user.UserDetail\x12\x33\n\x0cGetUserInfos\x12\x10.user.UserIdList\x1a\x11.user.UserInfoMap\x12\x43\n\x10UpdateUserAvatar\x12\x1d.user.UpdateUserAvatarRequest\x1a\x10.user.UserDetail2\x81\x02\n\x11UserPublicService\x12+\n\x0bGetUserInfo\x12\x0c.user.UserId\x1a\x0e.user.UserInfo\x12:\n\x0eGetCurrentUser\x12\x16.google.protobuf.Empty\x1a\x10.user.UserDetail\x12\x37\n\nUpdateUser\x12\x17.user.UpdateUserRequest\x1a\x10.user.UserDetail\x12J\n\x10UploadUserAvatar\x12\x16.google.protobuf.Empty\x1a\x1e.user.UploadUserAvatarResponseb\x06proto3'
 )
 
 _globals = globals()
@@ -26,6 +26,8 @@ _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "paperpilot_common.protobuf.user.user_pb2", _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
     DESCRIPTOR._options = None
+    _USERINFOMAP_INFOSENTRY._options = None
+    _USERINFOMAP_INFOSENTRY._serialized_options = b"8\001"
     _globals["_USERID"]._serialized_start = 160
     _globals["_USERID"]._serialized_end = 180
     _globals["_USERINFO"]._serialized_start = 182
@@ -40,12 +42,14 @@ if _descriptor._USE_C_DESCRIPTORS == False:
     _globals["_UPDATEUSERREQUEST"]._serialized_end = 677
     _globals["_USERIDLIST"]._serialized_start = 679
     _globals["_USERIDLIST"]._serialized_end = 704
-    _globals["_USERINFOLIST"]._serialized_start = 706
-    _globals["_USERINFOLIST"]._serialized_end = 751
-    _globals["_UPLOADUSERAVATARRESPONSE"]._serialized_start = 753
-    _globals["_UPLOADUSERAVATARRESPONSE"]._serialized_end = 810
-    _globals["_USERSERVICE"]._serialized_start = 813
-    _globals["_USERSERVICE"]._serialized_end = 1043
-    _globals["_USERPUBLICSERVICE"]._serialized_start = 1046
-    _globals["_USERPUBLICSERVICE"]._serialized_end = 1303
+    _globals["_USERINFOMAP"]._serialized_start = 706
+    _globals["_USERINFOMAP"]._serialized_end = 826
+    _globals["_USERINFOMAP_INFOSENTRY"]._serialized_start = 766
+    _globals["_USERINFOMAP_INFOSENTRY"]._serialized_end = 826
+    _globals["_UPLOADUSERAVATARRESPONSE"]._serialized_start = 828
+    _globals["_UPLOADUSERAVATARRESPONSE"]._serialized_end = 885
+    _globals["_USERSERVICE"]._serialized_start = 888
+    _globals["_USERSERVICE"]._serialized_end = 1117
+    _globals["_USERPUBLICSERVICE"]._serialized_start = 1120
+    _globals["_USERPUBLICSERVICE"]._serialized_end = 1377
 # @@protoc_insertion_point(module_scope)

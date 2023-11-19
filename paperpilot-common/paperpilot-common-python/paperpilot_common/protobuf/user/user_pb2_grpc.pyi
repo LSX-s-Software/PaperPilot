@@ -31,9 +31,9 @@ class UserServiceStub:
         paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """获取指定ID用户详细信息"""
-    ListUserInfo: grpc.UnaryUnaryMultiCallable[
+    GetUserInfos: grpc.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.UserIdList,
-        paperpilot_common.protobuf.user.user_pb2.UserInfoList,
+        paperpilot_common.protobuf.user.user_pb2.UserInfoMap,
     ]
     """批量获取用户简要信息"""
     UpdateUserAvatar: grpc.UnaryUnaryMultiCallable[
@@ -55,9 +55,9 @@ class UserServiceAsyncStub:
         paperpilot_common.protobuf.user.user_pb2.UserDetail,
     ]
     """获取指定ID用户详细信息"""
-    ListUserInfo: grpc.aio.UnaryUnaryMultiCallable[
+    GetUserInfos: grpc.aio.UnaryUnaryMultiCallable[
         paperpilot_common.protobuf.user.user_pb2.UserIdList,
-        paperpilot_common.protobuf.user.user_pb2.UserInfoList,
+        paperpilot_common.protobuf.user.user_pb2.UserInfoMap,
     ]
     """批量获取用户简要信息"""
     UpdateUserAvatar: grpc.aio.UnaryUnaryMultiCallable[
@@ -90,13 +90,13 @@ class UserServiceServicer(metaclass=abc.ABCMeta):
     ]:
         """获取指定ID用户详细信息"""
     @abc.abstractmethod
-    def ListUserInfo(
+    def GetUserInfos(
         self,
         request: paperpilot_common.protobuf.user.user_pb2.UserIdList,
         context: _ServicerContext,
     ) -> typing.Union[
-        paperpilot_common.protobuf.user.user_pb2.UserInfoList,
-        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserInfoList],
+        paperpilot_common.protobuf.user.user_pb2.UserInfoMap,
+        collections.abc.Awaitable[paperpilot_common.protobuf.user.user_pb2.UserInfoMap],
     ]:
         """批量获取用户简要信息"""
     @abc.abstractmethod

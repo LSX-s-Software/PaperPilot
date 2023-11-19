@@ -1,0 +1,23 @@
+syntax = "proto3";
+package translation;
+
+service TranslationPublicService {
+    // 翻译
+    rpc translate(TranslationRequest) returns (TranslationResponse);
+}
+
+// 翻译请求
+message TranslationRequest {
+    // 翻译内容
+    string content = 1;
+    // 源语言
+    optional string source_language = 2;
+    // 目标语言
+    optional string target_language = 3;
+}
+
+// 翻译响应
+message TranslationResponse {
+    // 翻译结果
+    string result = 1;
+}

@@ -20,7 +20,7 @@ class _ServicerContext(grpc.ServicerContext, grpc.aio.ServicerContext):  # type:
 class PaperServiceStub:
     def __init__(self, channel: typing.Union[grpc.Channel, grpc.aio.Channel]) -> None: ...
     AddPaper: grpc.UnaryUnaryMultiCallable[
-        paperpilot_common.protobuf.paper.paper_pb2.CreatePaperRequest,
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
     ]
     """添加论文"""
@@ -29,10 +29,15 @@ class PaperServiceStub:
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
     ]
     """更新论文"""
+    UpdateAttachment: grpc.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.paper.paper_pb2.UpdateAttachmentRequest,
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
+    ]
+    """更新论文附件"""
 
 class PaperServiceAsyncStub:
     AddPaper: grpc.aio.UnaryUnaryMultiCallable[
-        paperpilot_common.protobuf.paper.paper_pb2.CreatePaperRequest,
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
     ]
     """添加论文"""
@@ -41,12 +46,17 @@ class PaperServiceAsyncStub:
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
     ]
     """更新论文"""
+    UpdateAttachment: grpc.aio.UnaryUnaryMultiCallable[
+        paperpilot_common.protobuf.paper.paper_pb2.UpdateAttachmentRequest,
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
+    ]
+    """更新论文附件"""
 
 class PaperServiceServicer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def AddPaper(
         self,
-        request: paperpilot_common.protobuf.paper.paper_pb2.CreatePaperRequest,
+        request: paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
         context: _ServicerContext,
     ) -> typing.Union[
         paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
@@ -63,6 +73,16 @@ class PaperServiceServicer(metaclass=abc.ABCMeta):
         collections.abc.Awaitable[paperpilot_common.protobuf.paper.paper_pb2.PaperDetail],
     ]:
         """更新论文"""
+    @abc.abstractmethod
+    def UpdateAttachment(
+        self,
+        request: paperpilot_common.protobuf.paper.paper_pb2.UpdateAttachmentRequest,
+        context: _ServicerContext,
+    ) -> typing.Union[
+        paperpilot_common.protobuf.paper.paper_pb2.PaperDetail,
+        collections.abc.Awaitable[paperpilot_common.protobuf.paper.paper_pb2.PaperDetail],
+    ]:
+        """更新论文附件"""
 
 def add_PaperServiceServicer_to_server(
     servicer: PaperServiceServicer, server: typing.Union[grpc.Server, grpc.aio.Server]

@@ -1,0 +1,35 @@
+syntax = "proto3";
+package monitor;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// 后端状态
+message ServerStatus {
+    // 后端主机数量
+    int32 host_count = 1;
+    // 项目状态
+    repeated ProjectStatus projects = 2;
+    // 当前时间
+    google.protobuf.Timestamp time = 3;
+}
+
+// 项目状态
+message ProjectStatus {
+    // 项目ID(英文)
+    string id = 1;
+    // 项目名(中文)
+    string name = 2;
+    // 项目描述
+    string description = 3;
+    // 健康实例数量
+    int32 healthy_count = 4;
+    // 总实例数量
+    int32 total_count = 5;
+}
+
+// 监控公开服务
+service MonitorPublicService {
+    // 获取后端状态
+    rpc GetStatus (google.protobuf.Empty) returns (ServerStatus);
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+package ai;
+
+enum Role {
+    USER = 0;
+    ASSISTANT = 1;
+}
+
+message Message {
+    Role role = 1;
+    string content = 2;
+}
+
+message Chat {
+    repeated Message messages = 1;
+}

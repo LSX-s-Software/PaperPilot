@@ -251,22 +251,40 @@ class UserIdList(google.protobuf.message.Message):
 global___UserIdList = UserIdList
 
 @typing_extensions.final
-class UserInfoList(google.protobuf.message.Message):
-    """用户简要信息列表"""
+class UserInfoMap(google.protobuf.message.Message):
+    """用户简要信息Map"""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    USERS_FIELD_NUMBER: builtins.int
+    @typing_extensions.final
+    class InfosEntry(google.protobuf.message.Message):
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+        KEY_FIELD_NUMBER: builtins.int
+        VALUE_FIELD_NUMBER: builtins.int
+        key: builtins.str
+        @property
+        def value(self) -> global___UserInfo: ...
+        def __init__(
+            self,
+            *,
+            key: builtins.str = ...,
+            value: global___UserInfo | None = ...,
+        ) -> None: ...
+        def HasField(self, field_name: typing_extensions.Literal["value", b"value"]) -> builtins.bool: ...
+        def ClearField(self, field_name: typing_extensions.Literal["key", b"key", "value", b"value"]) -> None: ...
+
+    INFOS_FIELD_NUMBER: builtins.int
     @property
-    def users(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___UserInfo]: ...
+    def infos(self) -> google.protobuf.internal.containers.MessageMap[builtins.str, global___UserInfo]: ...
     def __init__(
         self,
         *,
-        users: collections.abc.Iterable[global___UserInfo] | None = ...,
+        infos: collections.abc.Mapping[builtins.str, global___UserInfo] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["users", b"users"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["infos", b"infos"]) -> None: ...
 
-global___UserInfoList = UserInfoList
+global___UserInfoMap = UserInfoMap
 
 @typing_extensions.final
 class UploadUserAvatarResponse(google.protobuf.message.Message):

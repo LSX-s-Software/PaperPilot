@@ -1,0 +1,101 @@
+syntax = "proto3";
+package im;
+
+import "google/protobuf/empty.proto";
+
+// IM认证响应
+message IMAuthResponse {
+    // user id
+    string id = 1;
+    // user sig
+    string sig = 2;
+}
+
+
+// 新建用户请求
+message CreateUserRequest {
+    // 用户id
+    string id = 1;
+    // 用户名
+    string username = 2;
+    // 用户头像
+    string avatar = 3;
+}
+
+// 更新用户请求
+message UpdateUserRequest {
+    // 用户id
+    string id = 1;
+    // 用户名
+    string username = 2;
+    // 用户头像
+    string avatar = 3;
+}
+
+// 创建Work群组请求
+message CreateWorkGroupRequest {
+    // 群组id
+    string id = 1;
+    // 群组名称
+    string name = 2;
+    // 群主id
+    string owner = 3;
+}
+
+// 更新Work群组请求
+message UpdateWorkGroupRequest {
+    // 群组id
+    string id = 1;
+    // 群组名称
+    string name = 2;
+}
+
+// 删除Work群组请求
+message DeleteWorkGroupRequest {
+    // 群组id
+    string id = 1;
+}
+
+// 邀请用户加入群组请求
+message InviteUserToGroupRequest {
+    // 群组id
+    string group_id = 1;
+    // 用户id
+    string user_id = 2;
+}
+
+// 从群组中移除用户请求
+message RemoveUserFromGroupRequest {
+    // 群组id
+    string group_id = 1;
+    // 用户id
+    string user_id = 2;
+}
+
+
+// 即时通讯接口
+service IMService {
+    // 新建用户
+    rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty);
+    // 更新用户
+    rpc UpdateUser(UpdateUserRequest) returns (google.protobuf.Empty);
+
+    // 创建Work群组
+    rpc CreateWorkGroup(CreateWorkGroupRequest) returns (google.protobuf.Empty);
+    // 更新Work群组
+    rpc UpdateWorkGroup(UpdateWorkGroupRequest) returns (google.protobuf.Empty);
+    // 删除Work群组
+    rpc DeleteWorkGroup(DeleteWorkGroupRequest) returns (google.protobuf.Empty);
+
+    // 邀请用户加入群组
+    rpc InviteUserToGroup(InviteUserToGroupRequest) returns (google.protobuf.Empty);
+    // 从群组中移除用户
+    rpc RemoveUserFromGroup(RemoveUserFromGroupRequest) returns (google.protobuf.Empty);
+}
+
+
+// 即时通讯公开接口
+service IMPublicService {
+    // IM认证
+    rpc IMAuth(google.protobuf.Empty) returns (IMAuthResponse);
+}

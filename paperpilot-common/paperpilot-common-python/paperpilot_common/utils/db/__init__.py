@@ -12,6 +12,7 @@ def db_sync(func):
     def func_wrapper(*args):
         close_old_connections()
         result = func(*args)
+        close_old_connections()
         return result
 
     return func_wrapper
@@ -23,6 +24,7 @@ def db(func):
     async def func_wrapper(*args):
         close_old_connections()
         result = await func(*args)
+        close_old_connections()
         return result
 
     return func_wrapper

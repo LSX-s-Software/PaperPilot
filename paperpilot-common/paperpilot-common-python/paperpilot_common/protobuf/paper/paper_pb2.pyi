@@ -36,63 +36,6 @@ class PaperId(google.protobuf.message.Message):
 global___PaperId = PaperId
 
 @typing_extensions.final
-class PaperInfo(google.protobuf.message.Message):
-    """论文简要信息"""
-
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    TITLE_FIELD_NUMBER: builtins.int
-    AUTHORS_FIELD_NUMBER: builtins.int
-    PUBLICATION_YEAR_FIELD_NUMBER: builtins.int
-    PUBLICATION_FIELD_NUMBER: builtins.int
-    CREATE_TIME_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    """论文 ID"""
-    title: builtins.str
-    """标题"""
-    @property
-    def authors(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
-        """作者列表"""
-    publication_year: builtins.int
-    """年份"""
-    publication: builtins.str
-    """出版方"""
-    @property
-    def create_time(self) -> google.protobuf.timestamp_pb2.Timestamp:
-        """创建时间"""
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        title: builtins.str = ...,
-        authors: collections.abc.Iterable[builtins.str] | None = ...,
-        publication_year: builtins.int = ...,
-        publication: builtins.str = ...,
-        create_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["create_time", b"create_time"]) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "authors",
-            b"authors",
-            "create_time",
-            b"create_time",
-            "id",
-            b"id",
-            "publication",
-            b"publication",
-            "publication_year",
-            b"publication_year",
-            "title",
-            b"title",
-        ],
-    ) -> None: ...
-
-global___PaperInfo = PaperInfo
-
-@typing_extensions.final
 class PaperDetail(google.protobuf.message.Message):
     """论文详细信息"""
 
@@ -105,7 +48,7 @@ class PaperDetail(google.protobuf.message.Message):
     KEYWORDS_FIELD_NUMBER: builtins.int
     AUTHORS_FIELD_NUMBER: builtins.int
     TAGS_FIELD_NUMBER: builtins.int
-    PUBLICATION_DATE_FIELD_NUMBER: builtins.int
+    PUBLICATION_YEAR_FIELD_NUMBER: builtins.int
     PUBLICATION_FIELD_NUMBER: builtins.int
     VOLUME_FIELD_NUMBER: builtins.int
     ISSUE_FIELD_NUMBER: builtins.int
@@ -115,6 +58,7 @@ class PaperDetail(google.protobuf.message.Message):
     FILE_FIELD_NUMBER: builtins.int
     CREATE_TIME_FIELD_NUMBER: builtins.int
     UPDATE_TIME_FIELD_NUMBER: builtins.int
+    EVENT_FIELD_NUMBER: builtins.int
     id: builtins.str
     """论文 ID"""
     project_id: builtins.str
@@ -132,9 +76,8 @@ class PaperDetail(google.protobuf.message.Message):
     @property
     def tags(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
         """tag列表"""
-    @property
-    def publication_date(self) -> paperpilot_common.protobuf.common.util_pb2.Date:
-        """出版日期"""
+    publication_year: builtins.int
+    """出版年份"""
     publication: builtins.str
     """出版方"""
     volume: builtins.str
@@ -151,6 +94,8 @@ class PaperDetail(google.protobuf.message.Message):
     def create_time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
     @property
     def update_time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
+    event: builtins.str
+    """活动"""
     def __init__(
         self,
         *,
@@ -161,7 +106,7 @@ class PaperDetail(google.protobuf.message.Message):
         keywords: collections.abc.Iterable[builtins.str] | None = ...,
         authors: collections.abc.Iterable[builtins.str] | None = ...,
         tags: collections.abc.Iterable[builtins.str] | None = ...,
-        publication_date: paperpilot_common.protobuf.common.util_pb2.Date | None = ...,
+        publication_year: builtins.int = ...,
         publication: builtins.str = ...,
         volume: builtins.str = ...,
         issue: builtins.str = ...,
@@ -171,12 +116,10 @@ class PaperDetail(google.protobuf.message.Message):
         file: builtins.str = ...,
         create_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
         update_time: google.protobuf.timestamp_pb2.Timestamp | None = ...,
+        event: builtins.str = ...,
     ) -> None: ...
     def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "create_time", b"create_time", "publication_date", b"publication_date", "update_time", b"update_time"
-        ],
+        self, field_name: typing_extensions.Literal["create_time", b"create_time", "update_time", b"update_time"]
     ) -> builtins.bool: ...
     def ClearField(
         self,
@@ -189,6 +132,8 @@ class PaperDetail(google.protobuf.message.Message):
             b"create_time",
             "doi",
             b"doi",
+            "event",
+            b"event",
             "file",
             b"file",
             "id",
@@ -203,8 +148,8 @@ class PaperDetail(google.protobuf.message.Message):
             b"project_id",
             "publication",
             b"publication",
-            "publication_date",
-            b"publication_date",
+            "publication_year",
+            b"publication_year",
             "tags",
             b"tags",
             "title",
@@ -265,7 +210,7 @@ class ListPaperResponse(google.protobuf.message.Message):
     TOTAL_FIELD_NUMBER: builtins.int
     NEXT_PAGE_FIELD_NUMBER: builtins.int
     @property
-    def papers(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___PaperInfo]:
+    def papers(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___PaperDetail]:
         """论文列表"""
     total: builtins.int
     """总数"""
@@ -274,7 +219,7 @@ class ListPaperResponse(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        papers: collections.abc.Iterable[global___PaperInfo] | None = ...,
+        papers: collections.abc.Iterable[global___PaperDetail] | None = ...,
         total: builtins.int = ...,
         next_page: builtins.int = ...,
     ) -> None: ...
@@ -308,6 +253,37 @@ class CreatePaperRequest(google.protobuf.message.Message):
     ) -> None: ...
 
 global___CreatePaperRequest = CreatePaperRequest
+
+@typing_extensions.final
+class UpdateAttachmentRequest(google.protobuf.message.Message):
+    """更新论文附件请求"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PAPER_ID_FIELD_NUMBER: builtins.int
+    FILE_FIELD_NUMBER: builtins.int
+    FETCH_METADATA_FIELD_NUMBER: builtins.int
+    paper_id: builtins.str
+    """论文 ID"""
+    file: builtins.str
+    """文件 url"""
+    fetch_metadata: builtins.bool
+    """是否自动获取元数据"""
+    def __init__(
+        self,
+        *,
+        paper_id: builtins.str = ...,
+        file: builtins.str = ...,
+        fetch_metadata: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "fetch_metadata", b"fetch_metadata", "file", b"file", "paper_id", b"paper_id"
+        ],
+    ) -> None: ...
+
+global___UpdateAttachmentRequest = UpdateAttachmentRequest
 
 @typing_extensions.final
 class UploadAttachmentRequest(google.protobuf.message.Message):

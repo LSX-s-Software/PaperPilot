@@ -55,6 +55,8 @@ class OssStorage(Storage):
         self.end_point = self._normalize_endpoint(end_point or oss_settings.ENDPOINT)
         self.bucket_name = bucket_name or oss_settings.BUCKET_NAME
         self.expire_time = expire_time or oss_settings.URL_EXPIRE_SECOND
+        host_list = self.end_point.split("://")
+        self.host = f"{host_list[0]}://{self.bucket_name}.{host_list[1]}"
 
         self.auth = oss2.Auth(self.access_key_id, self.access_key_secret)
         self.service = oss2.Service(self.auth, self.end_point)
@@ -208,7 +210,7 @@ class OssStorage(Storage):
 
     def url(self, name: str) -> str:
         """
-        获取文件的url(带token)
+        获取文件的url(默认含token)
         :param name: 文件名
         :return: url
         """
@@ -219,6 +221,15 @@ class OssStorage(Storage):
             if idx > 0:
                 url = url[:idx].replace("%2F", "/")
         return url
+
+    def url_without_token(self, name: str) -> str:
+        """
+        获取文件的url(不含token)
+        :param name: 文件名
+        :return: url
+        """
+        key = self._get_key_name(name)
+        return f"{self.host}/{key}"
 
     def delete(self, name: str) -> None:
         """
@@ -291,3 +302,42 @@ class OssFile(File):
         if self.closed:
             self.file = self._storage.open(self.name, mode).file
         return super(OssFile, self).open(mode)
+
+    def set_acl(self, acl: str) -> None:
+        """
+        设置文件的访问权限
+        :param acl: 访问权限
+        :return:
+        """
+        self._storage.set_object_acl(self.name, acl)
+
+    def get_acl(self) -> str:
+        """
+        获取文件的访问权限
+        :return:
+        """
+        return self._storage.get_object_acl(self.name)
+
+    def url(self, sign: bool) -> str:
+        """
+        获取文件的url
+
+        :param sign: 是否含token
+        :return: url
+        """
+        if sign:
+            return self._storage.url(self.name)
+        else:
+            return self._storage.url_without_token(self.name)
+
+    def url_auto(self) -> str:
+        """
+        获取文件的url(自动判断是否含token)
+
+        :return: url
+        """
+        acl = self.get_acl()
+        if acl == oss2.BUCKET_ACL_PRIVATE:
+            return self.url(sign=True)
+        else:
+            return self.url(sign=False)

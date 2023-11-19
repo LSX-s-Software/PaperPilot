@@ -121,12 +121,15 @@ class AsyncServerMiddleware(grpc_aio.ServerInterceptor, metaclass=abc.ABCMeta):
         have a public name. Do not override it, unless you know what you're doing.
         """
         next_handler = await continuation(handler_call_details)
+        if not next_handler:
+            return
         handler_factory, next_handler_method = _get_factory_and_method(next_handler)
 
         if next_handler.response_streaming:
 
             async def invoke_intercept_method(request, context):
                 method_name = handler_call_details.method
+
                 coroutine_or_asyncgen = self.intercept(
                     next_handler_method,
                     request,
@@ -170,6 +173,14 @@ class AsyncServerMiddleware(grpc_aio.ServerInterceptor, metaclass=abc.ABCMeta):
             request_deserializer=next_handler.request_deserializer,
             response_serializer=next_handler.response_serializer,
         )
+
+    async def call(self, method, request, context):
+        """Call method in an async way"""
+        response = method(request, context)
+        if hasattr(response, "__aiter__"):
+            return response
+        else:
+            return await response
 
 
 def _get_factory_and_method(

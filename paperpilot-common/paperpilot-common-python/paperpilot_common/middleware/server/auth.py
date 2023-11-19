@@ -3,7 +3,6 @@ from contextvars import ContextVar
 from typing import Any, Callable
 
 import grpc
-from django.conf import settings
 
 from paperpilot_common.middleware.server.base import AsyncServerMiddleware
 from paperpilot_common.utils.log import get_logger
@@ -53,7 +52,14 @@ class AuthMixin:
 
 class AuthMiddleware(AsyncServerMiddleware):
     logger = get_logger("server.interceptor.auth")
-    auth_metadata_key: str = getattr(settings, "AUTH_METADATA_KEY", "x-kong-jwt-claim-user_id")
+
+    def __init__(self):
+        try:
+            from django.conf import settings
+
+            self.auth_metadata_key = getattr(settings, "AUTH_METADATA_KEY", "x-kong-jwt-claim-user_id")
+        except ImportError:
+            self.auth_metadata_key = "x-kong-jwt-claim-user_id"
 
     async def intercept(
         self,
@@ -67,7 +73,7 @@ class AuthMiddleware(AsyncServerMiddleware):
             user_id = metadata.get(self.auth_metadata_key, None)
             user_context.set(UserContext(user_id))
 
-            return await method(request_or_iterator, context)
+            return await self.call(method, request_or_iterator, context)
         except Exception as e:
             self.logger.exception(e)
             raise e

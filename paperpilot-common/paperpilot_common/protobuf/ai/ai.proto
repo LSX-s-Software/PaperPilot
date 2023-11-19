@@ -1,0 +1,50 @@
+syntax = "proto3";
+package ai;
+
+// OpenAI FinishReason
+enum FinishReason {
+    // 未结束
+    NULL = 0;
+    // 生成结束
+    STOP = 1;
+    // 生成长度达到最大值
+    LENGTH = 2;
+    // 需要调用函数
+    FUNCTION_CALL = 3;
+    // 生成内容被过滤
+    CONTENT_FILTER = 4;
+    // Chat 次数用完
+    MESSAGE_NUM_LIMIT = 5;
+    // Message 过长
+    MESSAGE_TOO_LONG = 6;
+}
+
+// GPT 响应
+message GptResult {
+    // 生成内容
+    string content = 1;
+    // 结束原因
+    optional FinishReason finish_reason = 2;
+    // 聊天 ID
+    optional string chat_id = 3;
+    // 总可用聊天次数
+    optional int32 total_chat_times = 4;
+    // 剩余可用聊天次数
+    optional int32 remain_chat_times = 5;
+}
+
+// GPT 请求
+message GptRequest {
+    // 所选文本
+    optional string text = 1;
+    // 操作
+    string action = 2;
+    // 对话 ID（为空则开启新对话）
+    optional string chat_id = 3;
+}
+
+// GPT 服务
+service GptService {
+    // 询问 GPT
+    rpc Ask(GptRequest) returns (stream GptResult);
+}

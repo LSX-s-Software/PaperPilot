@@ -1,13 +1,11 @@
 import hashlib
+import os
 import random
 import time
 import traceback
 from datetime import datetime
 from sys import exc_info
 from typing import TYPE_CHECKING, Optional
-
-from django.conf import settings
-from django.utils.timezone import now
 
 from paperpilot_common.protobuf.common import exce_pb2
 from paperpilot_common.response.utils import get_response_type
@@ -64,7 +62,7 @@ class ApiException(Exception):
 
         self.inner = inner
         self._exc_data = None
-        self.time = now()
+        self.time = datetime.now().astimezone()
 
     def get_exp_detail(self, detail: Optional[str]) -> str:
         """
@@ -159,7 +157,7 @@ class ApiException(Exception):
             "info": None,
         }
 
-        if settings.DEBUG:
+        if os.environ.get("DJANGO_ENV", "production") == "development":
             data["info"] = self.exc_data
 
         return data

@@ -1,0 +1,57 @@
+syntax = "proto3";
+package monitor;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// 容器状态
+enum Status {
+    // 运行-无健康信息
+    RUNNING = 0;
+    // 停止
+    STOPPED = 1;
+    // 启动中
+    STARTING = 2;
+    // 运行-健康
+    HEALTHY = 3;
+    // 运行-不健康
+    UNHEALTHY = 4;
+    // 未知
+    UNKNOWN = 5;
+}
+
+// 采集端状态
+message ClientStatus {
+    // 采集端主机名
+    string host = 1;
+    // 采集端项目状态
+    repeated ClientProjectStatus projects = 2;
+    // 采集时间
+    google.protobuf.Timestamp time = 3;
+}
+
+// 采集端项目状态
+message ClientProjectStatus {
+    // 项目名
+    string project_name = 1;
+    // 采集端容器状态
+    repeated ClientContainerStatus containers = 2;
+}
+
+// 采集端容器状态
+message ClientContainerStatus {
+    // 容器ID
+    string id = 1;
+    // 容器名
+    string name = 2;
+    // 容器主机名
+    string host = 3;
+    // 容器状态
+    Status status = 4;
+}
+
+// 采集端服务
+service MonitorClientService {
+    // 获取采集端状态
+    rpc GetStatus (google.protobuf.Empty) returns (ClientStatus);
+}
