@@ -1,0 +1,87 @@
+//
+//  ImageTitleForm.swift
+//  PaperPilot
+//
+//  Created by 林思行 on 2023/10/20.
+//
+
+import SwiftUI
+
+struct ImageTitleForm<Content: View>: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var title: LocalizedStringKey
+    var subtitle: LocalizedStringKey?
+    var systemImage: String
+    var content: () -> Content
+    var onDismiss: (() -> Void)?
+
+    init(_ title: LocalizedStringKey,
+         subtitle: LocalizedStringKey? = nil,
+         systemImage: String,
+         @ViewBuilder content: @escaping () -> Content,
+         onDismiss: (() -> Void)? = nil) {
+        self.title = title
+        self.subtitle = subtitle
+        self.systemImage = systemImage
+        self.content = content
+        self.onDismiss = onDismiss
+    }
+
+    var body: some View {
+        Group {
+#if os(macOS)
+            VStack(spacing: 0) {
+                ImageTitle(title, subtitle: subtitle, systemImage: systemImage)
+
+                Form {
+                    content()
+                }
+                .formStyle(.grouped)
+            }
+            .frame(idealWidth: 350)
+#else
+            Form {
+                VStack(spacing: 0) {
+                    ImageTitle(title, subtitle: subtitle, systemImage: systemImage)
+                }
+                .frame(maxWidth: .infinity)
+
+                content()
+            }
+            .frame(minWidth: 350)
+#endif
+        }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel", role: .cancel) {
+                    onDismiss?()
+                    dismiss()
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    ImageTitleForm(
+        "Create New Project",
+        subtitle: "Create New Project",
+        systemImage: "folder.fill.badge.plus"
+    ) {
+        TextField("Project Name", text: .constant(""))
+    }
+    .fixedSize()
+    .previewDisplayName("Title and Subtitle")
+}
+
+#Preview {
+    ImageTitleForm(
+        "Create New Project",
+        systemImage: "folder.fill.badge.plus"
+    ) {
+        TextField("Project Name", text: .constant(""))
+    }
+    .fixedSize()
+    .previewDisplayName("Title only")
+}
