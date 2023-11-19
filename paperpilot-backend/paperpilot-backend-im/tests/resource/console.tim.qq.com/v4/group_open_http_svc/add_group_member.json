@@ -1,0 +1,11 @@
+{
+    "ActionStatus": "OK",
+    "ErrorCode": 0,
+    "ErrorInfo": "",
+    "MemberList": [
+        {
+            "Member_Account": "00000000000000000000000000000002",
+            "Result": 1
+        }
+    ]
+}

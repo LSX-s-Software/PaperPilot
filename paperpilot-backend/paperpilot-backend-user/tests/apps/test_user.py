@@ -18,6 +18,7 @@ from paperpilot_common.response import ResponseType
 from user.models import User
 from user.services import user_service
 from user.urls import UserController, UserPublicController
+from user.utils import generate_avatar
 
 
 class TestUserPublic:
@@ -31,7 +32,7 @@ class TestUserPublic:
 
         assert response.id == user.id.hex
         assert response.username == user.username
-        assert response.avatar == user.avatar.url
+        assert response.avatar == generate_avatar(user.username)
 
     @pytest.mark.asyncio
     async def test_get_current_user__success(self, api, context, user: User):
@@ -40,14 +41,14 @@ class TestUserPublic:
 
         assert response.id == user.id.hex
         assert response.username == user.username
-        assert response.avatar == user.avatar.url
+        assert response.avatar == generate_avatar(user.username)
         assert response.phone == user.phone
         assert response.create_time == datetime_to_timestamp(user.create_time)
         assert response.update_time == datetime_to_timestamp(user.update_time)
 
     @pytest.mark.asyncio
     async def test_get_current_user__not_login(self, api, context):
-        with pytest.raises(AttributeError) as e:
+        with pytest.raises(AttributeError):
             await api.GetCurrentUser(Empty(), context)
 
     @pytest.mark.asyncio
@@ -80,8 +81,8 @@ class TestUserPublic:
         context.authenticate(user.id)
         request = UpdateUserRequest(
             username=user.username,
-            old_password=password,
-            new_password=password,
+            # old_password=password,
+            # new_password=password,
             phone=user.phone,
         )
         await auth_cache.add_code(user.phone, code)
@@ -90,7 +91,7 @@ class TestUserPublic:
         user = await User.objects.filter(id=user.id).afirst()
 
         assert user.username == request.username
-        assert user.check_password(request.new_password)
+        assert user.check_password(password)
         assert user.phone == request.phone
 
     @pytest.mark.asyncio
@@ -196,7 +197,7 @@ class TestUserPublic:
         )
         await auth_cache.add_code("13012341234", code)
 
-        with pytest.raises(AttributeError) as e:
+        with pytest.raises(AttributeError):
             await api.UpdateUser(request, context)
 
     @pytest.mark.asyncio
@@ -216,7 +217,7 @@ class TestUserPublic:
     async def test_upload_avatar__not_login(self, api, context):
         request = Empty()
 
-        with pytest.raises(AttributeError) as e:
+        with pytest.raises(AttributeError):
             await api.UploadUserAvatar(request, context)
 
 
@@ -231,7 +232,7 @@ class TestUser:
 
         assert response.id == user.id.hex
         assert response.username == user.username
-        assert response.avatar == user.avatar.url
+        assert response.avatar == generate_avatar(user.username)
 
     @pytest.mark.asyncio
     async def test_get_user_info__not_found(self, api, context):
@@ -246,7 +247,7 @@ class TestUser:
 
         assert response.id == user.id.hex
         assert response.username == user.username
-        assert response.avatar == user.avatar.url
+        assert response.avatar == generate_avatar(user.username)
         assert response.phone == user.phone
         assert response.create_time == datetime_to_timestamp(user.create_time)
         assert response.update_time == datetime_to_timestamp(user.update_time)
@@ -283,11 +284,11 @@ class TestUser:
         request = UserIdList()
         request.ids.extend([_.hex for _ in uuids])
 
-        response = await api.ListUserInfo(request, context)
+        response = await api.GetUserInfos(request, context)
 
-        assert len(response.users) == count
+        assert len(response.infos) == count
 
-        for user in response.users:
+        for user in response.infos.values():
             assert uuid.UUID(user.id) in uuids
 
     @pytest.mark.asyncio
@@ -295,18 +296,18 @@ class TestUser:
         request = UserIdList()
         request.ids.extend([])
 
-        response = await api.ListUserInfo(request, context)
+        response = await api.GetUserInfos(request, context)
 
-        assert len(response.users) == 0
+        assert len(response.infos) == 0
 
     @pytest.mark.asyncio
     async def test_list_user_info__not_found(self, api, context):
         request = UserIdList()
         request.ids.extend([uuid.uuid4().hex])
 
-        response = await api.ListUserInfo(request, context)
+        response = await api.GetUserInfos(request, context)
 
-        assert len(response.users) == 0
+        assert len(response.infos) == 0
 
     @pytest.mark.asyncio
     async def test_update_user_avatar(self, api, context, user: User):

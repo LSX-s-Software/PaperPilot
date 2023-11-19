@@ -4,7 +4,13 @@ from google.protobuf.empty_pb2 import Empty
 from oauth.cache import auth_cache
 from oauth.urls import AuthPublicController
 from paperpilot_common.exceptions import ApiException
-from paperpilot_common.protobuf.user.auth_pb2 import *
+from paperpilot_common.protobuf.user.auth_pb2 import (
+    CountPhoneRequest,
+    CountUsernameRequest,
+    LoginRequest,
+    RefreshTokenRequest,
+    SendSmsCodeRequest,
+)
 from paperpilot_common.protobuf.user.user_pb2 import CreateUserRequest
 from paperpilot_common.response import ResponseType
 from pytz import utc

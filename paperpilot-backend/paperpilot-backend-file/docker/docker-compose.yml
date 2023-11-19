@@ -1,0 +1,18 @@
+version: "3.8"
+name: paperpilot-file
+
+services:
+  ### server container ##########################################
+  file:
+    image: registry.cn-chengdu.aliyuncs.com/ziqiang_studio/paperpilot:file
+    env_file: ./.env
+    networks:
+      - paperpilot
+      - kong_kong-net
+
+### Add Network Bridge info #########################################
+networks:
+  paperpilot:
+    external: true
+  kong_kong-net:
+    external: true
