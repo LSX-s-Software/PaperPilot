@@ -1,9 +1,8 @@
-# PaperPilot 主仓库
+![cover](docs/cover.jpg)
+
 多平台多人协作文献管理软件
 
 ## 项目子仓库
-
-> 主仓库**不会实时更新**，如需查看最新进展，请访问下列子仓库
 
 - [PaperPilotApp](https://github.com/LSX-s-Software/PaperPilotApp)
 - [paperpilot-common](https://github.com/Nagico/paperpilot-common)
@@ -11,16 +10,19 @@
 
 ## 核心功能
 
-> 功能正在开发中
+- [x] 文献管理
+  - [x] 通过文献的 DOI/URL 添加文献
+  - [x] 导出 BibTeX、GB/T 7714 等格式的引用
+- [x] 跨平台、跨设备访问
+  - [x] 在 Mac、iPad、Apple Vision Pro 等设备上查看文献
+  - [x] 在 iPad 上使用 Apple Pencil 标注 PDF
+  - [x] 数据多端同步
+- [x] 多人协同阅读
+  - [x] **实时同步**富文本笔记
+  - [x] **实时同步**论文批注
+- [x] AI 协助阅读
+  - [x] 论文划词翻译
+  - [x] 论文解析、总结、重写
+  - [x] 可引用论文内容、保留上下文的自由聊天
 
-- 文献管理
-  - 自动识别文献的元数据并归类
-  - 通过文献的元数据查询文献
-- 跨平台、跨设备访问
-  - 在电脑、平板等设备上查看文献
-  - 数据多端同步
-- 多人协同阅读
-  - **实时同步**论文批注
-  - **实时同步**笔记
-- AI 协助阅读
-  - 使用大语言模型接口实现论文解析、翻译、总结
+详细功能介绍详见[完整功能列表](https://github.com/LSX-s-Software/PaperPilotApp/blob/master/README.md)
